@@ -8,7 +8,7 @@ migrate:
 	$(backend) && $(CMD) python3 manage.py makemigrations
 	$(backend) && $(CMD) python3 manage.py migrate
 user:
-	$(server) && $(CMD) python3 manage.py createsuperuser
+	$(backend) && $(CMD) python3 manage.py createsuperuser
 
 # Frontend commands.
 frontend:=cd frontend

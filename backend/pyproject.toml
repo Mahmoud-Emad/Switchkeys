@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "switchkey"
+version = "0.1.0"
+description = ""
+authors = ["Mahmoud Emad <mahmmoud.hassanein@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+django = "^5.0.3"
+djangorestframework = "^3.15.1"
+python-decouple = "^3.8"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

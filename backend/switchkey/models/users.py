@@ -8,7 +8,7 @@ from switchkey.utils.generates import generate_random_color
 from switchkey.models.abstracts import TimeStamp
 
 
-class CshrBaseUserManger(BaseUserManager):
+class SwitchKeyBaseUserManger(BaseUserManager):
     """this is the main class for user manger"""
 
     def create_user(self, email: str, password: str) -> "User":
@@ -49,7 +49,7 @@ class User(AbstractBaseUser, TimeStamp):
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
-    objects = CshrBaseUserManger()
+    objects = SwitchKeyBaseUserManger()
 
     @property
     def full_name(self) -> str:

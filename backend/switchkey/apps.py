@@ -2,5 +2,5 @@ from django.apps import AppConfig
 
 
 class SwitchkeyConfig(AppConfig):
-    default_auto_field = 'django.db.models.BigAutoField'
-    name = 'switchkey'
+    default_auto_field = "django.db.models.BigAutoField"
+    name = "switchkey"

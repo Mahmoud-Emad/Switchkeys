@@ -18,9 +18,15 @@ install:
 	$(backend) && poetry install
 	$(backend) && poetry check
 	$(frontend) && yarn
+
 run:
 ifeq ($(server), frontend)
 	$(frontend) && yarn dev
 else ifeq ($(server), backend)
 	$(backend) && $(CMD) python3 manage.py runserver
 endif
+
+lint:
+	$(backend) && $(CMD) black .  --exclude=__init__.py
+	$(backend) && $(CMD) flake8 .  --exclude=__init__.py
+	# $(frontend) && yarn lint

@@ -1,6 +1,11 @@
 from django.urls import path
 
-from switchkey.views.auth import RegisterApiView, LoginByTokenApiView, MyTokenRefreshView, ChangePasswordView
+from switchkey.views.auth import (
+    RegisterApiView,
+    LoginByTokenApiView,
+    MyTokenRefreshView,
+    ChangePasswordView,
+)
 
 
 urlpatterns = [

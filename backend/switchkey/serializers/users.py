@@ -1,6 +1,7 @@
 from switchkey.models.users import User
 from rest_framework.serializers import ModelSerializer
 
+
 class GeneralUserSerializer(ModelSerializer):
     """
     This class will be used to get all info about a user
@@ -18,4 +19,3 @@ class GeneralUserSerializer(ModelSerializer):
             "background_color",
             "is_active",
         ]
-

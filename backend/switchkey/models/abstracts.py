@@ -1,4 +1,5 @@
 """abstract model for created, updated timestamps"""
+
 from django.db import models
 
 

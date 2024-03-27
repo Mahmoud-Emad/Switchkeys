@@ -3,6 +3,7 @@
 from typing import List
 from switchkey.models.users import User
 
+
 def get_user_by_id(id: str) -> User:
     """Return user who have the same id"""
     if id is None:
@@ -12,9 +13,11 @@ def get_user_by_id(id: str) -> User:
     except User.DoesNotExist:
         return None
 
+
 def get_all_users() -> List[User]:
     """Return all registered users"""
     return User.objects.all()
+
 
 def get_user_by_email(email: str) -> User:
     """Return user who have the same email"""

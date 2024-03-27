@@ -10,7 +10,7 @@ from rest_framework import exceptions
 from django.contrib.auth.hashers import check_password
 from typing import Dict, Any
 from switchkey.models.users import User
-from switchkey.services.users import get_user_by_id
+from switchkey.services.users import get_user_by_email, get_user_by_id
 
 
 class ChangePasswordSerializer(Serializer):
@@ -89,11 +89,11 @@ class RegisterSerializer(ModelSerializer):
     class Meta:
         model = User
         fields = (
-          "first_name",
-          "last_name",
-          "email",
-          "password",
-          "joining_at",
+            "first_name",
+            "last_name",
+            "email",
+            "password",
+            "joining_at",
         )
 
     def create(self, validated_data):

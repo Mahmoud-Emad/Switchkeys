@@ -2,7 +2,6 @@ from django.contrib import admin
 from django.urls import path, include
 import settings
 from django.conf.urls.static import static
-from switchkey.routes.auth import urlpatterns as auth_urlpatterns
 
 
 urlpatterns = [
@@ -11,8 +10,8 @@ urlpatterns = [
         "api/",
         include(
             [
-                path("auth/", include(auth_urlpatterns)),
-                # path("users/", include("switchkey.routes.users")),
+                path("auth/", include("switchkey.urls.auth")),
+                path("users/", include("switchkey.urls.users")),
             ]
         ),
     ),

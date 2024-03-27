@@ -86,7 +86,9 @@ class ChangePasswordView(GenericAPIView):
                 request.user.password = new_password
                 request.user.save()
                 return CustomResponse.success(message="Success updated password")
-            return CustomResponse.unauthorized(message="Incorrect password. Please ensure that the password provided is accurate.")
+            return CustomResponse.unauthorized(
+                message="Incorrect password. Please ensure that the password provided is accurate."
+            )
         return CustomResponse.bad_request(
             message="Please make sure that you entered a valid data.",
             error=serializer.errors,

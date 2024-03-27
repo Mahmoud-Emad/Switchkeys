@@ -10,10 +10,17 @@ migrate:
 user:
 	$(server) && $(CMD) python3 manage.py createsuperuser
 
+# Frontend commands.
+frontend:=cd frontend
+
 # Commands works on both servers.
+install:
+	$(backend) && poetry install
+	$(backend) && poetry check
+	$(frontend) && yarn
 run:
 ifeq ($(server), frontend)
-	echo not implemented yes
+	$(frontend) && yarn dev
 else ifeq ($(server), backend)
 	$(backend) && $(CMD) python3 manage.py runserver
 endif

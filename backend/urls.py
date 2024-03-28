@@ -12,7 +12,7 @@ urlpatterns = [
             [
                 path("auth/", include("switchkey.urls.auth")),
                 path("users/", include("switchkey.urls.users")),
-                path("storage/", include("switchkey.urls.storage")),
+                # path("storage/", include("switchkey.urls.storage")),
             ]
         ),
     ),

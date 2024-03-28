@@ -9,6 +9,16 @@ from switchkey.utils.generates import generate_random_color
 from switchkey.models.abstracts import TimeStamp
 
 
+class UserType(models.TextChoices):
+    ADMINISTRATOR = "Administrator", "Organization Administrator"
+    USER = "User", "User"
+
+
+class DeviceType(models.TextChoices):
+    IPHONE = "IPhone", "iPhone"
+    ANDROID = "Android", "Android"
+
+
 class SwitchKeyBaseUserManger(BaseUserManager):
     """this is the main class for user manger"""
 
@@ -41,9 +51,13 @@ class User(AbstractBaseUser, TimeStamp):
 
     first_name = models.CharField(max_length=45)
     last_name = models.CharField(max_length=45)
-    background_color = models.CharField(max_length=10, default=generate_random_color)
     email = models.EmailField(max_length=45, unique=True)
+
+    background_color = models.CharField(max_length=10, default=generate_random_color)
     joining_at = models.DateField(auto_now_add=True)
+    user_type = models.CharField(
+        max_length=20, choices=UserType.choices, default=UserType.USER
+    )
 
     USERNAME_FIELD = "email"
     is_admin = models.BooleanField(default=False)
@@ -70,3 +84,37 @@ class User(AbstractBaseUser, TimeStamp):
 
     def __str__(self) -> str:
         return f"{self.email}"
+
+
+class ProjectEnvironmentUser(TimeStamp):
+    username = models.CharField(unique=True, max_length=30)
+    device = models.ForeignKey(
+        "UserDevice", on_delete=models.SET_NULL, null=True, related_name="user_device"
+    )
+
+    features = models.JSONField(default=dict, blank=True)
+
+    def __str__(self) -> str:
+        return f"{self.username}"
+
+    class Meta:
+        verbose_name = "Project User"
+        verbose_name_plural = "Project User"
+
+
+class UserDevice(TimeStamp):
+    device_type = models.CharField(
+        max_length=20, choices=DeviceType.choices, default=DeviceType.ANDROID
+    )
+    version = models.CharField(max_length=100, null=True, blank=True)
+
+    def __str__(self) -> str:
+        return f"{self.device_type} | {self.version}"
+
+    class Meta:
+        verbose_name = "User Device"
+        verbose_name_plural = "User Device"
+        unique_together = (
+            "device_type",
+            "version",
+        )

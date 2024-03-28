@@ -1,7 +1,6 @@
-from typing import ClassVar
 from switchkey.core.exceptions import FeatureNotEnabled as FeatureNotEnabledError
 
-class ModelBase(type): ...
+class SwitchKeyBase(type): ...
 
 
 class SwitchKeyFeatures():
@@ -17,7 +16,7 @@ class SwitchKeyFeatures():
     def is_enabled(self, feature: str) -> bool:
         return False
 
-class SwitchKey(metaclass=ModelBase):
+class SwitchKey(metaclass=SwitchKeyBase):
     def __init__(self, environment_id: str) -> None:
         self.FeatureNotEnabled = FeatureNotEnabledError
         self.environment_id = environment_id

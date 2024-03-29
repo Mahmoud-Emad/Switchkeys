@@ -13,8 +13,9 @@ class OrganizationSerializer(ModelSerializer):
         fields = (
             "id",
             "name",
+            "owner",
             "members",
             "created",
             "modified",
         )
-        read_only_fields = ("id", "members", "created", "modified")
+        read_only_fields = ("id", "members", "created", "modified", "owner")

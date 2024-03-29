@@ -94,7 +94,11 @@ class RegisterSerializer(ModelSerializer):
             "email",
             "password",
             "joining_at",
+            "user_type",
         )
+        read_only_fields = [
+            "joining_at",
+        ]
 
     def create(self, validated_data):
         password = validated_data.pop("password", None)

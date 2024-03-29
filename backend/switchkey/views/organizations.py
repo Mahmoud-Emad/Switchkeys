@@ -2,6 +2,7 @@ from rest_framework.generics import GenericAPIView, ListAPIView
 from rest_framework.request import Request
 from rest_framework.response import Response
 
+from switchkey.api.permissions import UserIsAuthenticated, IsAdminUser
 from switchkey.serializers.organizations import OrganizationSerializer
 from switchkey.services.organizations import (
     get_all_organization,
@@ -12,6 +13,19 @@ from switchkey.api.custom_response import CustomResponse
 
 class BaseOrganizationApiView(ListAPIView):
     serializer_class = OrganizationSerializer
+    permission_classes = []
+
+    def get_permissions(self):
+        if self.request.method == "GET":
+            self.permission_classes = [
+                UserIsAuthenticated,
+            ]
+        else:
+            self.permission_classes = [
+                IsAdminUser,
+            ]
+
+        return super(BaseOrganizationApiView, self).get_permissions()
 
     def get_queryset(self) -> Response:
         """Get all ``organization`` in the system"""
@@ -24,7 +38,7 @@ class BaseOrganizationApiView(ListAPIView):
         organization = request.data
         serializer = self.get_serializer(data=organization)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(owner=request.user)
             return CustomResponse.success(
                 data=serializer.data,
                 message="Organization has been created successfully.",
@@ -39,6 +53,19 @@ class BaseOrganizationApiView(ListAPIView):
 
 class OrganizationApiView(GenericAPIView):
     serializer_class = OrganizationSerializer
+    permission_classes = []
+
+    def get_permissions(self):
+        if self.request.method == "GET":
+            self.permission_classes = [
+                UserIsAuthenticated,
+            ]
+        else:
+            self.permission_classes = [
+                IsAdminUser,
+            ]
+
+        return super(OrganizationApiView, self).get_permissions()
 
     def get(self, request: Request, organization_id: str) -> Response:
         """Get organization by id"""
@@ -61,7 +88,9 @@ class OrganizationApiView(GenericAPIView):
         data = request.data
         serializer = self.get_serializer(organization, data=data)
         if serializer.is_valid():
-            serializer.save()
+
+            serializer.save(owner=request.user)
+
             return CustomResponse.success(
                 data=serializer.data,
                 message="Organization has been updated successfully.",
@@ -75,13 +104,14 @@ class OrganizationApiView(GenericAPIView):
         )
 
     def delete(self, request: Request, organization_id: str) -> Response:
-        """Update organization by id"""
+        """Delete an organization by its ID."""
         organization = get_organization_by_id(organization_id)
 
         if organization is None:
             return CustomResponse.not_found(message="The organization does not exist.")
 
         organization.delete()
+
         return CustomResponse.success(
             data={},
             message="Organization has been updated successfully.",

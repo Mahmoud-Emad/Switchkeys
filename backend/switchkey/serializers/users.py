@@ -19,3 +19,9 @@ class GeneralUserSerializer(ModelSerializer):
             "background_color",
             "is_active",
         ]
+        read_only_feilds = [
+            "joining_at",
+            "background_color",
+            "full_name",
+            "is_active",
+        ]

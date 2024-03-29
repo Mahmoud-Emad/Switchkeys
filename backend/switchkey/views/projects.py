@@ -2,6 +2,7 @@ from rest_framework.generics import GenericAPIView, ListAPIView
 from rest_framework.request import Request
 from rest_framework.response import Response
 
+from switchkey.api.permissions import UserIsAuthenticated, IsAdminUser
 from switchkey.serializers.projects import OrganizationProjectSerializer
 from switchkey.services.projects import get_all_projects, get_project_by_id
 from switchkey.serializers.organizations import OrganizationSerializer
@@ -10,6 +11,19 @@ from switchkey.api.custom_response import CustomResponse
 
 class BaseOrganizationProjectApiView(ListAPIView):
     serializer_class = OrganizationProjectSerializer
+    permission_classes = []
+    
+    def get_permissions(self):
+        if self.request.method == "GET":
+            self.permission_classes = [
+                UserIsAuthenticated,
+            ]
+        else:
+            self.permission_classes = [
+                IsAdminUser,
+            ]
+
+        return super(BaseOrganizationProjectApiView, self).get_permissions()
 
     def get_queryset(self) -> Response:
         """Get all ``projects`` in the system."""
@@ -37,6 +51,19 @@ class BaseOrganizationProjectApiView(ListAPIView):
 
 class OrganizationProjectApiView(GenericAPIView):
     serializer_class = OrganizationProjectSerializer
+    permission_classes = []
+
+    def get_permissions(self):
+        if self.request.method == "GET":
+            self.permission_classes = [
+                UserIsAuthenticated,
+            ]
+        else:
+            self.permission_classes = [
+                IsAdminUser,
+            ]
+
+        return super(OrganizationProjectApiView, self).get_permissions()
 
     def get(self, request: Request, project_id: str) -> Response:
         """Get organization project by its ID."""

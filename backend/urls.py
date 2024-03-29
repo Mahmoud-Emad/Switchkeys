@@ -14,6 +14,7 @@ urlpatterns = [
                 path("users/", include("switchkey.urls.users")),
                 path("organizations/", include("switchkey.urls.organizations")),
                 path("projects/", include("switchkey.urls.projects")),
+                path("groups/", include("switchkey.urls.groups")),
             ]
         ),
     ),

@@ -8,7 +8,7 @@ class Organization(TimeStamp):
     owner = models.ForeignKey(
         User, related_name="organization_owner", on_delete=models.CASCADE
     )
-    name = models.CharField(max_length=20, unique=True)
+    name = models.CharField(max_length=20,)
     members = models.ManyToManyField(
         User, related_name="organization_members", blank=True
     )
@@ -19,10 +19,14 @@ class Organization(TimeStamp):
     class Meta:
         verbose_name = "Organization"
         verbose_name_plural = "Organizations"
+        unique_together = (
+            "name",
+            "owner",
+        )
 
 
 class OrganizationProject(TimeStamp):
-    name = models.CharField(max_length=20, unique=True)
+    name = models.CharField(max_length=20,)
     organization = models.ForeignKey(
         Organization,
         related_name="project_organization",
@@ -37,18 +41,31 @@ class OrganizationProject(TimeStamp):
     class Meta:
         verbose_name = "Organization Project"
         verbose_name_plural = "Organization Projects"
+        unique_together = (
+            "name",
+            "organization",
+        )
 
 
-class OrganizationGroup(TimeStamp):
-    project = models.ManyToManyField(
+class OrganizationProjectGroup(TimeStamp):
+    project = models.ForeignKey(
         OrganizationProject,
         related_name="project_groups",
+        on_delete=models.CASCADE,
     )
     name = models.CharField(max_length=50)
     members = models.ManyToManyField(User, related_name="organization_groups")
 
+    class Meta:
+        verbose_name = "Organization Project Group"
+        verbose_name_plural = "Organization Project Groups"
+        unique_together = (
+            "name",
+            "project",
+        )
+
     def __str__(self):
-        return self.name
+        return f"{self.project.name} | {self.name}"
 
 
 class ProjectEnvironment(TimeStamp):

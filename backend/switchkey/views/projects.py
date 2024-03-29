@@ -2,10 +2,10 @@ from rest_framework.generics import GenericAPIView, ListAPIView
 from rest_framework.request import Request
 from rest_framework.response import Response
 
+from switchkey.models.management import Organization
 from switchkey.api.permissions import UserIsAuthenticated, IsAdminUser
 from switchkey.serializers.projects import OrganizationProjectSerializer
 from switchkey.services.projects import get_all_projects, get_project_by_id
-from switchkey.serializers.organizations import OrganizationSerializer
 from switchkey.api.custom_response import CustomResponse
 
 
@@ -36,6 +36,11 @@ class BaseOrganizationProjectApiView(ListAPIView):
         project = request.data
         serializer = self.get_serializer(data=project)
         if serializer.is_valid():
+            organization: Organization = serializer.validated_data.get("organization")
+            if request.user.id != organization.owner.id:
+                return CustomResponse.unauthorized(
+                    message="You do not have permission to access this resource because you are not the creator of this organization.",
+                )
             serializer.save()
             return CustomResponse.success(
                 data=serializer.data,
@@ -66,7 +71,7 @@ class OrganizationProjectApiView(GenericAPIView):
         return super(OrganizationProjectApiView, self).get_permissions()
 
     def get(self, request: Request, project_id: str) -> Response:
-        """Get organization project by its ID."""
+        """Get an organization project by its ID."""
         project = get_project_by_id(project_id)
 
         if project is None:
@@ -74,12 +79,12 @@ class OrganizationProjectApiView(GenericAPIView):
                 message="The organization project does not exist."
             )
         return CustomResponse.success(
-            data=OrganizationSerializer(project).data,
+            data=OrganizationProjectSerializer(project).data,
             message="The organization project found.",
         )
 
     def put(self, request: Request, project_id: str) -> Response:
-        """Update organization project by its ID."""
+        """Update an organization project by its ID."""
         project = get_project_by_id(project_id)
 
         if project is None:
@@ -104,7 +109,7 @@ class OrganizationProjectApiView(GenericAPIView):
         )
 
     def delete(self, request: Request, project_id: str) -> Response:
-        """Update organization project by its ID."""
+        """Delete an organization project by its ID."""
         project = get_project_by_id(project_id)
 
         if project is None:

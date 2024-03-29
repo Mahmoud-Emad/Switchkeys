@@ -12,7 +12,7 @@ from switchkey.api.custom_response import CustomResponse
 class BaseOrganizationProjectApiView(ListAPIView):
     serializer_class = OrganizationProjectSerializer
     permission_classes = []
-    
+
     def get_permissions(self):
         if self.request.method == "GET":
             self.permission_classes = [

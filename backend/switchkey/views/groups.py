@@ -3,7 +3,6 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 from switchkey.models.management import OrganizationProject
-from switchkey.services.groups import get_all_groups
 from switchkey.serializers.groups import OrganizationProjectGroupSerializer
 from switchkey.api.permissions import UserIsAuthenticated, IsAdminUser
 from switchkey.services.groups import get_all_groups, get_group_by_id
@@ -13,7 +12,7 @@ from switchkey.api.custom_response import CustomResponse
 class BaseOrganizationProjectGroupApiView(ListAPIView):
     serializer_class = OrganizationProjectGroupSerializer
     permission_classes = []
-    
+
     def get_permissions(self):
         if self.request.method == "GET":
             self.permission_classes = [
@@ -39,7 +38,7 @@ class BaseOrganizationProjectGroupApiView(ListAPIView):
         if serializer.is_valid():
             project: OrganizationProject = serializer.validated_data.get("project")
             if request.user.id != project.organization.owner.id:
-              return CustomResponse.unauthorized(
+                return CustomResponse.unauthorized(
                     message="You do not have permission to access this resource because you are not the creator of the organization that owns this project.",
                 )
             serializer.save()
@@ -98,7 +97,7 @@ class OrganizationProjectGroupApiView(GenericAPIView):
         if serializer.is_valid():
             project: OrganizationProject = serializer.validated_data.get("project")
             if request.user.id != project.organization.owner.id:
-              return CustomResponse.unauthorized(
+                return CustomResponse.unauthorized(
                     message="You do not have permission to access this resource because you are not the creator of the organization that owns this project.",
                 )
 
@@ -126,7 +125,7 @@ class OrganizationProjectGroupApiView(GenericAPIView):
 
         project: OrganizationProject = group.project
         if request.user.id != project.organization.owner.id:
-          return CustomResponse.unauthorized(
+            return CustomResponse.unauthorized(
                 message="You do not have permission to access this resource because you are not the creator of the organization that owns this project.",
             )
 

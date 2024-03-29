@@ -8,7 +8,9 @@ class Organization(TimeStamp):
     owner = models.ForeignKey(
         User, related_name="organization_owner", on_delete=models.CASCADE
     )
-    name = models.CharField(max_length=20,)
+    name = models.CharField(
+        max_length=20,
+    )
     members = models.ManyToManyField(
         User, related_name="organization_members", blank=True
     )
@@ -26,7 +28,9 @@ class Organization(TimeStamp):
 
 
 class OrganizationProject(TimeStamp):
-    name = models.CharField(max_length=20,)
+    name = models.CharField(
+        max_length=20,
+    )
     organization = models.ForeignKey(
         Organization,
         related_name="project_organization",

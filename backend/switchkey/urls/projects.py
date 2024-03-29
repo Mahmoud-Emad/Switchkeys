@@ -1,12 +1,12 @@
 from django.urls import path
 
 
-from switchkey.views.management import (
-    BaseKeyValueStorageApiView,
-    KeyValueStorageApiView,
+from switchkey.views.projects import (
+    BaseOrganizationProjectApiView,
+    OrganizationProjectApiView,
 )
 
 urlpatterns = [
-    path("", BaseKeyValueStorageApiView.as_view()),
-    path("<str:key_id>/", KeyValueStorageApiView.as_view()),
+    path("", BaseOrganizationProjectApiView.as_view()),
+    path("<str:project_id>/", OrganizationProjectApiView.as_view()),
 ]

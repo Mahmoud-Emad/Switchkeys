@@ -6,7 +6,9 @@ import uuid
 
 class Organization(TimeStamp):
     name = models.CharField(max_length=20, unique=True)
-    members = models.ManyToManyField(User, related_name="organization_members", blank=True)
+    members = models.ManyToManyField(
+        User, related_name="organization_members", blank=True
+    )
 
     def __str__(self) -> str:
         return f"{self.name}"
@@ -23,12 +25,11 @@ class OrganizationProject(TimeStamp):
         related_name="project_organization",
         blank=True,
         null=True,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
     )
 
-
     def __str__(self):
-        return f'{self.name} | {self.organization.name}'
+        return f"{self.name} | {self.organization.name}"
 
     class Meta:
         verbose_name = "Organization Project"
@@ -62,7 +63,7 @@ class ProjectEnvironment(TimeStamp):
     )
 
     def __str__(self):
-        return f'{self.name} | {self.project.name}'
+        return f"{self.name} | {self.project.name}"
 
 
 class FeatureStorage(TimeStamp):

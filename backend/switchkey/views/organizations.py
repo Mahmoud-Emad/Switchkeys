@@ -2,9 +2,11 @@ from rest_framework.generics import GenericAPIView, ListAPIView
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from switchkey.models.management import Organization
 from switchkey.serializers.organizations import OrganizationSerializer
-from switchkey.services.organizations import get_all_organization, get_organization_by_id
+from switchkey.services.organizations import (
+    get_all_organization,
+    get_organization_by_id,
+)
 from switchkey.api.custom_response import CustomResponse
 
 
@@ -17,14 +19,15 @@ class BaseOrganizationApiView(ListAPIView):
         return get_queryset
 
     def post(self, request: Request) -> Response:
-        """Get organization by id"""
+        """Create new organization object."""
 
         organization = request.data
         serializer = self.get_serializer(data=organization)
         if serializer.is_valid():
             serializer.save()
             return CustomResponse.success(
-                data=serializer.data, message="Organization has been created successfully."
+                data=serializer.data,
+                message="Organization has been created successfully.",
             )
 
         return CustomResponse.bad_request(
@@ -44,7 +47,8 @@ class OrganizationApiView(GenericAPIView):
         if organization is None:
             return CustomResponse.not_found(message="The organization does not exist.")
         return CustomResponse.success(
-            data=OrganizationSerializer(organization).data, message="The organization found."
+            data=OrganizationSerializer(organization).data,
+            message="The organization found.",
         )
 
     def put(self, request: Request, organization_id: str) -> Response:
@@ -59,11 +63,15 @@ class OrganizationApiView(GenericAPIView):
         if serializer.is_valid():
             serializer.save()
             return CustomResponse.success(
-                data=serializer.data, message="Organization has been updated successfully.", status_code=201
+                data=serializer.data,
+                message="Organization has been updated successfully.",
+                status_code=201,
             )
 
-        return CustomResponse.success(
-            data=OrganizationSerializer(organization).data, message="The organization found."
+        return CustomResponse.bad_request(
+            data=OrganizationSerializer(organization).data,
+            message="Please make sure that you entered a valid data..",
+            error=serializer.errors,
         )
 
     def delete(self, request: Request, organization_id: str) -> Response:
@@ -75,5 +83,7 @@ class OrganizationApiView(GenericAPIView):
 
         organization.delete()
         return CustomResponse.success(
-            data={}, message="Organization has been updated successfully.", status_code=204
+            data={},
+            message="Organization has been updated successfully.",
+            status_code=204,
         )

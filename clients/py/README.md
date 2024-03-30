@@ -66,7 +66,7 @@ from rest_framework.response import Response
 class User(models.Model):
     username = models.CharField(max_length=30, unique=True)
 
-# Lets say we have 2 versions in our project, and we want to display each version based on user.
+# Let's say we have 2 versions in our project, and we want to display each version based on user.
 class GetVersionApiView(GenericAPIView):
 
     def get(self, request: Request) -> Response:

@@ -32,4 +32,4 @@ lint:
 	# $(frontend) && yarn lint
 
 switchkey:
-	cd clients/python && python3 -m example
+	cd clients/py && python3 -m example

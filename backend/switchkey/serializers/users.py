@@ -1,8 +1,8 @@
-from switchkey.models.users import User
+from switchkey.models.users import ProjectEnvironmentUser, User
 from rest_framework.serializers import ModelSerializer
 
 
-class GeneralUserSerializer(ModelSerializer):
+class OrganizationUserSerializer(ModelSerializer):
     """
     This class will be used to get all info about a user
     """
@@ -24,4 +24,22 @@ class GeneralUserSerializer(ModelSerializer):
             "background_color",
             "full_name",
             "is_active",
+        ]
+
+
+class ProjectEnvironmentUserSerializer(ModelSerializer):
+    """
+    This class will be used to get all project users.
+    """
+
+    class Meta:
+        model = ProjectEnvironmentUser
+        fields = [
+            "id",
+            "username",
+            "device",
+            "features",
+        ]
+        read_only_feilds = [
+            "features",
         ]

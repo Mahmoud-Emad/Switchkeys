@@ -1,8 +1,6 @@
 from django.contrib import admin
 from django.apps import apps
 
-# Register your models here.
-
 
 def autoregister(*app_list: str) -> None:
     """
@@ -17,5 +15,10 @@ def autoregister(*app_list: str) -> None:
 
 admin.site.site_header = "SwitchKey Administration Settings"
 admin.site.site_title = "SwitchKey Administration Settings"
+
+
+class ProjectEnvironmentAdmin(admin.ModelAdmin):
+    readonly_fields = ("environment_key",)
+
 
 autoregister("switchkey")

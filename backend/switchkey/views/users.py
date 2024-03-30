@@ -5,13 +5,13 @@ from switchkey.api.permissions import (
     UserIsAuthenticated,
 )
 from switchkey.api.custom_response import CustomResponse
-from switchkey.serializers.users import GeneralUserSerializer
+from switchkey.serializers.users import OrganizationUserSerializer
 from switchkey.services.users import get_user_by_id, get_all_users
 
 
 class BaseGeneralUserAPIView(ListAPIView, GenericAPIView):
     permission_classes = [UserIsAuthenticated]
-    serializer_class = GeneralUserSerializer
+    serializer_class = OrganizationUserSerializer
 
     def get_queryset(self) -> Response:
         """get all users in the system for a normal user"""
@@ -21,7 +21,7 @@ class BaseGeneralUserAPIView(ListAPIView, GenericAPIView):
 
 class GeneralUserAPIView(ListAPIView, GenericAPIView):
     permission_classes = [UserIsAuthenticated]
-    serializer_class = GeneralUserSerializer
+    serializer_class = OrganizationUserSerializer
 
     def get(self, request: Request, id: str) -> Response:
         """To get a user by id"""

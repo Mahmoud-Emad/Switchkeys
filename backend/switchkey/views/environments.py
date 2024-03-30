@@ -1,3 +1,4 @@
+from uuid import UUID
 from rest_framework.generics import GenericAPIView, ListAPIView
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -7,9 +8,10 @@ from switchkey.services.environments import (
     get_all_environments,
     get_environment_by_id,
     get_environment_by_key,
+    get_environment_user,
 )
 from switchkey.models.management import OrganizationProject
-from switchkey.serializers.environments import OrganizationProjectEnvironmentSerializer
+from switchkey.serializers.environments import OrganizationProjectEnvironmentSerializer, SetEnvironmentSerializer
 from switchkey.api.permissions import UserIsAuthenticated, IsAdminUser
 from switchkey.api.custom_response import CustomResponse
 
@@ -145,7 +147,7 @@ class OrganizationProjectEnvironmentApiView(GenericAPIView):
 class OrganizationProjectEnvironmentKeyApiView(GenericAPIView):
     serializer_class = OrganizationProjectEnvironmentSerializer
 
-    def get(self, request: Request, environment_key: str):
+    def get(self, request: Request, environment_key: UUID):
         if not is_valid_uuid(environment_key):
             return CustomResponse.bad_request(
                 message=f"{environment_key} is not valid UUID."
@@ -162,3 +164,46 @@ class OrganizationProjectEnvironmentKeyApiView(GenericAPIView):
             message="Environment found.",
             data=OrganizationProjectEnvironmentSerializer(environment).data,
         )
+
+class SetEnvironmentKeyApiView(GenericAPIView):
+    serializer_class = SetEnvironmentSerializer
+
+    def post(self, request: Request, environment_key: UUID):
+        if not is_valid_uuid(environment_key):
+            return CustomResponse.bad_request(
+                message=f"{environment_key} is not valid UUID."
+            )
+
+        if not request.query_params.get("user_id"):
+            return CustomResponse.bad_request(
+                message=f"You have to send the `user_id` as a query params."
+            )
+
+        environment = get_environment_by_key(environment_key)
+        if environment is None:
+            return CustomResponse.not_found(
+                message="The project environment does not exist."
+            )
+
+        user_id = request.query_params.get("user_id")
+        environment_user = get_environment_user(user_id)
+
+        if environment_user is None:
+            return CustomResponse.not_found(
+                message="The environment user does not exist."
+            )
+
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            key = serializer.validated_data.get("key")
+            value = serializer.validated_data.get("value")
+            environment_user.features[key] = {"value": value, "is_enabled": True}
+            environment_user.save()
+            return CustomResponse.success(
+                message="The user features has been updated.",
+                data=environment_user.features
+            )
+        return CustomResponse.bad_request(
+            message="Please make sure that you entered a valid data.",
+            error=serializer.errors
+        )            

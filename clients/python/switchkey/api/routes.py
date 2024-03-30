@@ -16,6 +16,7 @@ class EndPoints(Enum):
     # Endpoints with parameters
     ORGANIZATIONS_ID = "http://127.0.0.1:8000/api/organizations/{}/"
     ENVIRONMENTS_KEY = "http://127.0.0.1:8000/api/environments/key/{}/"
+    ENVIRONMENTS_SET = "http://127.0.0.1:8000/api/environments/key/{}/set/?user_id={}"
     ENVIRONMENTS_ID = "http://127.0.0.1:8000/api/environments/{}/"
     PROJECTS_ID = "http://127.0.0.1:8000/api/projects/{}/"
     GROUPS_ID = "http://127.0.0.1:8000/api/groups/{}/"
@@ -39,7 +40,7 @@ class SwitchKeyRoutes:
         Returns:
             str: The URL for the specified endpoint.
         """
-        if endpoint in [EndPoints.ORGANIZATIONS_ID, EndPoints.ENVIRONMENTS_KEY,
+        if endpoint in [EndPoints.ORGANIZATIONS_ID, EndPoints.ENVIRONMENTS_KEY, EndPoints.ENVIRONMENTS_SET,
                         EndPoints.ENVIRONMENTS_ID, EndPoints.PROJECTS_ID,
                         EndPoints.GROUPS_ID, EndPoints.USERS_ID]:
             return endpoint.value.format(*args)

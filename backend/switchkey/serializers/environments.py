@@ -1,4 +1,4 @@
-from rest_framework.serializers import ModelSerializer, SerializerMethodField
+from rest_framework.serializers import ModelSerializer, SerializerMethodField, Serializer, CharField
 
 from switchkey.serializers.users import ProjectEnvironmentUserSerializer
 from switchkey.serializers.projects import OrganizationProjectSerializer
@@ -31,3 +31,8 @@ class OrganizationProjectEnvironmentSerializer(ModelSerializer):
 
     def get_users(self, obj: ProjectEnvironment):
         return ProjectEnvironmentUserSerializer(obj.users, many=True).data
+
+
+class SetEnvironmentSerializer(Serializer):
+    key = CharField()
+    value = CharField()

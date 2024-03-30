@@ -55,7 +55,7 @@ class SwitchKey(metaclass=SwitchKeyBase):
         self.__routes = SwitchKeyRoutes()
         self.environment_data = None
         self.environment = None
-
+    
     def connect(self) -> None:
         """
         Connect to the SwitchKey environment.
@@ -103,6 +103,7 @@ class SwitchKey(metaclass=SwitchKeyBase):
                     features=user.get("features"),
                     id=user.get("id"),
                     username=user.get("username"),
+                    environment_key=self.environment_key
                 )
             )
         return users

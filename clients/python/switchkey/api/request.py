@@ -1,4 +1,5 @@
 import json
+from typing import Any, Dict
 import requests
 from switchkey.api.response import SwitchKeyResponse
 from enum import Enum
@@ -30,24 +31,39 @@ class SwitchKeyRequest:
     def call(
         url: str,
         method: SwitchKeyRequestMethod,
+        data: Dict[str, Any] = {}
     ) -> SwitchKeyResponse:
         try:
             if method == SwitchKeyRequestMethod.GET:
                 response = requests.get(url)
             elif method == SwitchKeyRequestMethod.POST:
-                response = requests.post(url)
+                response = requests.post(url, json=data)
             elif method == SwitchKeyRequestMethod.PUT:
-                response = requests.put(url)
+                response = requests.put(url, json=data)
             elif method == SwitchKeyRequestMethod.DELETE:
                 response = requests.delete(url)
             else:
                 raise ValueError("Invalid method provided.")
 
             response_content = response.content.decode()
+            
+            # Check if response content is not valid JSON.
+            if response_content.startswith("<!DOCTYPE html>"):
+               return SwitchKeyResponse(
+                    status_code=response.status_code,
+                    error_message="Response content is not valid json.",
+                )
+
+            # Check if response content is empty
+            if not response_content.strip():
+                return SwitchKeyResponse(
+                    status_code=response.status_code,
+                    error_message="Empty response content",
+                )
+
             response_content = json.loads(response_content)
 
             if response.status_code >= 200 and response.status_code < 400:
-                # print("response_content", response_content)
                 return SwitchKeyResponse(
                     status_code=response.status_code,
                     message=response_content.get("message"),

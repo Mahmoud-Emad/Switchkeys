@@ -1,4 +1,5 @@
 from typing import List
+from switchkey.models.users import ProjectEnvironmentUser
 from switchkey.models.management import ProjectEnvironment, OrganizationProject
 
 
@@ -29,4 +30,13 @@ def get_environment_by_key(environment_key: str) -> ProjectEnvironment:
     try:
         return ProjectEnvironment.objects.get(environment_key=str(environment_key))
     except ProjectEnvironment.DoesNotExist:
+        return None
+
+def get_environment_user(user_id: str):
+    """Return project environment who has the same id"""
+    if not user_id.isdigit():
+        return None
+    try:
+        return ProjectEnvironmentUser.objects.get(id = int(user_id))
+    except ProjectEnvironmentUser.DoesNotExist:
         return None

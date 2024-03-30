@@ -15,4 +15,4 @@ pip install switchkey
 ```
 
 **Usage:**
-Learn about the usage of the Python client from the [Python client documentation](./docs/python-client.md).
+Learn about the usage of the Python client from the [Python client documentation](./clients/py/README.md).

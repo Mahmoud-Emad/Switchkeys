@@ -12,6 +12,20 @@ class SwitchKeyRequestMethod(Enum):
 
 
 class SwitchKeyRequest:
+    """
+    Make an HTTP request to the specified URL using the provided method.
+
+    Args:
+        url (str): The URL to make the request to.
+        method (SwitchKeyRequestMethod): The HTTP method to use for the request.
+
+    Returns:
+        SwitchKeyResponse: An object containing the response from the request.
+
+    Raises:
+        ValueError: If an invalid method is provided.
+    """
+
     @staticmethod
     def call(
         url: str,
@@ -55,5 +69,8 @@ class SwitchKeyRequest:
                 )
         except requests.exceptions.RequestException as e:
             return SwitchKeyResponse(
-                status_code=500, error_message=str(e), data_type=None
+                status_code=500,
+                error_message=str(e),
+                data=None,
+                message=str(e),
             )

@@ -52,8 +52,8 @@ class SwitchKey(metaclass=SwitchKeyBase):
         """
 
         self.api_token = api_token
-        self.organization = SwitchKeyOrganization(api_token = api_token)
-        self.project = SwitchKeyProject(api_token = api_token)
+        self.organization = SwitchKeyOrganization(api_token = self.api_token)
+        self.project = SwitchKeyProject(api_token = self.api_token)
 
         self.FeatureNotEnabled = FeatureNotEnabledError
         self.features = {}

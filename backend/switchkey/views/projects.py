@@ -70,9 +70,7 @@ class OrganizationProjectApiView(GenericAPIView):
 
     def get_permissions(self):
         if self.request.method == "GET":
-            self.permission_classes = [
-                UserIsAuthenticated,
-            ]
+            self.permission_classes = []
         else:
             self.permission_classes = [
                 IsAdminUser,

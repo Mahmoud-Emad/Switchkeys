@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from switchkey.api.permissions import UserIsAuthenticated, IsAdminUser
 from switchkey.serializers.organizations import OrganizationSerializer
 from switchkey.services.organizations import (
+    check_organization_name,
     get_all_organization,
     get_organization_by_id,
 )
@@ -38,7 +39,21 @@ class BaseOrganizationApiView(ListAPIView):
         organization = request.data
         serializer = self.get_serializer(data=organization)
         if serializer.is_valid():
-            serializer.save(owner=request.user)
+            # Check if there an organization created by the requested user with the same name
+            organization_name = serializer.validated_data.get("name")
+            created = check_organization_name(request.user, organization_name)
+            if created:
+                return CustomResponse.bad_request(
+                    message="An organization with the same name has already been created by this user."
+                )
+            
+            organization_members = request.data.get("members")
+
+            if type(organization_members) == list and len(organization_members) >= 0:
+                serializer.save(owner=request.user, members=organization_members)
+            else:
+                serializer.save(owner=request.user)
+
             return CustomResponse.success(
                 data=serializer.data,
                 message="Organization has been created successfully.",
@@ -57,9 +72,7 @@ class OrganizationApiView(GenericAPIView):
 
     def get_permissions(self):
         if self.request.method == "GET":
-            self.permission_classes = [
-                UserIsAuthenticated,
-            ]
+            self.permission_classes = []
         else:
             self.permission_classes = [
                 IsAdminUser,
@@ -88,8 +101,20 @@ class OrganizationApiView(GenericAPIView):
         data = request.data
         serializer = self.get_serializer(organization, data=data)
         if serializer.is_valid():
+            # Check if there an organization created by the requested user with the same name
+            organization_name = serializer.validated_data.get("name")
+            created = check_organization_name(request.user, organization_name)
+            if created:
+                return CustomResponse.bad_request(
+                    message="An organization with the same name has already been created by this user."
+                )
+            
+            organization_members = request.data.get("members")
 
-            serializer.save(owner=request.user)
+            if type(organization_members) == list and len(organization_members) >= 0:
+                serializer.save(owner=request.user, members=organization_members)
+            else:
+                serializer.save(owner=request.user)
 
             return CustomResponse.success(
                 data=serializer.data,

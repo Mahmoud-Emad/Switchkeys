@@ -1,6 +1,6 @@
 from typing import List
 from switchkey.models.users import ProjectEnvironmentUser
-from switchkey.models.management import ProjectEnvironment, OrganizationProject
+from switchkey.models.management import EnvironmentFeature, ProjectEnvironment, OrganizationProject
 
 
 def get_all_environments() -> List[ProjectEnvironment]:
@@ -40,3 +40,7 @@ def get_environment_user(user_id: str):
         return ProjectEnvironmentUser.objects.get(id = int(user_id))
     except ProjectEnvironmentUser.DoesNotExist:
         return None
+
+def get_all_environment_features():
+    """Return all environment features"""
+    return EnvironmentFeature.objects.all().order_by("key")

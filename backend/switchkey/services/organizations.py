@@ -1,4 +1,5 @@
 from typing import List
+from switchkey.models.users import User
 from switchkey.models.management import Organization
 
 
@@ -15,3 +16,11 @@ def get_organization_by_id(id: str) -> Organization:
         return Organization.objects.get(id=int(id))
     except Organization.DoesNotExist:
         return None
+
+def check_organization_name(user: User, name: str):
+    """Check if there is an organization created by the requested user with the same name"""
+    organizations = Organization.objects.filter(
+        name = name,
+        owner__id = user.id
+    )
+    return len(organizations) > 0

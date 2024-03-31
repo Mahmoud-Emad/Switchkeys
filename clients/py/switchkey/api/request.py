@@ -19,6 +19,7 @@ class SwitchKeyRequest:
     Args:
         url (str): The URL to make the request to.
         method (SwitchKeyRequestMethod): The HTTP method to use for the request.
+        headers (Dict[str, str]): Additional headers for the request.
 
     Returns:
         SwitchKeyResponse: An object containing the response from the request.
@@ -31,25 +32,31 @@ class SwitchKeyRequest:
     def call(
         url: str,
         method: SwitchKeyRequestMethod,
-        data: Dict[str, Any] = {}
+        data: Dict[str, Any] = {},
+        token: str | None = None,
     ) -> SwitchKeyResponse:
         try:
+            headers = {}
+            if token:
+                headers["Authorization"] = f"Bearer {token}"
+
             if method == SwitchKeyRequestMethod.GET:
                 response = requests.get(url)
             elif method == SwitchKeyRequestMethod.POST:
-                response = requests.post(url, json=data)
+                response = requests.post(url, json=data, headers=headers)
             elif method == SwitchKeyRequestMethod.PUT:
-                response = requests.put(url, json=data)
+                response = requests.put(url, json=data, headers=headers)
             elif method == SwitchKeyRequestMethod.DELETE:
-                response = requests.delete(url)
+                response = requests.delete(url, headers=headers)
             else:
                 raise ValueError("Invalid method provided.")
 
             response_content = response.content.decode()
-            
+
             # Check if response content is not valid JSON.
             if response_content.startswith("<!DOCTYPE html>"):
-               return SwitchKeyResponse(
+                print("response_content", response_content)
+                return SwitchKeyResponse(
                     status_code=response.status_code,
                     error_message="Response content is not valid json.",
                 )

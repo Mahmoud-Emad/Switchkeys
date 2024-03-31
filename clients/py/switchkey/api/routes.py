@@ -16,7 +16,7 @@ class EndPoints(Enum):
     # Endpoints with parameters
     ORGANIZATIONS_ID = "http://127.0.0.1:8000/api/organizations/{}/"
     ENVIRONMENTS_KEY = "http://127.0.0.1:8000/api/environments/key/{}/"
-    ENVIRONMENTS_SET = "http://127.0.0.1:8000/api/environments/key/{}/set/?user_id={}"
+    ENVIRONMENTS_SET = "http://127.0.0.1:8000/api/environments/key/{}/user/set/?user_id={}"
     ENVIRONMENTS_ID = "http://127.0.0.1:8000/api/environments/{}/"
     PROJECTS_ID = "http://127.0.0.1:8000/api/projects/{}/"
     GROUPS_ID = "http://127.0.0.1:8000/api/groups/{}/"

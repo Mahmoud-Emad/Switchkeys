@@ -90,7 +90,7 @@ class ProjectEnvironment(TimeStamp):
         return f"{self.name} | {self.project.name}"
 
 
-class FeatureStorage(TimeStamp):
+class EnvironmentFeature(TimeStamp):
     environment = models.ForeignKey(
         ProjectEnvironment,
         related_name="environment_keys",
@@ -112,8 +112,8 @@ class FeatureStorage(TimeStamp):
         return f"{self.key} | {self.environment.name} :: Project = {self.environment.project.name}"  # Changed to return key instead of name
 
     class Meta:
-        verbose_name = "Feature Storage"
-        verbose_name_plural = "Features Storage"
+        verbose_name = "Environment Feature"
+        verbose_name_plural = "Environment Features"
         unique_together = (
             "environment",
             "key",

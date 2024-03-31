@@ -2,6 +2,7 @@ from rest_framework.generics import GenericAPIView, ListAPIView
 from rest_framework.request import Request
 from rest_framework.response import Response
 
+from switchkey.services.organizations import get_organization_by_id
 from switchkey.models.management import Organization
 from switchkey.api.permissions import UserIsAuthenticated, IsAdminUser
 from switchkey.serializers.projects import OrganizationProjectSerializer
@@ -36,12 +37,21 @@ class BaseOrganizationProjectApiView(ListAPIView):
         project = request.data
         serializer = self.get_serializer(data=project)
         if serializer.is_valid():
-            organization: Organization = serializer.validated_data.get("organization")
+            organization_id: int = serializer.validated_data.get("organization_id")
+            organization = get_organization_by_id(str(organization_id))
+
+            if organization is None:
+                return CustomResponse.not_found(
+                    message="Organization not found."
+                )
+
             if request.user.id != organization.owner.id:
                 return CustomResponse.unauthorized(
                     message="You do not have permission to access this resource because you are not the creator of this organization.",
                 )
-            serializer.save()
+
+            serializer.save(organization=organization)
+
             return CustomResponse.success(
                 data=serializer.data,
                 message="Organization project has been created successfully.",

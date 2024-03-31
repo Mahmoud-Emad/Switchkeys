@@ -2,10 +2,10 @@ from rest_framework.serializers import ModelSerializer, SerializerMethodField, S
 
 from switchkey.serializers.users import ProjectEnvironmentUserSerializer
 from switchkey.serializers.projects import OrganizationProjectSerializer
-from switchkey.models.management import ProjectEnvironment
+from switchkey.models.management import EnvironmentFeature, ProjectEnvironment
 
 
-class OrganizationProjectEnvironmentSerializer(ModelSerializer):
+class ProjectEnvironmentSerializer(ModelSerializer):
     """
     ``Serializer`` for ``Organization project environment`` .
     """
@@ -36,3 +36,29 @@ class OrganizationProjectEnvironmentSerializer(ModelSerializer):
 class SetEnvironmentSerializer(Serializer):
     key = CharField()
     value = CharField()
+
+class EnvironmentFeatureSerialize(ModelSerializer):
+    
+    environment = SerializerMethodField()
+
+    class Meta:
+        model = EnvironmentFeature
+        fields = (
+            "id",
+            "created",
+            "modified",
+            "environment",
+            "key",
+            "value",
+            "tag",
+            "tag_color",
+            "description",
+            "enabled_by_default",
+            "is_default",
+            "last_used",
+        )
+
+        read_only_fields = ("id", "created", "modified", "last_used", )
+
+    def get_environment(self, obj: EnvironmentFeature):
+        return ProjectEnvironmentSerializer(obj.environment).data

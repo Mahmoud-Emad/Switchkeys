@@ -1,10 +1,12 @@
 from typing import Any, Dict, List
 from uuid import UUID
+from switchkey.api.organization import SwitchKeyOrganization
+from switchkey.api.project import SwitchKeyProject
 from switchkey.api.types import (
     SwitchKeyEnvironmentType,
-    SwitchKeyProjectType,
-    SwitchKeyOrganizationType,
-    SwitchKeyUserType,
+    # SwitchKeyProjectType,
+    # SwitchKeyOrganizationResponseType,
+    # SwitchKeyUserType,
     SwitchKeyProjectUserType,
 )
 from switchkey.api.request import SwitchKeyRequest, SwitchKeyRequestMethod
@@ -36,37 +38,50 @@ class SwitchKey(metaclass=SwitchKeyBase):
         __parse_device(device_data: Dict[str, Any]) -> None: Parse device data.
         __parse_project_user(user_data: Dict[str, Any]) -> SwitchKeyProjectUserType: Parse project user data.
         __parse_user(user_data: Dict[str, Any]) -> SwitchKeyUserType | List[SwitchKeyUserType]: Parse user data.
-        __parse_organization(organization_data: Dict[str, Any]) -> SwitchKeyOrganizationType: Parse organization data.
+        __parse_organization(organization_data: Dict[str, Any]) -> SwitchKeyOrganizationResponseType: Parse organization data.
         __parse_project(project_data: Dict[str, Any]) -> SwitchKeyProjectType: Parse project data.
         __parse_environment() -> SwitchKeyEnvironmentType: Parse environment data.
     """
 
-    def __init__(self, environment_key: UUID) -> None:
+    def __init__(self, api_token: str | None = None) -> None:
         """
         Initialize the SwitchKey instance.
 
         Args:
-            environment_key (uuid): The key of the environment.
+            api_token (Bearer Token): User token required only if you are going to make create/update/delete requests.
         """
 
+        self.api_token = api_token
+        self.organization = SwitchKeyOrganization(api_token = api_token)
+        self.project = SwitchKeyProject(api_token = api_token)
+
         self.FeatureNotEnabled = FeatureNotEnabledError
-        self.environment_key = environment_key
         self.features = {}
         self.__routes = SwitchKeyRoutes()
         self.environment_data = None
         self.environment = None
     
-    def connect(self) -> None:
+    def connect(self, environment_key: UUID) -> None:
         """
         Connect to the SwitchKey environment.
+
+        Args:
+            environment_key (UUID): The key of the environment to connect to.
+
+        Raises:
+            ConnectionError: If there is an error message in the response.
+
+        Returns:
+            None
         """
+        self.environment_key = environment_key
 
         environment = SwitchKeyRequest.call(
             self.__routes.get_route(EndPoints.ENVIRONMENTS_KEY, self.environment_key),
             SwitchKeyRequestMethod.GET,
         )
 
-        if environment.error_message is not None:
+        if environment.error_message:
             raise ConnectionError(environment.error_message)
 
         self.environment_data = environment.data
@@ -108,86 +123,6 @@ class SwitchKey(metaclass=SwitchKeyBase):
             )
         return users
 
-    def __parse_user(
-        self, user_data: Dict[str, Any]
-    ) -> SwitchKeyUserType | List[SwitchKeyUserType]:
-        """
-        Parse user data.
-
-        Args:
-            user_data (Dict[str, Any]): User data to be parsed.
-
-        Returns:
-            SwitchKeyUserType | List[SwitchKeyUserType]: Parsed user object or list of parsed user objects.
-        """
-
-        if type(user_data) == list:
-            users: List[SwitchKeyUserType] = []
-            for user in user_data:
-                users.append(
-                    SwitchKeyUserType(
-                        background_color=user.get("background_color"),
-                        email=user.get("email"),
-                        first_name=user.get("first_name"),
-                        full_name=user.get("full_name"),
-                        is_active=user.get("is_active"),
-                        id=user.get("id"),
-                        joining_at=user.get("joining_at"),
-                        last_name=user.get("last_name"),
-                    )
-                )
-        else:
-            return SwitchKeyUserType(
-                background_color=user_data.get("background_color"),
-                email=user_data.get("email"),
-                first_name=user_data.get("first_name"),
-                full_name=user_data.get("full_name"),
-                is_active=user_data.get("is_active"),
-                id=user_data.get("id"),
-                joining_at=user_data.get("joining_at"),
-                last_name=user_data.get("last_name"),
-            )
-
-    def __parse_organization(
-        self, organization_data: Dict[str, Any]
-    ) -> SwitchKeyOrganizationType:
-        """
-        Parse organization data.
-
-        Args:
-            organization_data (Dict[str, Any]): Organization data to be parsed.
-
-        Returns:
-            SwitchKeyOrganizationType: Parsed organization object.
-        """
-
-        return SwitchKeyOrganizationType(
-            id=organization_data.get("id"),
-            name=organization_data.get("name"),
-            created=organization_data.get("created"),
-            modified=organization_data.get("modified"),
-            members=self.__parse_user(organization_data.get("members")),
-            owner=self.__parse_user(organization_data.get("owner")),
-        )
-
-    def __parse_project(self, project_data: Dict[str, Any]) -> SwitchKeyProjectType:
-        """
-        Parse project data.
-
-        Args:
-            project_data (Dict[str, Any]): Project data to be parsed.
-
-        Returns:
-            SwitchKeyProjectType: Parsed project object.
-        """
-
-        return SwitchKeyProjectType(
-            id=project_data.get("id"),
-            name=project_data.get("name"),
-            created=project_data.get("created"),
-            modified=project_data.get("modified"),
-            organization=self.__parse_organization(project_data.get("organization")),
-        )
 
     def __parse_environment(self) -> SwitchKeyEnvironmentType:
         """

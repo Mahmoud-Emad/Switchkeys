@@ -1,10 +1,9 @@
-from typing import Any, Dict, List
-
 from switchkey.api.request.request import SwitchKeyRequest, SwitchKeyRequestMethod
 from switchkey.api.request.types import UserTypeEnum
 from switchkey.api.routes import EndPoints, SwitchKeyRoutes
 from switchkey.core.exceptions import ResponseError
 from switchkey.utils.parser import parse_auth
+from switchkey.utils.config import SwitchKeyConfig
 
 
 class SwitchKeyAuth:
@@ -59,4 +58,10 @@ class SwitchKeyAuth:
         elif user.error_message:
             raise ResponseError(user.error_message)
 
-        return parse_auth(user.data)
+        user = parse_auth(user.data)
+        access_token = user.access_token
+        refresh_token = user.refresh_token
+
+        config = SwitchKeyConfig()
+        config.write(refresh_token=refresh_token, access_token=access_token)
+        return user

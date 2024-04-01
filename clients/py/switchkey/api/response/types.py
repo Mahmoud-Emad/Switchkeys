@@ -23,7 +23,6 @@ class SwitchKeyAuthRegisterResponse:
         password: str,
         joining_at: str,
         user_type: str,
-
         access_token: str,
         refresh_token: str,
     ):
@@ -152,3 +151,27 @@ class SwitchKeyProjectResponse:
         self.organization = organization
         self.created = created
         self.modified = modified
+
+
+class SwitchKeyTokensResponse:
+    """
+    Represents a response containing access and refresh tokens.
+
+    Attributes:
+        access_token (str): The access token.
+        refresh_token (str): The refresh token.
+
+    Methods:
+        __init__(access_token: str, refresh_token: str): Initializes a SwitchKeyTokensResponse object with the provided access and refresh tokens.
+    """
+
+    def __init__(self, access_token: str, refresh_token: str):
+        """
+        Initialize the SwitchKeyTokensResponse object.
+
+        Args:
+            access_token (str): The access token.
+            refresh_token (str): The refresh token.
+        """
+        self.access_token = access_token
+        self.refresh_token = refresh_token

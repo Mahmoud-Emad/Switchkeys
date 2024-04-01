@@ -1,6 +1,7 @@
+from enum import Enum
 from typing import List
 
-from switchkey.api.interfaces.response import SwitchKeyUserResponse
+from switchkey.api.response.types import SwitchKeyUserResponse
 
 
 class SwitchKeyOrganizationRequestType:
@@ -59,3 +60,7 @@ class SwitchKeyProjectRequestType:
         """
         self.name = name
         self.organization_id = organization_id
+
+class UserTypeEnum(Enum):
+    ADMINISTRATOR = "Administrator"
+    USER = "User"

@@ -10,8 +10,8 @@ from switchkey.models.abstracts import TimeStamp
 
 
 class UserType(models.TextChoices):
-    ADMINISTRATOR = "Administrator", "Organization Administrator"
-    USER = "User", "User"
+    ADMINISTRATOR = "Administrator", "administrator"
+    USER = "User", "user"
 
 
 class DeviceType(models.TextChoices):
@@ -56,7 +56,7 @@ class User(AbstractBaseUser, TimeStamp):
     background_color = models.CharField(max_length=10, default=generate_random_color)
     joining_at = models.DateField(auto_now_add=True)
     user_type = models.CharField(
-        max_length=20, choices=UserType.choices, default=UserType.USER
+        max_length=20, choices=UserType.choices, default=UserType.ADMINISTRATOR
     )
 
     USERNAME_FIELD = "email"

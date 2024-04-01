@@ -1,7 +1,7 @@
 import json
 from typing import Any, Dict
 import requests
-from switchkey.api.response import SwitchKeyResponse
+from switchkey.api.response.response import SwitchKeyResponse
 from enum import Enum
 
 
@@ -81,9 +81,13 @@ class SwitchKeyRequest:
                     error_message = response_content.get("message")
                 else:
                     error_message = response_content.get("detail")
+
+                error = response_content.get("error")
+
                 return SwitchKeyResponse(
                     status_code=response.status_code,
                     error_message=error_message,
+                    error=error
                 )
             else:
                 return SwitchKeyResponse(

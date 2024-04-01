@@ -1,7 +1,7 @@
 from typing import Dict, Any, List
 from uuid import UUID
 
-from switchkey.api.request import SwitchKeyRequest, SwitchKeyRequestMethod
+from switchkey.api.request.request import SwitchKeyRequest, SwitchKeyRequestMethod
 from switchkey.api.routes import EndPoints, SwitchKeyRoutes
 
 

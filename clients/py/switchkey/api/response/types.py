@@ -1,6 +1,44 @@
 from typing import List
 
 
+class SwitchKeyAuthRegisterResponse:
+    """
+    Represents a Type object for auth.
+
+    Attributes:
+        id (int): The unique identifier of the user.
+        access_token (str): The user access token to access the whole project.
+        refresh_token (str): The user refresh token to refresh the access token when expire.
+
+    Methods:
+        N/A
+    """
+
+    def __init__(
+        self,
+        id: int,
+        first_name: str,
+        last_name: str,
+        email: str,
+        password: str,
+        joining_at: str,
+        user_type: str,
+
+        access_token: str,
+        refresh_token: str,
+    ):
+        self.id = id
+        self.first_name = first_name
+        self.last_name = last_name
+        self.email = email
+        self.password = password
+        self.joining_at = joining_at
+        self.user_type = user_type
+
+        self.access_token = access_token
+        self.refresh_token = refresh_token
+
+
 class SwitchKeyUserResponse:
     """
     Represents a Type object for users.
@@ -38,6 +76,7 @@ class SwitchKeyUserResponse:
         self.joining_at = joining_at
         self.background_color = background_color
         self.is_active = is_active
+
 
 class SwitchKeyOrganizationResponse:
     """
@@ -97,6 +136,7 @@ class SwitchKeyProjectResponse:
     Methods:
         N/A
     """
+
     # from switchkey.api.organization import SwitchKeyOrganization, SwitchKeyOrganizationResponse
 
     def __init__(

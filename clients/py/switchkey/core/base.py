@@ -1,7 +1,8 @@
 from typing import Any, Dict, List
 from uuid import UUID
-from switchkey.api.organization import SwitchKeyOrganization
-from switchkey.api.project import SwitchKeyProject
+from switchkey.api.models.auth import SwitchKeyAuth
+from switchkey.api.models.organization import SwitchKeyOrganization
+from switchkey.api.models.project import SwitchKeyProject
 from switchkey.api.types import (
     SwitchKeyEnvironmentType,
     # SwitchKeyProjectType,
@@ -9,7 +10,7 @@ from switchkey.api.types import (
     # SwitchKeyUserType,
     SwitchKeyProjectUserType,
 )
-from switchkey.api.request import SwitchKeyRequest, SwitchKeyRequestMethod
+from switchkey.api.request.request import SwitchKeyRequest, SwitchKeyRequestMethod
 from switchkey.core.exceptions import FeatureNotEnabled as FeatureNotEnabledError
 from switchkey.api.routes import SwitchKeyRoutes, EndPoints
 
@@ -54,6 +55,7 @@ class SwitchKey(metaclass=SwitchKeyBase):
         self.api_token = api_token
         self.organization = SwitchKeyOrganization(api_token = self.api_token)
         self.project = SwitchKeyProject(api_token = self.api_token)
+        self.auth = SwitchKeyAuth()
 
         self.FeatureNotEnabled = FeatureNotEnabledError
         self.features = {}

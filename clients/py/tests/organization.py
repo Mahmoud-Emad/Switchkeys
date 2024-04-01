@@ -1,5 +1,5 @@
 import unittest
-from switchkey.api.organization import SwitchKeyOrganization
+from switchkey.api.models.organization import SwitchKeyOrganization
 from switchkey.core.exceptions import ResponseError
 
 

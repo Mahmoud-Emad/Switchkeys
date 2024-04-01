@@ -1,7 +1,7 @@
 
 from typing import Any, Dict, List
 
-from switchkey.api.interfaces.response import SwitchKeyUserResponse
+from switchkey.api.response.types import SwitchKeyUserResponse
 
 
 class SwitchKeyUser:
@@ -12,4 +12,6 @@ class SwitchKeyUser:
     Args:
         api_token (Bearer Token): User token required only if you are going to make create/update/delete requests.
     """
-    pass
+    
+    def register():
+        pass

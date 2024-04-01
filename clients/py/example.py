@@ -1,4 +1,8 @@
-from examples.project import ProjectExample
+from examples.auth import AuthExample
+# from examples.organization import OrganizationExample
+# from examples.project import ProjectExample
 
 
-project_example = ProjectExample()
+auth_example = AuthExample()
+# organization_example = OrganizationExample()
+# project_example = ProjectExample()

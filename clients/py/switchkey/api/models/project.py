@@ -1,5 +1,5 @@
-from switchkey.api.interfaces.response import SwitchKeyProjectResponse
-from switchkey.api.request import SwitchKeyRequest, SwitchKeyRequestMethod
+from switchkey.api.response.types import SwitchKeyProjectResponse
+from switchkey.api.request.request import SwitchKeyRequest, SwitchKeyRequestMethod
 from switchkey.api.routes import EndPoints, SwitchKeyRoutes
 from switchkey.core.exceptions import ResponseError
 from switchkey.utils.parser import parse_project

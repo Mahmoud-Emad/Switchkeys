@@ -1,6 +1,7 @@
 from typing import Any, Dict, List
 
-from switchkey.api.interfaces.response import (
+from switchkey.api.response.types import (
+    SwitchKeyAuthRegisterResponse,
     SwitchKeyOrganizationResponse,
     SwitchKeyProjectResponse,
     SwitchKeyUserResponse,
@@ -88,4 +89,27 @@ def parse_project(project_data: Dict[str, Any]) -> SwitchKeyProjectResponse:
         created=project_data.get("created"),
         modified=project_data.get("modified"),
         organization=parse_organization(project_data.get("organization")),
+    )
+
+def parse_auth(auth_data: Dict[str, Any]) -> SwitchKeyAuthRegisterResponse:
+    """
+    Parse auth data.
+
+    Args:
+        auth_data (Dict[str, Any]): Auth data to be parsed.
+
+    Returns:
+        SwitchKeyAuthRegisterResponse: Parsed project object.
+    """
+
+    return SwitchKeyAuthRegisterResponse(
+        id=auth_data.get("id"),
+        email=auth_data.get("email"),
+        first_name=auth_data.get("first_name"),
+        last_name=auth_data.get("last_name"),
+        joining_at=auth_data.get("joining_at"),
+        password=auth_data.get("password"),
+        user_type=auth_data.get("user_type"),
+        access_token=auth_data.get("access_token"),
+        refresh_token=auth_data.get("refresh_token"),
     )

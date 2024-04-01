@@ -2,7 +2,7 @@ from rest_framework_simplejwt.serializers import (
     TokenObtainPairSerializer,
     TokenRefreshSerializer,
 )
-from rest_framework.serializers import ModelSerializer, Serializer, CharField
+from rest_framework.serializers import ModelSerializer, Serializer, CharField, SerializerMethodField
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.state import token_backend
 from rest_framework_simplejwt.settings import api_settings
@@ -84,19 +84,26 @@ class MyTokenRefreshSerializer(TokenRefreshSerializer):
 
 
 class RegisterSerializer(ModelSerializer):
-    """class RegisterSerializer to serialize the user obj"""
+    """Class RegisterSerializer to serialize the user obj"""
+
+    access_token = SerializerMethodField()
+    refresh_token = SerializerMethodField()
 
     class Meta:
         model = User
         fields = (
+            "id",
             "first_name",
             "last_name",
             "email",
             "password",
             "joining_at",
             "user_type",
+            "access_token",
+            "refresh_token",
         )
         read_only_fields = [
+            "id",
             "joining_at",
         ]
 
@@ -107,3 +114,11 @@ class RegisterSerializer(ModelSerializer):
             instance.set_password(password)
         instance.save()
         return instance
+
+    def get_access_token(self, obj):
+        access_token_obj = MyTokenObtainPairSerializer.get_token(obj)
+        return str(access_token_obj)
+
+    def get_refresh_token(self, obj):
+        refresh = RefreshToken.for_user(obj)
+        return str(refresh)

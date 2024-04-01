@@ -1,3 +1,6 @@
+from typing import Any, Dict, List
+
+
 class SwitchKeyResponse:
     def __init__(
         self,
@@ -5,6 +8,7 @@ class SwitchKeyResponse:
         data=None,
         error_message: str | None = None,
         message: str | None = None,
+        error: List[Dict[str, Any]] = None 
     ):
         """
         Initialize a SwitchKeyResponse object.
@@ -19,6 +23,7 @@ class SwitchKeyResponse:
         self.data = data
         self.error_message = error_message
         self.message = message
+        self.error = error
 
     def __repr__(self):
         """
@@ -31,8 +36,9 @@ class SwitchKeyResponse:
         self.message = self.message if self.message is not None else None
         self.data = self.data if self.data is not None else None
         self.error_message = self.error_message if self.error_message is not None else None
+        self.error = self.error if self.error is not None else None
 
-        return f"SwitchKeyResponse(status_code={self.status_code}, data={self.data}, message={self.message}, error={is_error}, error_message={self.error_message})"
+        return f"SwitchKeyResponse(status_code={self.status_code}, data={self.data}, message={self.message}, is_error={is_error}, error_message={self.error_message}, error={self.error})"
 
     def get_error_message(self):
         """
@@ -69,3 +75,12 @@ class SwitchKeyResponse:
             int: HTTP status code.
         """
         return self.status_code
+
+    def get_error(self):
+        """
+        Get the HTTP error of the response.
+
+        Returns:
+            Dict[str, Any]: HTTP error.
+        """
+        return self.error

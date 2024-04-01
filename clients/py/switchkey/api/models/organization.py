@@ -1,13 +1,13 @@
 from typing import List
 
-from switchkey.api.interfaces.response import (
+from switchkey.api.response.types import (
     SwitchKeyOrganizationResponse,
     SwitchKeyUserResponse,
 )
-from switchkey.api.project import SwitchKeyProject
-from switchkey.api.request import SwitchKeyRequest, SwitchKeyRequestMethod
+from switchkey.api.models.project import SwitchKeyProject
+from switchkey.api.request.request import SwitchKeyRequest, SwitchKeyRequestMethod
 from switchkey.api.routes import EndPoints, SwitchKeyRoutes
-from switchkey.api.user import SwitchKeyUser
+from switchkey.api.models.user import SwitchKeyUser
 from switchkey.core.exceptions import ResponseError
 from switchkey.utils.parser import parse_organization
 

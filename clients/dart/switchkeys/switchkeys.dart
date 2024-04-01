@@ -12,7 +12,7 @@ void main() async {
   SwitchKeyAuth auth = SwitchKeys.auth(apiKey);
 
   // Now you can use the auth instance to make API calls
-  var user = await auth.login(email: "admin@gmail.com", password: "0000");
+  var user = await auth.login(email: "admin@gmasil.com", password: "0000");
   print("user: ");
   print(user.email);
 }

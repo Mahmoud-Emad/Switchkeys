@@ -1,6 +1,6 @@
 # SwitchKey Auth Example
 
-This example demonstrates how to use the SwitchKey client for user authentication.
+This script demonstrates how to use the SwitchKey client for user authentication.
 
 Usage:
 
@@ -33,11 +33,21 @@ Usage:
 
     ```python
     SWITCH_KEY_API_TOKEN = user.access_token
-    print("Access Token", SWITCH_KEY_API_TOKEN)
+    print("Access Token:", SWITCH_KEY_API_TOKEN)
     ```
 
-Attributes:
-    None
+5. Use the access token to interact with other SwitchKey functionalities, such as accessing projects or organizations.
 
-Methods:
-    None
+    ```python
+    # Set the API token for further interactions
+    switch_key.api_token = SWITCH_KEY_API_TOKEN
+
+    # Now you can access SwitchKey projects
+    print(switch_key.project.get(project_id=1))
+    ```
+
+Note:
+
+- Replace the email, first name, last name, and password values with your desired user credentials.
+- By default, the created user will have ADMINISTRATOR privileges, but you can change it to have USER privileges by using `UserTypeEnum.USER.value`.
+- Make sure to handle exceptions and errors appropriately in a production environment.

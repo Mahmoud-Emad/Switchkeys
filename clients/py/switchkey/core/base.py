@@ -11,7 +11,7 @@ from switchkey.api.types import (
     SwitchKeyProjectUserType,
 )
 from switchkey.api.request.request import SwitchKeyRequest, SwitchKeyRequestMethod
-from switchkey.core.exceptions import FeatureNotEnabled as FeatureNotEnabledError
+from switchkey.core.exceptions import AuthenticationError, FeatureNotEnabled as FeatureNotEnabledError
 from switchkey.api.routes import SwitchKeyRoutes, EndPoints
 from switchkey.utils.config import SwitchKeyConfig
 from switchkey.utils.logger import SwitchKeyLogger
@@ -54,21 +54,19 @@ class SwitchKey(metaclass=SwitchKeyBase):
             api_token (Bearer Token): User token required only if you are going to make create/update/delete requests.
         """
         self.logger = SwitchKeyLogger.get_logger()
+        self.auth = SwitchKeyAuth()
 
         if api_token is None:
             self.config = SwitchKeyConfig()
             if self.config.check():
                 self.logger.info("The config file exists, and api_token is loaded from the config file.")
                 self.api_token = self.config.load().access_token
-            else:
-                self.logger.error("There are no tokens found in the config file, and none were specified when initializing an instance of the SwitchKey client. Please ensure that tokens are provided either in the config file or passed during initialization.")
-                return
         else:
-            self.api_token = api_token
+            raise AuthenticationError("There are no tokens found in the config file, and none were specified when initializing an instance of the SwitchKey client. Please ensure that tokens are provided either in the config file or passed during initialization.")
 
+        self.api_token = api_token
         self.organization = SwitchKeyOrganization(api_token = self.api_token)
         self.project = SwitchKeyProject(api_token = self.api_token)
-        self.auth = SwitchKeyAuth()
 
         # self.FeatureNotEnabled = FeatureNotEnabledError
         # self.features = {}

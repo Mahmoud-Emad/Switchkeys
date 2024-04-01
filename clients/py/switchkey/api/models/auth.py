@@ -17,6 +17,7 @@ class SwitchKeyAuth:
     def __init__(self):
         self.__routes = SwitchKeyRoutes()
 
+    # @check_credentials()
     def register(
         self,
         first_name: str,

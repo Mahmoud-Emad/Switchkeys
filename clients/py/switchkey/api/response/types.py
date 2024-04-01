@@ -1,7 +1,7 @@
 from typing import List
 
 
-class SwitchKeyAuthRegisterResponse:
+class SwitchKeyAuthResponse:
     """
     Represents a Type object for auth.
 

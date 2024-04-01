@@ -39,21 +39,30 @@ Note:
 
 """
 
-from switchkey.api.request.types import UserTypeEnum
+# from switchkey.api.request.types import UserTypeEnum
 from switchkey.core.base import SwitchKey
 
 # Initialize SwitchKey instance
 switch_key = SwitchKey()
 
 # Register a new user
-user = switch_key.auth.register(
-    email="Mahmoud_Emad@gmail.com",
-    first_name="Mahmoud",
-    last_name="Emad",
-    password="8080",
-    user_type=UserTypeEnum.ADMINISTRATOR.value
-)
+# user = switch_key.auth.register(
+#     email="Mahmoud_Emad@gmail.com",
+#     first_name="Mahmoud",
+#     last_name="Emad",
+#     password="8080",
+#     user_type=UserTypeEnum.ADMINISTRATOR.value
+# )
 
-# Retrieve the access token
+# # Retrieve the access token
+# SWITCH_KEY_API_TOKEN = user.access_token
+# print("Access Token:", SWITCH_KEY_API_TOKEN)
+
+# Register a user
+user = switch_key.auth.login(
+    email="Mahmoud_Emad@gmail.com",
+    password="8080",
+)
 SWITCH_KEY_API_TOKEN = user.access_token
 print("Access Token:", SWITCH_KEY_API_TOKEN)
+

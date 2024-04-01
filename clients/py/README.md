@@ -1,12 +1,19 @@
 # SwitchKey Python Client
 
-## Introduction
+The SwitchKey Python Client provides a convenient way to interact with the SwitchKey API using Python applications. This README provides an overview of the SwitchKey Python Client, its installation process, usage instructions, and additional resources.
 
-SwitchKey is a Python package that allows you to manage feature flags and user features dynamically. It enables you to control the behavior of your application based on user-specific features and toggle features on or off without redeploying your application.
+## Table of Contents
+
+- [Installation](#installation)
+- [Usage](#usage)
+- [Examples](#examples)
+- [Documentation](#documentation)
+- [Contributing](#contributing)
+- [License](#license)
 
 ## Installation
 
-To install the SwitchKey package, you can use pip:
+To install the SwitchKey Python Client, you can use pip, Python's package manager. Run the following command in your terminal:
 
 ```bash
 pip install switchkey
@@ -14,75 +21,72 @@ pip install switchkey
 
 ## Usage
 
+To use the SwitchKey Python Client in your Python application, you need to import the necessary modules and initialize a SwitchKey instance with your API token. If you don't have an API token yet, you can use the authentication methods provided by the client to obtain one and save it in a `config.ini` file for future use.
+
+### Initializing SwitchKey Instance
+
 ```python
-# Import the SwitchKey module
 from switchkey.core.base import SwitchKey
 
-# Initialize SwitchKey instance with the environment key
-switch_key = SwitchKey(environment_key="1931ca88-f3d8-4aac-8019-a45e78f38d19")
+# If you already have an API token
+switch_key = SwitchKey(api_token="YOUR_API_TOKEN_HERE")
 
-# Connect to the environment to load all its data
-switch_key.connect()
-
-# Getters
-# Load users based on their username or id
-hamada_user = switch_key.environment.get_user("hamada")  # Retrieve user by username
-thunder_user = switch_key.environment.get_user("thunder")  # Retrieve user by username
-
-if hamada_user and thunder_user:
-    # Accessing user features
-    hamada_features = hamada_user.features
-    thunder_features = thunder_user.features
-
-    # Access specific features of a user
-    print(f"Debug feature value for user 'hamada': {hamada_features.value_of('debug')}")  # => True | False
-    print(f"Debug feature value for user 'thunder': {thunder_features.value_of('debug')}")  # => True | False
-
-    # Check if a user has a specific feature
-    print(f"Does user 'hamada' have the 'debug' feature?: {hamada_features.has('debug')}")  # => True | False
-    print(f"Does user 'thunder' have the 'debug' feature?: {thunder_features.has('debug')}")  # => True | False
-
-    # Check if a feature is enabled for a user
-    print(f"Is the 'debug' feature enabled for user 'thunder'?: {thunder_features.is_enabled('debug')}")  # => True | False
-    
-# Setters
-hamada_user = switch_key.environment.get_user("hamada")
-if hamada_user:
-    # Set a new feature for the user
-    hamada_user.features.set("debug22", True)
-    print(f"Value of 'debug22' feature for user 'hamada': {hamada_user.features.value_of('debug22')}")  # => True
-    print(f"Is the 'debug22' feature enabled for user 'hamada'?: {hamada_user.features.is_enabled('debug22')}")  # => True, because new features are enabled by default
+# If you don't have an API token yet
+# Use the auth.login method to obtain tokens and save them in the config.ini file
+# Or use the auth.register method to create a new user and obtain tokens
+# Then initialize the SwitchKey instance with the obtained tokens
 ```
+
+### Authentication Methods
+
+#### Logging In
 
 ```python
-# Here is a real example
-# Django restframework example.
-from django.db import models
-from rest_framework.generics import GenericAPIView
-from rest_framework.request import Request
-from rest_framework.response import Response
-
-
-class User(models.Model):
-    username = models.CharField(max_length=30, unique=True)
-
-# Let's say we have 2 versions in our project, and we want to display each version based on user.
-class GetVersionApiView(GenericAPIView):
-
-    def get(self, request: Request) -> Response:
-        # Let's say you have a User model that holds the username of the user.
-        switch_key = SwitchKey(environment_key="1931ca88-f3d8-4aac-8019-a45e78f38d19")
-        switch_key.connect()
-
-        version = switch_key.environment.get_user(request.user.username).features.value_of("version") # it can be v1.1 or v1.0 based on the user features.
-        return Response(message=f"Version is {version}")
-
+user = switch_key.auth.login(email="your_email@example.com", password="your_password")
+# Set the token on the switchkey instance.
+SWITCH_KEY_API_TOKEN = user.access_token
+switch_key.api_token = SWITCH_KEY_API_TOKEN
 ```
 
-### Methods
+#### Registering a New User
 
-- `has(feature: str) -> bool`: Check if the user has the feature.
-- `get(feature: str) -> Any`: Get the value of a feature.
-- `create(feature: str, value: str) -> None`: Create a new feature with a value.
-- `is_enabled(feature: str) -> bool`: Check if a feature is enabled.
-- `value_of(key: str) -> Any`: Retrieve the value of the specified feature key.
+```python
+user = switch_key.auth.register(
+    email="new_user@example.com",
+    first_name="New",
+    last_name="User",
+    password="password123"
+)
+# Set the token on the switchkey instance.
+SWITCH_KEY_API_TOKEN = user.access_token
+switch_key.api_token = SWITCH_KEY_API_TOKEN
+```
+
+After obtaining the tokens, they will be automatically saved in the `config.ini` file for future use.
+
+## Examples
+
+The SwitchKey Python Client comes with several examples to demonstrate its usage for various functionalities, such as authentication, managing organizations, projects, users, etc. You can find these examples in the `examples` directory of the repository.
+
+To run the examples, navigate to the `examples` directory and execute the Python scripts. For example:
+
+```bash
+cd examples
+python auth_example.py
+```
+
+## Documentation
+
+For detailed documentation on how to use the SwitchKey Python Client, including available methods, parameters, and usage examples, please refer to the [official documentation](https://switchkey-python-client-docs.com).
+
+For more detailed documentation and usage examples, please refer to the [official documentation](https://switchkey-python-client-docs.com).
+
+## Contributing
+
+Contributions to the SwitchKey Python Client are welcome! If you encounter any issues or have suggestions for improvements, please feel free to open an issue or submit a pull request on the GitHub repository.
+
+Before contributing, please review the [contribution guidelines](./docs/CONTRIBUTING.md).
+
+## License
+
+The SwitchKey Python Client is licensed under the [MIT License](LICENSE).

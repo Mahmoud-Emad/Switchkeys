@@ -1,6 +1,6 @@
-# Switchkey prject plan
+# SwitchKeyss prject plan
 
-SwitchKey is a lightweight feature flag management platform designed for modern development teams. Easily toggle features on and off for A/B testing, phased rollouts, and rapid experimentation. Drive innovation and streamline your release process with SwitchKey.
+SwitchKeys is a lightweight feature flag management platform designed for modern development teams. Easily toggle features on and off for A/B testing, phased rollouts, and rapid experimentation. Drive innovation and streamline your release process with SwitchKeys.
 
 Backend Api:
 

@@ -1,29 +1,29 @@
 from typing import List
 
-from switchkey.api.response.types import (
-    SwitchKeyOrganizationResponse,
-    SwitchKeyUserResponse,
+from switchkeys.api.response.types import (
+    SwitchKeysOrganizationResponse,
+    SwitchKeysUserResponse,
 )
-from switchkey.api.models.project import SwitchKeyProject
-from switchkey.api.request.request import SwitchKeyRequest, SwitchKeyRequestMethod
-from switchkey.api.routes import EndPoints, SwitchKeyRoutes
-from switchkey.api.models.user import SwitchKeyUser
-from switchkey.core.exceptions import ResponseError
-from switchkey.utils.parser import parse_organization
+from switchkeys.api.models.project import SwitchKeysProject
+from switchkeys.api.request.request import SwitchKeysRequest, SwitchKeysRequestMethod
+from switchkeys.api.routes import EndPoints, SwitchKeysRoutes
+from switchkeys.api.models.user import SwitchKeysUser
+from switchkeys.core.exceptions import ResponseError
+from switchkeys.utils.parser import parse_organization
 
 
-class SwitchKeyOrganization:
+class SwitchKeysOrganization:
     """
     Represents an API for managing organizations.
 
     Methods:
-        create(name: str, members: List[SwitchKeyUserResponse] | None) -> SwitchKeyOrganizationResponse | ResponseError:
+        create(name: str, members: List[SwitchKeysUserResponse] | None) -> SwitchKeysOrganizationResponse | ResponseError:
             Create a new organization.
-        update(organization_id: int, new_name: str, new_members: List[SwitchKeyUserResponse] | None) -> SwitchKeyOrganizationResponse | ResponseError:
+        update(organization_id: int, new_name: str, new_members: List[SwitchKeysUserResponse] | None) -> SwitchKeysOrganizationResponse | ResponseError:
             Update an organization.
         delete(organization_id: int) -> str[`deleted`] | ResponseError:
             Delete an organization.
-        get(organization_id: int) -> SwitchKeyOrganizationResponse | ResponseError:
+        get(organization_id: int) -> SwitchKeysOrganizationResponse | ResponseError:
             Retrieve an organization by ID.
 
     Args:
@@ -33,22 +33,22 @@ class SwitchKeyOrganization:
 
     def __init__(self, api_token: str | None = None):
         self.api_token = api_token
-        self.__routes = SwitchKeyRoutes()
-        self.members = SwitchKeyUser()
-        self.owner = SwitchKeyUser()
-        self.projects = SwitchKeyProject(api_token=self.api_token)
+        self.__routes = SwitchKeysRoutes()
+        self.members = SwitchKeysUser()
+        self.owner = SwitchKeysUser()
+        self.projects = SwitchKeysProject(api_token=self.api_token)
 
     def create(
         self,
         name: str,
-        members: List[SwitchKeyUserResponse] | None = None,
-    ) -> SwitchKeyOrganizationResponse | ResponseError:
+        members: List[SwitchKeysUserResponse] | None = None,
+    ) -> SwitchKeysOrganizationResponse | ResponseError:
         """
         Method to create an organization.
 
         Args:
             name (str): the organization name.
-            members (SwitchKeyUser | None): the organization members, can be a list of SwitchKeyUser or None.
+            members (SwitchKeysUser | None): the organization members, can be a list of SwitchKeysUser or None.
 
         Raises:
             ResponseError: If there is an error while requesting.
@@ -59,9 +59,9 @@ class SwitchKeyOrganization:
             data["members"] = members
 
         url = self.__routes.get_route(EndPoints.ORGANIZATIONS)
-        organization = SwitchKeyRequest.call(
+        organization = SwitchKeysRequest.call(
             url=url,
-            method=SwitchKeyRequestMethod.POST,
+            method=SwitchKeysRequestMethod.POST,
             data=data,
             token=self.api_token,
         )
@@ -75,15 +75,15 @@ class SwitchKeyOrganization:
         self,
         organization_id: int,
         new_name: str,
-        new_members: List[SwitchKeyUserResponse] | None = None,
-    ) -> SwitchKeyOrganizationResponse | ResponseError:
+        new_members: List[SwitchKeysUserResponse] | None = None,
+    ) -> SwitchKeysOrganizationResponse | ResponseError:
         """
         Method to update an organization.
 
         Args:
           organization_id (int): the organization ID.
           new_name (str): the organization new name.
-          new_members (SwitchKeyUser | None): the organization members, can be a list of SwitchKeyUser or None.
+          new_members (SwitchKeysUser | None): the organization members, can be a list of SwitchKeysUser or None.
 
         Raises:
             ResponseError: If there is an error while requesting.
@@ -94,9 +94,9 @@ class SwitchKeyOrganization:
             data["members"] = new_members
 
         url = self.__routes.get_route(EndPoints.ORGANIZATIONS_ID, organization_id)
-        organization = SwitchKeyRequest.call(
+        organization = SwitchKeysRequest.call(
             url=url,
-            method=SwitchKeyRequestMethod.PUT,
+            method=SwitchKeysRequestMethod.PUT,
             data=data,
             token=self.api_token,
         )
@@ -108,7 +108,7 @@ class SwitchKeyOrganization:
 
     def get(
         self, organization_id: int
-    ) -> SwitchKeyOrganizationResponse | ResponseError:
+    ) -> SwitchKeysOrganizationResponse | ResponseError:
         """
         Method to get an organization.
 
@@ -120,9 +120,9 @@ class SwitchKeyOrganization:
         """
 
         url = self.__routes.get_route(EndPoints.ORGANIZATIONS_ID, organization_id)
-        organization = SwitchKeyRequest.call(
+        organization = SwitchKeysRequest.call(
             url=url,
-            method=SwitchKeyRequestMethod.GET,
+            method=SwitchKeysRequestMethod.GET,
         )
 
         if organization.error_message:
@@ -142,8 +142,8 @@ class SwitchKeyOrganization:
         """
 
         url = self.__routes.get_route(EndPoints.ORGANIZATIONS_ID, organization_id)
-        organization = SwitchKeyRequest.call(
-            url=url, method=SwitchKeyRequestMethod.DELETE, token=self.api_token
+        organization = SwitchKeysRequest.call(
+            url=url, method=SwitchKeysRequestMethod.DELETE, token=self.api_token
         )
 
         if (

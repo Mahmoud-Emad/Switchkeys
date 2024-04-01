@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "switchkey"
+name = "switchkeys"
 version = "0.1.2"
-description = "The SwitchKey Python client enables seamless integration with the SwitchKey feature management platform in Python applications. Developers can effortlessly incorporate feature flags and toggle management into their projects, accessing user data, retrieving feature values, and setting feature flags with ease. This client streamlines the process of implementing feature management functionality, empowering developers to efficiently control feature rollout and experimentation in their applications."
+description = "The SwitchKeys Python client enables seamless integration with the SwitchKeys feature management platform in Python applications. Developers can effortlessly incorporate feature flags and toggle management into their projects, accessing user data, retrieving feature values, and setting feature flags with ease. This client streamlines the process of implementing feature management functionality, empowering developers to efficiently control feature rollout and experimentation in their applications."
 authors = ["Mahmoud Emad <mahmmoud.hassanein@gmail.com>"]
 readme = "README.md"
 

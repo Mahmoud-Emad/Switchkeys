@@ -1,28 +1,28 @@
 import json
 from typing import Any, Dict
 import requests
-from switchkey.api.response.response import SwitchKeyResponse
+from switchkeys.api.response.response import SwitchKeysResponse
 from enum import Enum
 
 
-class SwitchKeyRequestMethod(Enum):
+class SwitchKeysRequestMethod(Enum):
     POST = "POST"
     GET = "GET"
     PUT = "PUT"
     DELETE = "DELETE"
 
 
-class SwitchKeyRequest:
+class SwitchKeysRequest:
     """
     Make an HTTP request to the specified URL using the provided method.
 
     Args:
         url (str): The URL to make the request to.
-        method (SwitchKeyRequestMethod): The HTTP method to use for the request.
+        method (SwitchKeysRequestMethod): The HTTP method to use for the request.
         headers (Dict[str, str]): Additional headers for the request.
 
     Returns:
-        SwitchKeyResponse: An object containing the response from the request.
+        SwitchKeysResponse: An object containing the response from the request.
 
     Raises:
         ValueError: If an invalid method is provided.
@@ -31,22 +31,22 @@ class SwitchKeyRequest:
     @staticmethod
     def call(
         url: str,
-        method: SwitchKeyRequestMethod,
+        method: SwitchKeysRequestMethod,
         data: Dict[str, Any] = {},
         token: str | None = None,
-    ) -> SwitchKeyResponse:
+    ) -> SwitchKeysResponse:
         try:
             headers = {}
             if token:
                 headers["Authorization"] = f"Bearer {token}"
 
-            if method == SwitchKeyRequestMethod.GET:
+            if method == SwitchKeysRequestMethod.GET:
                 response = requests.get(url)
-            elif method == SwitchKeyRequestMethod.POST:
+            elif method == SwitchKeysRequestMethod.POST:
                 response = requests.post(url, json=data, headers=headers)
-            elif method == SwitchKeyRequestMethod.PUT:
+            elif method == SwitchKeysRequestMethod.PUT:
                 response = requests.put(url, json=data, headers=headers)
-            elif method == SwitchKeyRequestMethod.DELETE:
+            elif method == SwitchKeysRequestMethod.DELETE:
                 response = requests.delete(url, headers=headers)
             else:
                 raise ValueError("Invalid method provided.")
@@ -56,14 +56,14 @@ class SwitchKeyRequest:
             # Check if response content is not valid JSON.
             if response_content.startswith("<!DOCTYPE html>"):
                 print("response_content", response_content)
-                return SwitchKeyResponse(
+                return SwitchKeysResponse(
                     status_code=response.status_code,
                     error_message="Response content is not valid json.",
                 )
 
             # Check if response content is empty
             if not response_content.strip():
-                return SwitchKeyResponse(
+                return SwitchKeysResponse(
                     status_code=response.status_code,
                     error_message="Empty response content",
                 )
@@ -71,7 +71,7 @@ class SwitchKeyRequest:
             response_content = json.loads(response_content)
 
             if response.status_code >= 200 and response.status_code < 400:
-                return SwitchKeyResponse(
+                return SwitchKeysResponse(
                     status_code=response.status_code,
                     message=response_content.get("message"),
                     data=response_content.get("results"),
@@ -84,18 +84,18 @@ class SwitchKeyRequest:
 
                 error = response_content.get("error")
 
-                return SwitchKeyResponse(
+                return SwitchKeysResponse(
                     status_code=response.status_code,
                     error_message=error_message,
                     error=error
                 )
             else:
-                return SwitchKeyResponse(
+                return SwitchKeysResponse(
                     status_code=response.status_code,
                     error_message=response_content.get("detail"),
                 )
         except requests.exceptions.RequestException as e:
-            return SwitchKeyResponse(
+            return SwitchKeysResponse(
                 status_code=500,
                 error_message=str(e),
                 data=None,

@@ -31,5 +31,5 @@ lint:
 	$(backend) && $(CMD) flake8 .  --exclude=__init__.py
 	# $(frontend) && yarn lint
 
-switchkey:
+switchkeys:
 	cd clients/py && python3 -m example

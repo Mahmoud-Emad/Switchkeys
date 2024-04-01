@@ -1,7 +1,7 @@
 from typing import Any, Dict, List
 
 
-class SwitchKeyResponse:
+class SwitchKeysResponse:
     def __init__(
         self,
         status_code: int,
@@ -11,7 +11,7 @@ class SwitchKeyResponse:
         error: List[Dict[str, Any]] = None 
     ):
         """
-        Initialize a SwitchKeyResponse object.
+        Initialize a SwitchKeysResponse object.
 
         Args:
             status_code (int): The HTTP status code of the response.
@@ -27,10 +27,10 @@ class SwitchKeyResponse:
 
     def __repr__(self):
         """
-        Return a string representation of the SwitchKeyResponse object.
+        Return a string representation of the SwitchKeysResponse object.
 
         Returns:
-            str: String representation of the SwitchKeyResponse object.
+            str: String representation of the SwitchKeysResponse object.
         """
         is_error = self.error_message is None
         self.message = self.message if self.message is not None else None
@@ -38,7 +38,7 @@ class SwitchKeyResponse:
         self.error_message = self.error_message if self.error_message is not None else None
         self.error = self.error if self.error is not None else None
 
-        return f"SwitchKeyResponse(status_code={self.status_code}, data={self.data}, message={self.message}, is_error={is_error}, error_message={self.error_message}, error={self.error})"
+        return f"SwitchKeysResponse(status_code={self.status_code}, data={self.data}, message={self.message}, is_error={is_error}, error_message={self.error_message}, error={self.error})"
 
     def get_error_message(self):
         """

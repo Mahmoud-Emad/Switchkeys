@@ -22,11 +22,11 @@ class EndPoints(Enum):
     GROUPS_ID = "http://127.0.0.1:8000/api/groups/{}/"
     USERS_ID = "http://127.0.0.1:8000/api/auth/users/{}/"
 
-class SwitchKeyRoutes:
+class SwitchKeysRoutes:
     """Class to manage API routes."""
 
     def __init__(self) -> None:
-        """Initialize the SwitchKeyRoutes instance."""
+        """Initialize the SwitchKeysRoutes instance."""
         self.endpoints = EndPoints
 
     def get_route(self, endpoint: EndPoints, *args) -> str:

@@ -1,17 +1,17 @@
-from switchkey.api.response.types import SwitchKeyProjectResponse
-from switchkey.api.request.request import SwitchKeyRequest, SwitchKeyRequestMethod
-from switchkey.api.routes import EndPoints, SwitchKeyRoutes
-from switchkey.core.exceptions import ResponseError
-from switchkey.utils.parser import parse_project
+from switchkeys.api.response.types import SwitchKeysProjectResponse
+from switchkeys.api.request.request import SwitchKeysRequest, SwitchKeysRequestMethod
+from switchkeys.api.routes import EndPoints, SwitchKeysRoutes
+from switchkeys.core.exceptions import ResponseError
+from switchkeys.utils.parser import parse_project
 
 
 
-class SwitchKeyProject:
+class SwitchKeysProject:
     """
     Represents an API for managing projects.
 
     Methods:
-        create(name: str, organization_id: int) -> SwitchKeyProjectResponse | ResponseError: Create a new organization.
+        create(name: str, organization_id: int) -> SwitchKeysProjectResponse | ResponseError: Create a new organization.
     Args:
         api_token (Bearer Token):
             User token required only if you are going to make create/update/delete requests.
@@ -19,9 +19,9 @@ class SwitchKeyProject:
 
     def __init__(self, api_token: str | None = None):
         self.api_token = api_token
-        self.__routes = SwitchKeyRoutes()
+        self.__routes = SwitchKeysRoutes()
 
-    def create(self, organization_id: int, name: str) -> SwitchKeyProjectResponse | ResponseError:
+    def create(self, organization_id: int, name: str) -> SwitchKeysProjectResponse | ResponseError:
         """
         Method to create a project.
 
@@ -36,9 +36,9 @@ class SwitchKeyProject:
         data = {"name": name, "organization_id": organization_id}
 
         url = self.__routes.get_route(EndPoints.PROJECTS)
-        project = SwitchKeyRequest.call(
+        project = SwitchKeysRequest.call(
             url=url,
-            method=SwitchKeyRequestMethod.POST,
+            method=SwitchKeysRequestMethod.POST,
             data=data,
             token=self.api_token,
         )
@@ -48,7 +48,7 @@ class SwitchKeyProject:
 
         return parse_project(project.data)
 
-    def update(self, new_organization_id: int, project_id: int, new_name: str) -> SwitchKeyProjectResponse | ResponseError:
+    def update(self, new_organization_id: int, project_id: int, new_name: str) -> SwitchKeysProjectResponse | ResponseError:
         """
         Method to update a project.
 
@@ -64,9 +64,9 @@ class SwitchKeyProject:
         data = {"name": new_name, "organization_id": new_organization_id}
 
         url = self.__routes.get_route(EndPoints.PROJECTS_ID, project_id)
-        project = SwitchKeyRequest.call(
+        project = SwitchKeysRequest.call(
             url=url,
-            method=SwitchKeyRequestMethod.PUT,
+            method=SwitchKeysRequestMethod.PUT,
             data=data,
             token=self.api_token,
         )
@@ -78,7 +78,7 @@ class SwitchKeyProject:
 
     def get(
         self, project_id: int
-    ) -> SwitchKeyProjectResponse | ResponseError:
+    ) -> SwitchKeysProjectResponse | ResponseError:
         """
         Method to get project.
 
@@ -90,9 +90,9 @@ class SwitchKeyProject:
         """
 
         url = self.__routes.get_route(EndPoints.PROJECTS_ID, project_id)
-        project = SwitchKeyRequest.call(
+        project = SwitchKeysRequest.call(
             url=url,
-            method=SwitchKeyRequestMethod.GET,
+            method=SwitchKeysRequestMethod.GET,
         )
 
         if project.error_message:
@@ -112,8 +112,8 @@ class SwitchKeyProject:
         """
 
         url = self.__routes.get_route(EndPoints.PROJECTS_ID, project_id)
-        project = SwitchKeyRequest.call(
-            url=url, method=SwitchKeyRequestMethod.DELETE, token=self.api_token
+        project = SwitchKeysRequest.call(
+            url=url, method=SwitchKeysRequestMethod.DELETE, token=self.api_token
         )
 
         if (

@@ -1,21 +1,21 @@
 """
-SwitchKey Auth Example
+SwitchKeys Auth Example
 
-This script demonstrates how to use the SwitchKey client for user authentication.
+This script demonstrates how to use the SwitchKeys client for user authentication.
 
 Usage:
 1. Import the necessary modules:
     ```python
-    from switchkey.api.request.types import UserTypeEnum
-    from switchkey.core.base import SwitchKey
+    from switchkeys.api.request.types import UserTypeEnum
+    from switchkeys.core.base import SwitchKeys
     ```
 
-2. Initialize a SwitchKey instance:
+2. Initialize a SwitchKeys instance:
     ```python
-    switch_key = SwitchKey()
+    switch_key = SwitchKeys()
     ```
 
-3. Use the `register` method to register a new user in the SwitchKey project and save the access/refresh tokens in a `config.ini` file to be used for further interactions in the project:
+3. Use the `register` method to register a new user in the SwitchKeys project and save the access/refresh tokens in a `config.ini` file to be used for further interactions in the project:
     ```python
     user = switch_key.auth.register(
         email="Mahmoud_Emad@gmail.com",
@@ -32,12 +32,12 @@ Usage:
     print("Access Token:", SWITCH_KEY_API_TOKEN)
     ```
 
-5. Use the access token to interact with other SwitchKey functionalities, such as accessing projects or organizations.
+5. Use the access token to interact with other SwitchKeys functionalities, such as accessing projects or organizations.
     ```python
     # Set the API token for further interactions
     switch_key.api_token = SWITCH_KEY_API_TOKEN
 
-    # Now you can access SwitchKey projects
+    # Now you can access SwitchKeys projects
     print(switch_key.project.get(project_id=1))
     ```
 
@@ -47,10 +47,10 @@ Note:
 - Make sure to handle exceptions and errors appropriately in a production environment.
 """
 
-from switchkey.core.base import SwitchKey
+from switchkeys.core.base import SwitchKeys
 
-# Initialize SwitchKey instance
-switch_key = SwitchKey()
+# Initialize SwitchKeys instance
+switch_key = SwitchKeys()
 
 # Register a user
 user = switch_key.auth.login(
@@ -62,6 +62,6 @@ user = switch_key.auth.login(
 SWITCH_KEY_API_TOKEN = user.access_token
 print("Access Token:", SWITCH_KEY_API_TOKEN)
 
-# Now can access the switchkey projects.
+# Now can access the switchkeys projects.
 switch_key.api_token = SWITCH_KEY_API_TOKEN
 print(switch_key.project.get(project_id=1))

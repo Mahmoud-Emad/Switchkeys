@@ -1,16 +1,16 @@
 from typing import Any, Dict, List
 
-from switchkey.api.response.types import (
-    SwitchKeyAuthResponse,
-    SwitchKeyOrganizationResponse,
-    SwitchKeyProjectResponse,
-    SwitchKeyUserResponse,
+from switchkeys.api.response.types import (
+    SwitchKeysAuthResponse,
+    SwitchKeysOrganizationResponse,
+    SwitchKeysProjectResponse,
+    SwitchKeysUserResponse,
 )
 
 
 def parse_user(
     user_data: Dict[str, Any]
-) -> SwitchKeyUserResponse | List[SwitchKeyUserResponse]:
+) -> SwitchKeysUserResponse | List[SwitchKeysUserResponse]:
     """
     Parse user data.
 
@@ -18,14 +18,14 @@ def parse_user(
         user_data (Dict[str, Any]): User data to be parsed.
 
     Returns:
-        SwitchKeyUserType | List[SwitchKeyUserType]: Parsed user object or list of parsed user objects.
+        SwitchKeysUserType | List[SwitchKeysUserType]: Parsed user object or list of parsed user objects.
     """
 
     if type(user_data) == list:
-        users: List[SwitchKeyUserResponse] = []
+        users: List[SwitchKeysUserResponse] = []
         for user in user_data:
             users.append(
-                SwitchKeyUserResponse(
+                SwitchKeysUserResponse(
                     background_color=user.get("background_color"),
                     email=user.get("email"),
                     first_name=user.get("first_name"),
@@ -37,7 +37,7 @@ def parse_user(
                 )
             )
     else:
-        return SwitchKeyUserResponse(
+        return SwitchKeysUserResponse(
             background_color=user_data.get("background_color"),
             email=user_data.get("email"),
             first_name=user_data.get("first_name"),
@@ -51,7 +51,7 @@ def parse_user(
 
 def parse_organization(
     organization_data: Dict[str, Any]
-) -> SwitchKeyOrganizationResponse:
+) -> SwitchKeysOrganizationResponse:
     """
     Parse organization data.
 
@@ -59,10 +59,10 @@ def parse_organization(
         organization_data (Dict[str, Any]): Organization data to be parsed.
 
     Returns:
-        SwitchKeyOrganizationResponse: Parsed organization object.
+        SwitchKeysOrganizationResponse: Parsed organization object.
     """
 
-    return SwitchKeyOrganizationResponse(
+    return SwitchKeysOrganizationResponse(
         id=organization_data.get("id"),
         name=organization_data.get("name"),
         created=organization_data.get("created"),
@@ -72,7 +72,7 @@ def parse_organization(
     )
 
 
-def parse_project(project_data: Dict[str, Any]) -> SwitchKeyProjectResponse:
+def parse_project(project_data: Dict[str, Any]) -> SwitchKeysProjectResponse:
     """
     Parse project data.
 
@@ -80,10 +80,10 @@ def parse_project(project_data: Dict[str, Any]) -> SwitchKeyProjectResponse:
         project_data (Dict[str, Any]): Project data to be parsed.
 
     Returns:
-        SwitchKeyProjectResponse: Parsed project object.
+        SwitchKeysProjectResponse: Parsed project object.
     """
 
-    return SwitchKeyProjectResponse(
+    return SwitchKeysProjectResponse(
         id=project_data.get("id"),
         name=project_data.get("name"),
         created=project_data.get("created"),
@@ -91,7 +91,7 @@ def parse_project(project_data: Dict[str, Any]) -> SwitchKeyProjectResponse:
         organization=parse_organization(project_data.get("organization")),
     )
 
-def parse_auth(auth_data: Dict[str, Any]) -> SwitchKeyAuthResponse:
+def parse_auth(auth_data: Dict[str, Any]) -> SwitchKeysAuthResponse:
     """
     Parse auth data.
 
@@ -99,10 +99,10 @@ def parse_auth(auth_data: Dict[str, Any]) -> SwitchKeyAuthResponse:
         auth_data (Dict[str, Any]): Auth data to be parsed.
 
     Returns:
-        SwitchKeyAuthResponse: Parsed project object.
+        SwitchKeysAuthResponse: Parsed project object.
     """
 
-    return SwitchKeyAuthResponse(
+    return SwitchKeysAuthResponse(
         id=auth_data.get("id"),
         email=auth_data.get("email"),
         first_name=auth_data.get("first_name"),

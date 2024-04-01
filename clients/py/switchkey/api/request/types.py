@@ -1,17 +1,17 @@
 from enum import Enum
 from typing import List
 
-from switchkey.api.response.types import SwitchKeyUserResponse
+from switchkeys.api.response.types import SwitchKeysUserResponse
 
 
-class SwitchKeyOrganizationRequestType:
+class SwitchKeysOrganizationRequestType:
     # TODO: Will be used in next version as an interface for the request payload.
     """
     Represents a Type object for organizations.
 
     Attributes:
         name (str): The name of the organization.
-        members (List[SwitchKeyUserType]): The members of the organization.
+        members (List[SwitchKeysUserType]): The members of the organization.
 
     Methods:
         N/A
@@ -20,27 +20,27 @@ class SwitchKeyOrganizationRequestType:
     def __init__(
         self,
         name: str,
-        members: List[SwitchKeyUserResponse],
+        members: List[SwitchKeysUserResponse],
     ):
         """
-        Initialize the SwitchKeyOrganizationRequestType object.
+        Initialize the SwitchKeysOrganizationRequestType object.
 
         Args:
             name (str): The name of the organization.
-            members (List[SwitchKeyUserType]): The members of the organization.
+            members (List[SwitchKeysUserType]): The members of the organization.
         """
         self.name = name
         self.members = members
 
 
-class SwitchKeyProjectRequestType:
+class SwitchKeysProjectRequestType:
     # TODO: Will be used in next version as an interface for the request payload.
     """
     Represents a Type object for projects.
 
     Attributes:
         name (str): The name of the project.
-        members (List[SwitchKeyUserType]): The members of the organization.
+        members (List[SwitchKeysUserType]): The members of the organization.
 
     Methods:
         N/A
@@ -52,7 +52,7 @@ class SwitchKeyProjectRequestType:
         organization_id: int,
     ):
         """
-        Initialize the SwitchKeyOrganizationRequestType object.
+        Initialize the SwitchKeysOrganizationRequestType object.
 
         Args:
             name (str): The name of the organization.

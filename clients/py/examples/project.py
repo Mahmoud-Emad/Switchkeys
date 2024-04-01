@@ -1,18 +1,18 @@
 """
-SwitchKey Project Example
+SwitchKeys Project Example
 
-This script demonstrates how to use the SwitchKey client for managing projects.
+This script demonstrates how to use the SwitchKeys client for managing projects.
 
 Usage:
-1. Import the SwitchKey module:
+1. Import the SwitchKeys module:
     ```python
-    from switchkey.core.base import SwitchKey
+    from switchkeys.core.base import SwitchKeys
     ```
 
-2. Initialize a SwitchKey instance with the provided API token:
+2. Initialize a SwitchKeys instance with the provided API token:
     ```python
     SWITCH_KEY_API_TOKEN = "your_api_token_here"
-    switch_key = SwitchKey(api_token=SWITCH_KEY_API_TOKEN)
+    switch_key = SwitchKeys(api_token=SWITCH_KEY_API_TOKEN)
     ```
 
 3. Create an organization using the `create` method:
@@ -50,11 +50,11 @@ Note:
 - Ensure to handle exceptions and errors appropriately in a production environment.
 """
 
-from switchkey.core.base import SwitchKey
+from switchkeys.core.base import SwitchKeys
 
-# Initialize SwitchKey instance with the provided API token
+# Initialize SwitchKeys instance with the provided API token
 SWITCH_KEY_API_TOKEN = "your_api_token_here"
-switch_key = SwitchKey(api_token=SWITCH_KEY_API_TOKEN)
+switch_key = SwitchKeys(api_token=SWITCH_KEY_API_TOKEN)
 
 # Create an organization
 # organization = switch_key.organization.create(name="Threefold")

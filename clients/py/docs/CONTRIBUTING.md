@@ -1,12 +1,12 @@
-# Contributing to the SwitchKey Python Client
+# Contributing to the SwitchKeys Python Client
 
-Thank you for considering contributing to the SwitchKey Python Client! By contributing, you help improve the client for everyone.
+Thank you for considering contributing to the SwitchKeys Python Client! By contributing, you help improve the client for everyone.
 
 ## How Can I Contribute?
 
 ### Reporting Bugs
 
-If you encounter a bug or unexpected behavior while using the SwitchKey Python Client, please open an issue on the GitHub repository. Be sure to include detailed information about the bug, steps to reproduce it, and any relevant screenshots or error messages.
+If you encounter a bug or unexpected behavior while using the SwitchKeys Python Client, please open an issue on the GitHub repository. Be sure to include detailed information about the bug, steps to reproduce it, and any relevant screenshots or error messages.
 
 ### Requesting Features
 
@@ -23,14 +23,14 @@ We welcome pull requests for bug fixes, enhancements, or new features. Before su
 
 ## Code of Conduct
 
-Please note that the SwitchKey Python Client has a Code of Conduct, and contributors are expected to adhere to it in all interactions within the project's community. You can read the full Code of Conduct [here](CODE_OF_CONDUCT.md).
+Please note that the SwitchKeys Python Client has a Code of Conduct, and contributors are expected to adhere to it in all interactions within the project's community. You can read the full Code of Conduct [here](CODE_OF_CONDUCT.md).
 
 ## Questions and Support
 
-If you have questions about using the SwitchKey Python Client or need support, please consider asking on the GitHub Discussions board or opening an issue on the repository.
+If you have questions about using the SwitchKeys Python Client or need support, please consider asking on the GitHub Discussions board or opening an issue on the repository.
 
 ## License
 
-By contributing to the SwitchKey Python Client, you agree that your contributions will be licensed under the project's [MIT License](../LICENSE).
+By contributing to the SwitchKeys Python Client, you agree that your contributions will be licensed under the project's [MIT License](../LICENSE).
 
-We appreciate your contributions to making the SwitchKey Python Client better for everyone!
+We appreciate your contributions to making the SwitchKeys Python Client better for everyone!

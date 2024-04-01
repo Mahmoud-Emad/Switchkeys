@@ -1,5 +1,5 @@
 """
-Global SwitchKey exception and warning classes.
+Global SwitchKeys exception and warning classes.
 """
 
 # --------------------------------------------------------------------
@@ -9,7 +9,7 @@ Global SwitchKey exception and warning classes.
 # Base class for all kinds of client-side errors.
 
 
-from switchkey.utils.logger import SwitchKeyLogger
+from switchkeys.utils.logger import SwitchKeysLogger
 
 
 class Error(Exception):
@@ -26,7 +26,7 @@ class ResponseError(Error):
 class AuthenticationError(Error):
     """Indicates a missing authentication."""
 
-    SwitchKeyLogger.get_logger().error("There are no tokens found in the config file, and none were specified when initializing an instance of the SwitchKey client. Please ensure that tokens are provided either in the config file or passed during initialization.")
+    SwitchKeysLogger.get_logger().error("There are no tokens found in the config file, and none were specified when initializing an instance of the SwitchKeys client. Please ensure that tokens are provided either in the config file or passed during initialization.")
 
 
 class FeatureNotEnabled(Exception):

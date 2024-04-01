@@ -1,10 +1,10 @@
 
 from typing import Any, Dict, List
 
-from switchkey.api.response.types import SwitchKeyUserResponse
+from switchkeys.api.response.types import SwitchKeysUserResponse
 
 
-class SwitchKeyUser:
+class SwitchKeysUser:
     """
     Represents an API for managing users.
 

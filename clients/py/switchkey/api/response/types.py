@@ -1,7 +1,7 @@
 from typing import List
 
 
-class SwitchKeyAuthResponse:
+class SwitchKeysAuthResponse:
     """
     Represents a Type object for auth.
 
@@ -38,7 +38,7 @@ class SwitchKeyAuthResponse:
         self.refresh_token = refresh_token
 
 
-class SwitchKeyUserResponse:
+class SwitchKeysUserResponse:
     """
     Represents a Type object for users.
 
@@ -77,15 +77,15 @@ class SwitchKeyUserResponse:
         self.is_active = is_active
 
 
-class SwitchKeyOrganizationResponse:
+class SwitchKeysOrganizationResponse:
     """
     Represents a Type object for organizations.
 
     Attributes:
         id (int): [READONLY FIELD] -> The unique identifier of the organization.
         name (str): The name of the organization.
-        owner (SwitchKeyUser): The owner of the organization.
-        members (List[SwitchKeyUser]): The members of the organization.
+        owner (SwitchKeysUser): The owner of the organization.
+        members (List[SwitchKeysUser]): The members of the organization.
         created (str): [READONLY FIELD] -> The date/time when the organization was created.
         modified (str): [READONLY FIELD] -> The date/time when the organization was last modified.
 
@@ -97,19 +97,19 @@ class SwitchKeyOrganizationResponse:
         self,
         id: int,
         name: str,
-        owner: SwitchKeyUserResponse,
-        members: List[SwitchKeyUserResponse],
+        owner: SwitchKeysUserResponse,
+        members: List[SwitchKeysUserResponse],
         created: str,
         modified: str,
     ):
         """
-        Initialize the SwitchKeyOrganizationResponse object.
+        Initialize the SwitchKeysOrganizationResponse object.
 
         Args:
             id (int): The unique identifier of the organization.
             name (str): The name of the organization.
-            owner (SwitchKeyUserResponse): The owner of the organization.
-            members (List[SwitchKeyUserResponse]): The members of the organization.
+            owner (SwitchKeysUserResponse): The owner of the organization.
+            members (List[SwitchKeysUserResponse]): The members of the organization.
             created (str): The date/time when the organization was created.
             modified (str): The date/time when the organization was last modified.
         """
@@ -121,14 +121,14 @@ class SwitchKeyOrganizationResponse:
         self.modified = modified
 
 
-class SwitchKeyProjectResponse:
+class SwitchKeysProjectResponse:
     """
     Represents a Type object for project response.
 
     Attributes:
         id (int): The unique identifier of the project.
         name (str): The name of the project.
-        organization (SwitchKeyOrganizationResponse): The organization to which the project belongs.
+        organization (SwitchKeysOrganizationResponse): The organization to which the project belongs.
         created (str): The date/time when the project was created.
         modified (str): The date/time when the project was last modified.
 
@@ -136,13 +136,13 @@ class SwitchKeyProjectResponse:
         N/A
     """
 
-    # from switchkey.api.organization import SwitchKeyOrganization, SwitchKeyOrganizationResponse
+    # from switchkeys.api.organization import SwitchKeysOrganization, SwitchKeysOrganizationResponse
 
     def __init__(
         self,
         id: int,
         name: str,
-        organization: SwitchKeyOrganizationResponse,
+        organization: SwitchKeysOrganizationResponse,
         created: str,
         modified: str,
     ):
@@ -153,7 +153,7 @@ class SwitchKeyProjectResponse:
         self.modified = modified
 
 
-class SwitchKeyTokensResponse:
+class SwitchKeysTokensResponse:
     """
     Represents a response containing access and refresh tokens.
 
@@ -162,12 +162,12 @@ class SwitchKeyTokensResponse:
         refresh_token (str): The refresh token.
 
     Methods:
-        __init__(access_token: str, refresh_token: str): Initializes a SwitchKeyTokensResponse object with the provided access and refresh tokens.
+        __init__(access_token: str, refresh_token: str): Initializes a SwitchKeysTokensResponse object with the provided access and refresh tokens.
     """
 
     def __init__(self, access_token: str, refresh_token: str):
         """
-        Initialize the SwitchKeyTokensResponse object.
+        Initialize the SwitchKeysTokensResponse object.
 
         Args:
             access_token (str): The access token.

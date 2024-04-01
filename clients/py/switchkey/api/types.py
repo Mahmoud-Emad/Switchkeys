@@ -1,13 +1,13 @@
 from typing import Dict, Any, List
 from uuid import UUID
 
-from switchkey.api.request.request import SwitchKeyRequest, SwitchKeyRequestMethod
-from switchkey.api.routes import EndPoints, SwitchKeyRoutes
+from switchkeys.api.request.request import SwitchKeysRequest, SwitchKeysRequestMethod
+from switchkeys.api.routes import EndPoints, SwitchKeysRoutes
 
 
-class SwitchKeyFeatureType:
+class SwitchKeysFeatureType:
     """
-    Represents features associated with the SwitchKey.
+    Represents features associated with the SwitchKeys.
 
     Attributes:
         __features (Dict[str, Any]): A dictionary containing the user's features.
@@ -22,7 +22,7 @@ class SwitchKeyFeatureType:
 
     def __init__(self, features: Dict[str, Any], environment_key: UUID, user_id: int):
         """
-        Initialize the SwitchKeyFeatureType object.
+        Initialize the SwitchKeysFeatureType object.
 
         Args:
             features (Dict[str, Any]): A dictionary containing the user's features.
@@ -31,7 +31,7 @@ class SwitchKeyFeatureType:
 
         self.__features = features
         self.environment_key = environment_key
-        self.__routes = SwitchKeyRoutes()
+        self.__routes = SwitchKeysRoutes()
         self.user_id = user_id
 
     def has(self, feature: str) -> bool:
@@ -54,7 +54,7 @@ class SwitchKeyFeatureType:
             ValueError: If the feature name is empty or None, or if the value is None.
 
         Example:
-            ``feature_type = SwitchKeyFeatureType(features={'debug': False})``\n
+            ``feature_type = SwitchKeysFeatureType(features={'debug': False})``\n
             ``feature_type.set('debug', True)``
         """
         # Validate input parameters
@@ -64,9 +64,9 @@ class SwitchKeyFeatureType:
             raise ValueError("Feature value cannot be None. Set it to False instead.")
 
         # Make API call to set the feature
-        response = SwitchKeyRequest.call(
+        response = SwitchKeysRequest.call(
             self.__routes.get_route(EndPoints.ENVIRONMENTS_SET, self.environment_key, self.user_id),
-            SwitchKeyRequestMethod.POST,
+            SwitchKeysRequestMethod.POST,
             data={"key": feature, "value": str(value).lower() if type(value) == bool else value},
         )
 
@@ -100,7 +100,7 @@ class SwitchKeyFeatureType:
         raise KeyError(f"'{feature}' does not exist in the user features.")
 
 
-class SwitchKeyDeviceType:
+class SwitchKeysDeviceType:
     """
     Represents a Type object for device information.
     It's not serialized yet.
@@ -110,15 +110,15 @@ class SwitchKeyDeviceType:
         pass
 
 
-class SwitchKeyProjectUserType:
+class SwitchKeysProjectUserType:
     """
     Represents a Type object for project users.
 
     Attributes:
         id (int): The unique identifier of the user.
         username (str): The username of the user.
-        device (SwitchKeyDeviceType): The device information of the user.
-        features (SwitchKeyFeatureType): The features associated with the user.
+        device (SwitchKeysDeviceType): The device information of the user.
+        features (SwitchKeysFeatureType): The features associated with the user.
         environment_key (uuid): The key of the environment, to access the API.
     Methods:
         N/A
@@ -128,30 +128,30 @@ class SwitchKeyProjectUserType:
         self,
         id: int,
         username: str,
-        device: SwitchKeyDeviceType,
+        device: SwitchKeysDeviceType,
         features: Dict[str, Any],
         environment_key: UUID,
     ):
         self.id = id
         self.username = username
         self.device = device
-        self.features = SwitchKeyFeatureType(
+        self.features = SwitchKeysFeatureType(
             features=features, environment_key=environment_key, user_id=self.id
         )
 
 
-class SwitchKeyEnvironmentType:
+class SwitchKeysEnvironmentType:
     """
     Represents a Type object for environments.
 
     Attributes:
         id (int): The unique identifier of the environment.
         name (str): The name of the environment.
-        project (SwitchKeyProjectType): The project associated with the environment.
+        project (SwitchKeysProjectType): The project associated with the environment.
         environment_key (str): The key of the environment.
         created (str): The date/time when the environment was created.
         modified (str): The date/time when the environment was last modified.
-        users (List[SwitchKeyProjectUserType]): The users associated with the environment.
+        users (List[SwitchKeysProjectUserType]): The users associated with the environment.
 
     Methods:
         N/A
@@ -160,9 +160,9 @@ class SwitchKeyEnvironmentType:
     def __init__(
         self,
         name: str,
-        # project: SwitchKeyProjectType,
+        # project: SwitchKeysProjectType,
         environment_key: str,
-        users: List[SwitchKeyProjectUserType],
+        users: List[SwitchKeysProjectUserType],
         id: int | None = None,
         created: str | None = None,
         modified: str | None = None,

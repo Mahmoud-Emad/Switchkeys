@@ -1,13 +1,13 @@
 import unittest
-from switchkey.api.models.organization import SwitchKeyOrganization
-from switchkey.core.exceptions import ResponseError
+from switchkeys.api.models.organization import SwitchKeysOrganization
+from switchkeys.core.exceptions import ResponseError
 
 
 # TODO: Tests needs to be updated with auth logic.
-class TestSwitchKeyOrganization(unittest.TestCase):
+class TestSwitchKeysOrganization(unittest.TestCase):
 
     def setUp(self):
-        self.api = SwitchKeyOrganization()
+        self.api = SwitchKeysOrganization()
         self.organization_id = None
 
     def test_create_organization_success(self):
@@ -23,11 +23,11 @@ class TestSwitchKeyOrganization(unittest.TestCase):
 
     # def test_update_organization_success(self):
     #     # Prepare mock data
-    #     updated_organization_data = SwitchKeyOrganizationResponseType(
+    #     updated_organization_data = SwitchKeysOrganizationResponseType(
     #         id=1,
     #         name="Updated Organization",
-    #         owner=SwitchKeyUserResponseType(id=1, username="owner_username", email="owner@example.com"),
-    #         members=[SwitchKeyUserResponseType(id=2, username="member1_username", email="member1@example.com")],
+    #         owner=SwitchKeysUserResponseType(id=1, username="owner_username", email="owner@example.com"),
+    #         members=[SwitchKeysUserResponseType(id=2, username="member1_username", email="member1@example.com")],
     #         created="2024-03-28T12:00:00Z",
     #         modified="2024-03-29T12:00:00Z"
     #     )
@@ -38,7 +38,7 @@ class TestSwitchKeyOrganization(unittest.TestCase):
 
     # def test_update_organization_invalid_data(self):
     #     # Prepare invalid organization data (missing required fields)
-    #     invalid_organization_data = SwitchKeyOrganizationRequestType(
+    #     invalid_organization_data = SwitchKeysOrganizationRequestType(
     #         name="Updated Organization",
     #         members=[]
     #     )

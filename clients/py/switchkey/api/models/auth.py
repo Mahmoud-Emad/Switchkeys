@@ -1,13 +1,13 @@
-from switchkey.api.request.request import SwitchKeyRequest, SwitchKeyRequestMethod
-from switchkey.api.request.types import UserTypeEnum
-from switchkey.api.response.types import SwitchKeyAuthResponse
-from switchkey.api.routes import EndPoints, SwitchKeyRoutes
-from switchkey.core.exceptions import ResponseError
-from switchkey.utils.parser import parse_auth
-from switchkey.utils.config import SwitchKeyConfig
+from switchkeys.api.request.request import SwitchKeysRequest, SwitchKeysRequestMethod
+from switchkeys.api.request.types import UserTypeEnum
+from switchkeys.api.response.types import SwitchKeysAuthResponse
+from switchkeys.api.routes import EndPoints, SwitchKeysRoutes
+from switchkeys.core.exceptions import ResponseError
+from switchkeys.utils.parser import parse_auth
+from switchkeys.utils.config import SwitchKeysConfig
 
 
-class SwitchKeyAuth:
+class SwitchKeysAuth:
     """
     Represents an API for managing auth.
 
@@ -15,7 +15,7 @@ class SwitchKeyAuth:
     """
 
     def __init__(self):
-        self.__routes = SwitchKeyRoutes()
+        self.__routes = SwitchKeysRoutes()
 
     # @check_credentials()
     def register(
@@ -25,7 +25,7 @@ class SwitchKeyAuth:
         email: str,
         password: str,
         user_type: UserTypeEnum = UserTypeEnum.ADMINISTRATOR,
-    ) -> SwitchKeyAuthResponse:
+    ) -> SwitchKeysAuthResponse:
         """
         Method to create a user.
 
@@ -48,9 +48,9 @@ class SwitchKeyAuth:
         }
 
         url = self.__routes.get_route(EndPoints.SIGNUP)
-        user = SwitchKeyRequest.call(
+        user = SwitchKeysRequest.call(
             url=url,
-            method=SwitchKeyRequestMethod.POST,
+            method=SwitchKeysRequestMethod.POST,
             data=data,
         )
 
@@ -64,11 +64,11 @@ class SwitchKeyAuth:
         access_token = user.access_token
         refresh_token = user.refresh_token
 
-        config = SwitchKeyConfig()
+        config = SwitchKeysConfig()
         config.write(refresh_token=refresh_token, access_token=access_token)
         return user
 
-    def login(self, email: str, password: str) -> SwitchKeyAuthResponse:
+    def login(self, email: str, password: str) -> SwitchKeysAuthResponse:
         """
         Method to login.
 
@@ -85,9 +85,9 @@ class SwitchKeyAuth:
         }
         
         url = self.__routes.get_route(EndPoints.LOGIN)
-        user = SwitchKeyRequest.call(
+        user = SwitchKeysRequest.call(
             url=url,
-            method=SwitchKeyRequestMethod.POST,
+            method=SwitchKeysRequestMethod.POST,
             data=data,
         )
 
@@ -101,6 +101,6 @@ class SwitchKeyAuth:
         access_token = user.access_token
         refresh_token = user.refresh_token
 
-        config = SwitchKeyConfig()
+        config = SwitchKeysConfig()
         config.write(refresh_token=refresh_token, access_token=access_token)
         return user

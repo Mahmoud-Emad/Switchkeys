@@ -1,12 +1,12 @@
 import configparser
 import os
-from switchkey.api.response.types import SwitchKeyTokensResponse
-from switchkey.utils.logger import SwitchKeyLogger
+from switchkeys.api.response.types import SwitchKeysTokensResponse
+from switchkeys.utils.logger import SwitchKeysLogger
 
 
-class SwitchKeyConfig:
+class SwitchKeysConfig:
     """
-    SwitchKeyConfig class handles loading and writing tokens from/to a configuration file.
+    SwitchKeysConfig class handles loading and writing tokens from/to a configuration file.
 
     Attributes:
         None
@@ -18,7 +18,7 @@ class SwitchKeyConfig:
     """
 
     def __init__(self):
-        self.logger = SwitchKeyLogger.get_logger()
+        self.logger = SwitchKeysLogger.get_logger()
 
     def check(self, config_file="config.ini"):
         """
@@ -52,7 +52,7 @@ class SwitchKeyConfig:
             )
             return False
 
-    def load(self, config_file="config.ini") -> SwitchKeyTokensResponse:
+    def load(self, config_file="config.ini") -> SwitchKeysTokensResponse:
         """
         Load access and refresh tokens from the specified configuration file.
 
@@ -70,19 +70,19 @@ class SwitchKeyConfig:
             access_token = config["TOKENS"].get("access_token")
             refresh_token = config["TOKENS"].get("refresh_token")
             if access_token and refresh_token:
-                return SwitchKeyTokensResponse(
+                return SwitchKeysTokensResponse(
                     access_token=access_token, refresh_token=refresh_token
                 )
             else:
                 self.logger.warning(
                     "Tokens not found in the config file, maybe you have to login first."
                 )
-                return SwitchKeyTokensResponse(access_token=None, refresh_token=None)
+                return SwitchKeysTokensResponse(access_token=None, refresh_token=None)
         else:
             self.logger.warning(
                 "No [TOKENS] section found in the config file, maybe you have to login first"
             )
-            return SwitchKeyTokensResponse(access_token=None, refresh_token=None)
+            return SwitchKeysTokensResponse(access_token=None, refresh_token=None)
 
     def write(self, access_token, refresh_token, config_file="config.ini"):
         """

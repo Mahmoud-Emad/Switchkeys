@@ -10,12 +10,12 @@ urlpatterns = [
         "api/",
         include(
             [
-                path("auth/", include("switchkey.urls.auth")),
-                path("users/", include("switchkey.urls.users")),
-                path("organizations/", include("switchkey.urls.organizations")),
-                path("projects/", include("switchkey.urls.projects")),
-                path("groups/", include("switchkey.urls.groups")),
-                path("environments/", include("switchkey.urls.environments")),
+                path("auth/", include("switchkeys.urls.auth")),
+                path("users/", include("switchkeys.urls.users")),
+                path("organizations/", include("switchkeys.urls.organizations")),
+                path("projects/", include("switchkeys.urls.projects")),
+                path("groups/", include("switchkeys.urls.groups")),
+                path("environments/", include("switchkeys.urls.environments")),
             ]
         ),
     ),

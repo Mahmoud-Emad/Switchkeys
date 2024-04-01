@@ -1,25 +1,25 @@
-# SwitchKey Python Client
+# SwitchKeys Python Client
 
 ## Introduction
 
-SwitchKey is a Python package that allows you to manage feature flags and user features dynamically. It enables you to control the behavior of your application based on user-specific features and toggle features on or off without redeploying your application.
+SwitchKeys is a Python package that allows you to manage feature flags and user features dynamically. It enables you to control the behavior of your application based on user-specific features and toggle features on or off without redeploying your application.
 
 ## Installation
 
-To install the SwitchKey package, you can use pip:
+To install the SwitchKeys package, you can use pip:
 
 ```bash
-pip install switchkey
+pip install switchkeys
 ```
 
 ## Usage
 
 ```python
-# Import the SwitchKey module
-from switchkey.core.base import SwitchKey
+# Import the SwitchKeys module
+from switchkeys.core.base import SwitchKeys
 
-# Initialize SwitchKey instance with the environment key
-switch_key = SwitchKey(environment_key="1931ca88-f3d8-4aac-8019-a45e78f38d19")
+# Initialize SwitchKeys instance with the environment key
+switch_key = SwitchKeys(environment_key="1931ca88-f3d8-4aac-8019-a45e78f38d19")
 
 # Connect to the environment to load all its data
 switch_key.connect()
@@ -71,7 +71,7 @@ class GetVersionApiView(GenericAPIView):
 
     def get(self, request: Request) -> Response:
         # Let's say you have a User model that holds the username of the user.
-        switch_key = SwitchKey(environment_key="1931ca88-f3d8-4aac-8019-a45e78f38d19")
+        switch_key = SwitchKeys(environment_key="1931ca88-f3d8-4aac-8019-a45e78f38d19")
         switch_key.connect()
 
         version = switch_key.environment.get_user(request.user.username).features.value_of("version") # it can be v1.1 or v1.0 based on the user features.

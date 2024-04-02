@@ -152,3 +152,4 @@ package.json
 node_modules
 staticfiles
 clients/py/config.ini
+clients/dart/switchkeys/config.ini

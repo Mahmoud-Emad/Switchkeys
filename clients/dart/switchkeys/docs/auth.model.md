@@ -11,19 +11,18 @@ To log in an existing user, use the `login` method provided by the `SwitchKeyAut
 Example:
 
 ```dart
-
-import 'package:switchkeys/src/api/models/auth.dart';
 import 'package:switchkeys/src/core/base.dart';
 
 // Get an instance of SwitchKeyAuth
-SwitchKeyAuth auth = SwitchKeys.auth();
+SwitchKeys switchKeys = SwitchKeys();
 
 // Now you can use the auth instance to make API calls
 // Logging in an existing user
-await auth
+await switchKeys.auth
     .login(email: "hamada__2020@gmail.com", password: "hamada")
     .then((user) => print("Logged in successfully: ${user.email}"))
     .catchError((e) => print("Error logging in: $e"));
+
 ```
 
 ## Registering a New User
@@ -33,17 +32,14 @@ To register a new user, use the `register` method provided by the `SwitchKeyAuth
 Example:
 
 ```dart
-
-import 'package:switchkeys/src/api/models/auth.dart';
 import 'package:switchkeys/src/core/base.dart';
 
 // Get an instance of SwitchKeyAuth
-SwitchKeyAuth auth = SwitchKeys.auth();
+SwitchKeys switchKeys = SwitchKeys();
 
 // Now you can use the auth instance to make API calls
-// Registering a new user
-
-await auth
+// Logging in an existing user
+await switchKeys.auth
     .register(
       firstName: "Ahmed",
       lastName: "Zain",

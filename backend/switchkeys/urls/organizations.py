@@ -13,5 +13,8 @@ urlpatterns = [
     path("<str:organization_id>/", OrganizationApiView.as_view()),
     path("name/<str:organization_name>/", OrganizationByNameApiView.as_view()),
     path("<str:organization_id>/add-member/", OrganizationAddMemberApiView.as_view()),
-    path("<str:organization_id>/remove-member/", OrganizationRemoveMemberApiView.as_view()),
+    path(
+        "<str:organization_id>/remove-member/",
+        OrganizationRemoveMemberApiView.as_view(),
+    ),
 ]

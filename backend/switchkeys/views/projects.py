@@ -5,7 +5,11 @@ from rest_framework.response import Response
 from switchkeys.services.organizations import get_organization_by_id
 from switchkeys.api.permissions import UserIsAuthenticated, IsAdminUser
 from switchkeys.serializers.projects import OrganizationProjectSerializer
-from switchkeys.services.projects import check_project_name, get_all_projects, get_project_by_id
+from switchkeys.services.projects import (
+    check_project_name,
+    get_all_projects,
+    get_project_by_id,
+)
 from switchkeys.api.custom_response import CustomResponse
 
 
@@ -47,7 +51,7 @@ class BaseOrganizationProjectApiView(ListAPIView):
                 return CustomResponse.unauthorized(
                     message="You do not have permission to access this resource because you are not the creator of this organization.",
                 )
-                
+
             # Check if there are another projects with the same name.
             created = check_project_name(project_name, organization_id)
             if created:

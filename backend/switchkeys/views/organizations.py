@@ -4,7 +4,10 @@ from rest_framework.response import Response
 
 from switchkeys.services.users import get_user_by_id
 from switchkeys.api.permissions import UserIsAuthenticated, IsAdminUser
-from switchkeys.serializers.organizations import OrganizationAddMemberSerializer, OrganizationSerializer
+from switchkeys.serializers.organizations import (
+    OrganizationAddMemberSerializer,
+    OrganizationSerializer,
+)
 from switchkeys.services.organizations import (
     check_organization_name,
     get_all_organization,
@@ -164,23 +167,26 @@ class OrganizationByNameApiView(GenericAPIView):
             message="The organization found.",
         )
 
+
 class OrganizationAddMemberApiView(GenericAPIView):
     serializer_class = OrganizationAddMemberSerializer
     permission_classes = [
         IsAdminUser,
     ]
-    
+
     def put(self, request: Request, organization_id: str) -> Response:
         """
-            Add a member on an organization
+        Add a member on an organization
         """
 
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
-            
+
             organization = get_organization_by_id(organization_id)
             if organization is None:
-                return CustomResponse.not_found(message="The organization does not exist.")
+                return CustomResponse.not_found(
+                    message="The organization does not exist."
+                )
 
             member_id = serializer.validated_data.get("member_id")
             member = get_user_by_id(member_id)
@@ -198,26 +204,29 @@ class OrganizationAddMemberApiView(GenericAPIView):
         return CustomResponse.bad_request(
             message="Please make sure that you entered a valid data.",
             error=serializer.errors,
-            data=request.data
+            data=request.data,
         )
+
 
 class OrganizationRemoveMemberApiView(GenericAPIView):
     serializer_class = OrganizationAddMemberSerializer
     permission_classes = [
         IsAdminUser,
     ]
-    
+
     def put(self, request: Request, organization_id: str) -> Response:
         """
-            Add a member on an organization
+        Add a member on an organization
         """
 
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
-            
+
             organization = get_organization_by_id(organization_id)
             if organization is None:
-                return CustomResponse.not_found(message="The organization does not exist.")
+                return CustomResponse.not_found(
+                    message="The organization does not exist."
+                )
 
             member_id = serializer.validated_data.get("member_id")
             member = get_user_by_id(member_id)
@@ -229,7 +238,7 @@ class OrganizationRemoveMemberApiView(GenericAPIView):
                     data=request.data,
                     message=f"Member with ID `{member_id}` is not registered as a member of the organization named `{organization.name}`.",
                 )
- 
+
             organization.members.remove(member)
             organization.save()
 
@@ -241,5 +250,5 @@ class OrganizationRemoveMemberApiView(GenericAPIView):
         return CustomResponse.bad_request(
             message="Please make sure that you entered a valid data.",
             error=serializer.errors,
-            data=request.data
+            data=request.data,
         )

@@ -2,7 +2,12 @@ from rest_framework_simplejwt.serializers import (
     TokenObtainPairSerializer,
     TokenRefreshSerializer,
 )
-from rest_framework.serializers import ModelSerializer, Serializer, CharField, SerializerMethodField
+from rest_framework.serializers import (
+    ModelSerializer,
+    Serializer,
+    CharField,
+    SerializerMethodField,
+)
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.state import token_backend
 from rest_framework_simplejwt.settings import api_settings

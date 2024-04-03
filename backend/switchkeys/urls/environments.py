@@ -5,7 +5,7 @@ from switchkeys.views.environments import (
     OrganizationProjectEnvironmentApiView,
     OrganizationProjectEnvironmentKeyApiView,
     SetEnvironmentKeyApiView,
-    BaseEnvironmentFeatureAPIView
+    BaseEnvironmentFeatureAPIView,
 )
 
 urlpatterns = [
@@ -14,9 +14,7 @@ urlpatterns = [
     path(
         "key/<str:environment_key>/", OrganizationProjectEnvironmentKeyApiView.as_view()
     ),
-    path(
-        "key/<str:environment_key>/user/set/", SetEnvironmentKeyApiView.as_view()
-    ),
+    path("key/<str:environment_key>/user/set/", SetEnvironmentKeyApiView.as_view()),
     path(
         "key/<str:environment_key>/features/", BaseEnvironmentFeatureAPIView.as_view()
     ),

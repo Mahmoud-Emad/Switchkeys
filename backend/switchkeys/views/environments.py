@@ -12,7 +12,11 @@ from switchkeys.services.environments import (
     get_environment_user,
 )
 from switchkeys.models.management import OrganizationProject, ProjectEnvironment
-from switchkeys.serializers.environments import EnvironmentFeatureSerialize, ProjectEnvironmentSerializer, SetEnvironmentSerializer
+from switchkeys.serializers.environments import (
+    EnvironmentFeatureSerialize,
+    ProjectEnvironmentSerializer,
+    SetEnvironmentSerializer,
+)
 from switchkeys.api.permissions import UserIsAuthenticated, IsAdminUser
 from switchkeys.api.custom_response import CustomResponse
 
@@ -166,6 +170,7 @@ class OrganizationProjectEnvironmentKeyApiView(GenericAPIView):
             data=ProjectEnvironmentSerializer(environment).data,
         )
 
+
 class SetEnvironmentKeyApiView(GenericAPIView):
     serializer_class = SetEnvironmentSerializer
 
@@ -177,7 +182,7 @@ class SetEnvironmentKeyApiView(GenericAPIView):
 
         if not request.query_params.get("user_id"):
             return CustomResponse.bad_request(
-                message=f"You have to send the `user_id` as a query params."
+                message="You have to send the `user_id` as a query params."
             )
 
         environment = get_environment_by_key(environment_key)
@@ -202,12 +207,13 @@ class SetEnvironmentKeyApiView(GenericAPIView):
             environment_user.save()
             return CustomResponse.success(
                 message="The user features has been updated.",
-                data=environment_user.features
+                data=environment_user.features,
             )
         return CustomResponse.bad_request(
             message="Please make sure that you entered a valid data.",
-            error=serializer.errors
-        )            
+            error=serializer.errors,
+        )
+
 
 class BaseEnvironmentFeatureAPIView(ListAPIView):
 
@@ -218,7 +224,7 @@ class BaseEnvironmentFeatureAPIView(ListAPIView):
         if self.request.method == "GET":
             self.permission_classes = []
         else:
-            self.permission_classes = [ UserIsAuthenticated ]
+            self.permission_classes = [UserIsAuthenticated]
 
         return super(BaseEnvironmentFeatureAPIView, self).get_permissions()
 
@@ -233,7 +239,9 @@ class BaseEnvironmentFeatureAPIView(ListAPIView):
         feature = request.data
         serializer = self.get_serializer(data=feature)
         if serializer.is_valid():
-            environment: ProjectEnvironment = serializer.validated_data.get("environment")
+            environment: ProjectEnvironment = serializer.validated_data.get(
+                "environment"
+            )
             if request.user.id not in environment.project.organization.members:
                 return CustomResponse.unauthorized(
                     message="You do not have permission to access this resource because you are not a member in organization that owns this project.",
@@ -249,6 +257,7 @@ class BaseEnvironmentFeatureAPIView(ListAPIView):
             error=serializer.errors,
             data=request.data,
         )
+
 
 class EnvironmentFeatureAPIView(GenericAPIView):
     pass

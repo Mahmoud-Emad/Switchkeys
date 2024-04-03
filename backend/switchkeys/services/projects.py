@@ -15,6 +15,13 @@ def get_all_organization_projects(
         "name"
     )
 
+def check_project_name(project_name: str, organization_id: int):
+    """
+        Check if there is projects created on an exact organization by the requested user with the same name
+    """
+    projects = OrganizationProject.objects.filter(name=project_name, organization__id=organization_id)
+    return len(projects) > 0
+
 
 def get_project_by_id(id: str) -> OrganizationProject:
     """Return project who has the same id"""

@@ -16,7 +16,7 @@ class Organization(TimeStamp):
     )
 
     def __str__(self) -> str:
-        return f"{self.name}"
+        return f"{self.owner} | {self.name}"
 
     class Meta:
         verbose_name = "Organization"

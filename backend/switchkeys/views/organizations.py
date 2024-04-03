@@ -8,6 +8,7 @@ from switchkeys.services.organizations import (
     check_organization_name,
     get_all_organization,
     get_organization_by_id,
+    get_user_organization_by_name,
 )
 from switchkeys.api.custom_response import CustomResponse
 
@@ -46,10 +47,10 @@ class BaseOrganizationApiView(ListAPIView):
                 return CustomResponse.bad_request(
                     message="An organization with the same name has already been created by this user."
                 )
-            
+
             organization_members = request.data.get("members")
 
-            if type(organization_members) == list and len(organization_members) >= 0:
+            if type(organization_members) is list and len(organization_members) >= 0:
                 serializer.save(owner=request.user, members=organization_members)
             else:
                 serializer.save(owner=request.user)
@@ -108,10 +109,10 @@ class OrganizationApiView(GenericAPIView):
                 return CustomResponse.bad_request(
                     message="An organization with the same name has already been created by this user."
                 )
-            
+
             organization_members = request.data.get("members")
 
-            if type(organization_members) == list and len(organization_members) >= 0:
+            if type(organization_members) is list and len(organization_members) >= 0:
                 serializer.save(owner=request.user, members=organization_members)
             else:
                 serializer.save(owner=request.user)
@@ -141,4 +142,25 @@ class OrganizationApiView(GenericAPIView):
             data={},
             message="Organization has been updated successfully.",
             status_code=204,
+        )
+
+
+class OrganizationByNameApiView(GenericAPIView):
+    serializer_class = OrganizationSerializer
+    permission_classes = [
+        UserIsAuthenticated,
+    ]
+
+    def get(self, request: Request, organization_name: str) -> Response:
+        """
+        Get organization by name, use this endpoint if you want to
+        """
+        print("organization_name", organization_name)
+        organization = get_user_organization_by_name(request.user, organization_name)
+
+        if organization is None:
+            return CustomResponse.not_found(message="The organization does not exist.")
+        return CustomResponse.success(
+            data=OrganizationSerializer(organization).data,
+            message="The organization found.",
         )

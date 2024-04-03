@@ -17,10 +17,20 @@ def get_organization_by_id(id: str) -> Organization:
     except Organization.DoesNotExist:
         return None
 
+
 def check_organization_name(user: User, name: str):
     """Check if there is an organization created by the requested user with the same name"""
-    organizations = Organization.objects.filter(
-        name = name,
-        owner__id = user.id
-    )
+    organizations = Organization.objects.filter(name=name, owner__id=user.id)
     return len(organizations) > 0
+
+
+def get_user_organization_by_name(user: User, name: str):
+    """Get the organization based on the user and the organization name"""
+    try:
+        organization = Organization.objects.get(
+            owner__id=user.id,
+            name=name,
+        )
+        return organization
+    except Organization.DoesNotExist:
+        return None

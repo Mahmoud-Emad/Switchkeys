@@ -2,8 +2,9 @@ from rest_framework.generics import GenericAPIView, ListAPIView
 from rest_framework.request import Request
 from rest_framework.response import Response
 
+from switchkeys.services.users import get_user_by_id
 from switchkeys.api.permissions import UserIsAuthenticated, IsAdminUser
-from switchkeys.serializers.organizations import OrganizationSerializer
+from switchkeys.serializers.organizations import OrganizationAddMemberSerializer, OrganizationSerializer
 from switchkeys.services.organizations import (
     check_organization_name,
     get_all_organization,
@@ -124,8 +125,8 @@ class OrganizationApiView(GenericAPIView):
             )
 
         return CustomResponse.bad_request(
-            data=OrganizationSerializer(organization).data,
-            message="Please make sure that you entered a valid data..",
+            data=request.data,
+            message="Please make sure that you entered a valid data.",
             error=serializer.errors,
         )
 
@@ -139,8 +140,7 @@ class OrganizationApiView(GenericAPIView):
         organization.delete()
 
         return CustomResponse.success(
-            data={},
-            message="Organization has been updated successfully.",
+            message="Organization has been deleted successfully.",
             status_code=204,
         )
 
@@ -155,7 +155,6 @@ class OrganizationByNameApiView(GenericAPIView):
         """
         Get organization by name, use this endpoint if you want to
         """
-        print("organization_name", organization_name)
         organization = get_user_organization_by_name(request.user, organization_name)
 
         if organization is None:
@@ -163,4 +162,84 @@ class OrganizationByNameApiView(GenericAPIView):
         return CustomResponse.success(
             data=OrganizationSerializer(organization).data,
             message="The organization found.",
+        )
+
+class OrganizationAddMemberApiView(GenericAPIView):
+    serializer_class = OrganizationAddMemberSerializer
+    permission_classes = [
+        IsAdminUser,
+    ]
+    
+    def put(self, request: Request, organization_id: str) -> Response:
+        """
+            Add a member on an organization
+        """
+
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            
+            organization = get_organization_by_id(organization_id)
+            if organization is None:
+                return CustomResponse.not_found(message="The organization does not exist.")
+
+            member_id = serializer.validated_data.get("member_id")
+            member = get_user_by_id(member_id)
+            if member is None:
+                return CustomResponse.not_found(message="The member does not exist.")
+
+            organization.members.add(member)
+            organization.save()
+
+            return CustomResponse.success(
+                data=OrganizationSerializer(organization).data,
+                message="The member has been added to the organization.",
+            )
+
+        return CustomResponse.bad_request(
+            message="Please make sure that you entered a valid data.",
+            error=serializer.errors,
+            data=request.data
+        )
+
+class OrganizationRemoveMemberApiView(GenericAPIView):
+    serializer_class = OrganizationAddMemberSerializer
+    permission_classes = [
+        IsAdminUser,
+    ]
+    
+    def put(self, request: Request, organization_id: str) -> Response:
+        """
+            Add a member on an organization
+        """
+
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            
+            organization = get_organization_by_id(organization_id)
+            if organization is None:
+                return CustomResponse.not_found(message="The organization does not exist.")
+
+            member_id = serializer.validated_data.get("member_id")
+            member = get_user_by_id(member_id)
+            if member is None:
+                return CustomResponse.not_found(message="The member does not exist.")
+
+            if member not in organization.members.all():
+                return CustomResponse.bad_request(
+                    data=request.data,
+                    message=f"Member with ID `{member_id}` is not registered as a member of the organization named `{organization.name}`.",
+                )
+ 
+            organization.members.remove(member)
+            organization.save()
+
+            return CustomResponse.success(
+                data=OrganizationSerializer(organization).data,
+                message="The member has been added to the organization.",
+            )
+
+        return CustomResponse.bad_request(
+            message="Please make sure that you entered a valid data.",
+            error=serializer.errors,
+            data=request.data
         )

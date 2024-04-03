@@ -3,8 +3,10 @@ from rest_framework.serializers import (
     SerializerMethodField,
     Serializer,
     CharField,
+    IntegerField,
 )
 
+from switchkeys.models.users import ProjectEnvironmentUser
 from switchkeys.serializers.users import ProjectEnvironmentUserSerializer
 from switchkeys.serializers.projects import OrganizationProjectSerializer
 from switchkeys.models.management import EnvironmentFeature, ProjectEnvironment
@@ -15,6 +17,7 @@ class ProjectEnvironmentSerializer(ModelSerializer):
     ``Serializer`` for ``Organization project environment`` .
     """
 
+    project_id = IntegerField()
     project = SerializerMethodField()
     users = SerializerMethodField()
 
@@ -23,6 +26,7 @@ class ProjectEnvironmentSerializer(ModelSerializer):
         fields = (
             "id",
             "name",
+            "project_id",
             "created",
             "modified",
             "project",
@@ -73,3 +77,30 @@ class EnvironmentFeatureSerialize(ModelSerializer):
 
     def get_environment(self, obj: EnvironmentFeature):
         return ProjectEnvironmentSerializer(obj.environment).data
+
+
+class EnvironmentUserDeviceSerializer(Serializer):
+    version = CharField()
+    device_type = CharField()
+
+
+class AddEnvironmentUserSerializer(ModelSerializer):
+    """Serializer to add user to an environment"""
+    device = EnvironmentUserDeviceSerializer()
+
+    class Meta:
+        model = ProjectEnvironmentUser
+        fields = (
+            "id",
+            "created",
+            "modified",
+            "username",
+            "device",
+            "features",
+        )
+
+        read_only_fields = (
+            "id",
+            "created",
+            "modified",
+        )

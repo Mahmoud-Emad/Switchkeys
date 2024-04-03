@@ -1,6 +1,6 @@
 from typing import List
 from switchkeys.models.users import User
-from switchkeys.models.management import Organization
+from switchkeys.models.management import Organization, OrganizationProject
 
 
 def get_all_organization() -> List[Organization]:
@@ -34,3 +34,8 @@ def get_user_organization_by_name(user: User, name: str):
         return organization
     except Organization.DoesNotExist:
         return None
+
+
+def get_organization_projects(organization_id: str) -> List[OrganizationProject]:
+    """Filter all projects and get only the projects that has the same organization ID."""
+    return OrganizationProject.objects.filter(organization__id=organization_id)

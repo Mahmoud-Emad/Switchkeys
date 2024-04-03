@@ -3,16 +3,20 @@ from rest_framework.generics import GenericAPIView, ListAPIView
 from rest_framework.request import Request
 from rest_framework.response import Response
 
+from switchkeys.services.projects import get_project_by_id
 from switchkeys.utils.validators import is_valid_uuid
 from switchkeys.services.environments import (
+    create_environment_user,
     get_all_environment_features,
     get_all_environments,
     get_environment_by_id,
     get_environment_by_key,
-    get_environment_user,
+    get_environment_user_by_id,
+    get_environment_user_username,
 )
 from switchkeys.models.management import OrganizationProject, ProjectEnvironment
 from switchkeys.serializers.environments import (
+    AddEnvironmentUserSerializer,
     EnvironmentFeatureSerialize,
     ProjectEnvironmentSerializer,
     SetEnvironmentSerializer,
@@ -48,12 +52,20 @@ class BaseOrganizationProjectEnvironmentApiView(ListAPIView):
         environment = request.data
         serializer = self.get_serializer(data=environment)
         if serializer.is_valid():
-            project: OrganizationProject = serializer.validated_data.get("project")
+            project_id: int = serializer.validated_data.get("project_id")
+            project: OrganizationProject = get_project_by_id(str(project_id))
+
+            if project is None:
+                return CustomResponse.not_found(
+                    message="Project not found.",
+                )
+
             if request.user.id != project.organization.owner.id:
                 return CustomResponse.unauthorized(
                     message="You do not have permission to access this resource because you are not the creator of the organization that owns this project.",
                 )
-            serializer.save()
+
+            serializer.save(project=project)
             return CustomResponse.success(
                 data=serializer.data,
                 message="Project environment has been created successfully.",
@@ -72,9 +84,7 @@ class OrganizationProjectEnvironmentApiView(GenericAPIView):
 
     def get_permissions(self):
         if self.request.method == "GET":
-            self.permission_classes = [
-                UserIsAuthenticated,
-            ]
+            self.permission_classes = []
         else:
             self.permission_classes = [
                 IsAdminUser,
@@ -107,7 +117,14 @@ class OrganizationProjectEnvironmentApiView(GenericAPIView):
         data = request.data
         serializer = self.get_serializer(environment, data=data)
         if serializer.is_valid():
-            project: OrganizationProject = serializer.validated_data.get("project")
+            project_id: int = serializer.validated_data.get("project_id")
+            project: OrganizationProject = get_project_by_id(str(project_id))
+
+            if project is None:
+                return CustomResponse.not_found(
+                    message="Project not found.",
+                )
+
             if request.user.id != project.organization.owner.id:
                 return CustomResponse.unauthorized(
                     message="You do not have permission to access this resource because you are not the creator of the organization that owns this project.",
@@ -192,7 +209,7 @@ class SetEnvironmentKeyApiView(GenericAPIView):
             )
 
         user_id = request.query_params.get("user_id")
-        environment_user = get_environment_user(user_id)
+        environment_user = get_environment_user_by_id(user_id)
 
         if environment_user is None:
             return CustomResponse.not_found(
@@ -256,6 +273,42 @@ class BaseEnvironmentFeatureAPIView(ListAPIView):
             message="Please make sure that you entered a valid data.",
             error=serializer.errors,
             data=request.data,
+        )
+
+
+class AddEnvironmentUserAPIView(GenericAPIView):
+    serializer_class = AddEnvironmentUserSerializer
+    permission_classes = [UserIsAuthenticated]
+
+    def put(self, request: Request, environment_key: str):
+        environment = get_environment_by_key(environment_key)
+        if environment is None:
+            return CustomResponse.not_found(
+                message="The project environment does not exist."
+            )
+
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            username = serializer.validated_data.get('username')
+            user = get_environment_user_username(username)
+            if user is None:
+                device_type = serializer.validated_data.get('device').get("device_type")
+                device_version = serializer.validated_data.get('device').get("version")
+                features = serializer.validated_data.get('features')
+
+                user = create_environment_user(
+                    username=username,
+                    device_type=device_type,
+                    device_version=device_version,
+                    features=features
+                )
+
+            environment.users.add(user)
+            environment.save()
+            return CustomResponse.success(message="User added successfully.", data=AddEnvironmentUserSerializer(user).data)
+        return CustomResponse.bad_request(
+            message="Please make sure that you entered a valid data.",
+            error=serializer.errors,
         )
 
 

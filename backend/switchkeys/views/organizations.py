@@ -6,12 +6,14 @@ from switchkeys.services.users import get_user_by_id
 from switchkeys.api.permissions import UserIsAuthenticated, IsAdminUser
 from switchkeys.serializers.organizations import (
     OrganizationAddMemberSerializer,
+    OrganizationProjectsSerializer,
     OrganizationSerializer,
 )
 from switchkeys.services.organizations import (
     check_organization_name,
     get_all_organization,
     get_organization_by_id,
+    get_organization_projects,
     get_user_organization_by_name,
 )
 from switchkeys.api.custom_response import CustomResponse
@@ -251,4 +253,26 @@ class OrganizationRemoveMemberApiView(GenericAPIView):
             message="Please make sure that you entered a valid data.",
             error=serializer.errors,
             data=request.data,
+        )
+
+
+class OrganizationProjectsApiView(GenericAPIView):
+    """Get all projects of an organization"""
+
+    serializer_class = OrganizationProjectsSerializer
+    permission_classes = []
+
+    def get(self, request: Request, organization_id: str) -> Response:
+        """Get all projects exists on the organization"""
+
+        organization = get_organization_by_id(organization_id)
+
+        if organization is None:
+            return CustomResponse.not_found(message="The organization does not exist.")
+
+        projects = get_organization_projects(organization_id)
+
+        return CustomResponse.success(
+            data=OrganizationProjectsSerializer(projects, many=True).data,
+            message="Organization projects.",
         )

@@ -5,7 +5,7 @@ from rest_framework.serializers import (
 )
 
 from switchkeys.serializers.users import OrganizationUserSerializer
-from switchkeys.models.management import Organization
+from switchkeys.models.management import Organization, OrganizationProject
 
 
 class OrganizationSerializer(ModelSerializer):
@@ -62,3 +62,19 @@ class OrganizationAddMemberSerializer(ModelSerializer):
 
     def get_members(self, obj: Organization):
         return OrganizationUserSerializer(obj.members, many=True).data
+
+
+class OrganizationProjectsSerializer(ModelSerializer):
+    """
+    ``Serializer`` for serialize ``Organization`` projects.
+    """
+
+    class Meta:
+        model = OrganizationProject
+        fields = (
+            "id",
+            "name",
+            "created",
+            "modified",
+        )
+        read_only_fields = fields

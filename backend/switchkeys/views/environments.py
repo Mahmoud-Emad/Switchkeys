@@ -19,6 +19,7 @@ from switchkeys.serializers.environments import (
     AddEnvironmentUserSerializer,
     EnvironmentFeatureSerialize,
     ProjectEnvironmentSerializer,
+    RemoveEnvironmentUserSerializer,
     SetEnvironmentSerializer,
 )
 from switchkeys.api.permissions import UserIsAuthenticated, IsAdminUser
@@ -278,7 +279,7 @@ class BaseEnvironmentFeatureAPIView(ListAPIView):
 
 class AddEnvironmentUserAPIView(GenericAPIView):
     serializer_class = AddEnvironmentUserSerializer
-    permission_classes = [UserIsAuthenticated]
+    permission_classes = [IsAdminUser]
 
     def put(self, request: Request, environment_key: str):
         environment = get_environment_by_key(environment_key)
@@ -306,6 +307,32 @@ class AddEnvironmentUserAPIView(GenericAPIView):
             environment.users.add(user)
             environment.save()
             return CustomResponse.success(message="User added successfully.", data=AddEnvironmentUserSerializer(user).data)
+        return CustomResponse.bad_request(
+            message="Please make sure that you entered a valid data.",
+            error=serializer.errors,
+        )
+
+class RemoveEnvironmentUserAPIView(GenericAPIView):
+    serializer_class = RemoveEnvironmentUserSerializer
+    permission_classes = [IsAdminUser]
+
+    def put(self, request: Request, environment_key: str):
+        environment = get_environment_by_key(environment_key)
+        if environment is None:
+            return CustomResponse.not_found(
+                message="The project environment does not exist."
+            )
+
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            username = serializer.validated_data.get('username')
+            user = get_environment_user_username(username)
+            if user is None:
+                return CustomResponse.not_found(message="User not found.")
+
+            environment.users.remove(user)
+            environment.save()
+            return CustomResponse.success(message="User removed successfully.", data=AddEnvironmentUserSerializer(user).data)
         return CustomResponse.bad_request(
             message="Please make sure that you entered a valid data.",
             error=serializer.errors,

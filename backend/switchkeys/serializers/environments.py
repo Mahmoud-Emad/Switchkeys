@@ -86,6 +86,7 @@ class EnvironmentUserDeviceSerializer(Serializer):
 
 class AddEnvironmentUserSerializer(ModelSerializer):
     """Serializer to add user to an environment"""
+
     device = EnvironmentUserDeviceSerializer()
 
     class Meta:
@@ -104,3 +105,9 @@ class AddEnvironmentUserSerializer(ModelSerializer):
             "created",
             "modified",
         )
+
+
+class RemoveEnvironmentUserSerializer(Serializer):
+    """Serializer to remove user to an environment"""
+    
+    username = CharField()

@@ -14,13 +14,14 @@ from switchkeys.services.environments import (
     get_environment_user_by_id,
     get_environment_user_username,
 )
-from switchkeys.models.management import OrganizationProject, ProjectEnvironment
+from switchkeys.models.management import EnvironmentFeature, OrganizationProject, ProjectEnvironment
 from switchkeys.serializers.environments import (
     AddEnvironmentUserSerializer,
     EnvironmentFeatureSerialize,
     ProjectEnvironmentSerializer,
     RemoveEnvironmentUserSerializer,
-    SetEnvironmentSerializer,
+    EnvironmentUserFeatureSerializer,
+    UserFeatureSerialize,
 )
 from switchkeys.api.permissions import UserIsAuthenticated, IsAdminUser
 from switchkeys.api.custom_response import CustomResponse
@@ -190,7 +191,7 @@ class OrganizationProjectEnvironmentKeyApiView(GenericAPIView):
 
 
 class SetEnvironmentKeyApiView(GenericAPIView):
-    serializer_class = SetEnvironmentSerializer
+    serializer_class = EnvironmentUserFeatureSerializer
 
     def post(self, request: Request, environment_key: UUID):
         if not is_valid_uuid(environment_key):
@@ -198,35 +199,72 @@ class SetEnvironmentKeyApiView(GenericAPIView):
                 message=f"{environment_key} is not valid UUID."
             )
 
-        if not request.query_params.get("user_id"):
-            return CustomResponse.bad_request(
-                message="You have to send the `user_id` as a query params."
-            )
-
-        environment = get_environment_by_key(environment_key)
-        if environment is None:
-            return CustomResponse.not_found(
-                message="The project environment does not exist."
-            )
-
-        user_id = request.query_params.get("user_id")
-        environment_user = get_environment_user_by_id(user_id)
-
-        if environment_user is None:
-            return CustomResponse.not_found(
-                message="The environment user does not exist."
-            )
-
         serializer = self.get_serializer(data=request.data)
+        print("Data", request.data)
         if serializer.is_valid():
-            key = serializer.validated_data.get("key")
-            value = serializer.validated_data.get("value")
-            environment_user.features[key] = {"value": value, "is_enabled": True}
+            environment = get_environment_by_key(environment_key)
+            if environment is None:
+                return CustomResponse.not_found(
+                    message="The project environment does not exist."
+                )
+
+            username = serializer.validated_data.get("username")
+            feature = serializer.validated_data.get("feature")
+
+            environment_user = get_environment_user_username(username)
+            if environment_user is None:
+                return CustomResponse.not_found(
+                    message="The environment user does not exist.",
+            )
+
+            # Check if feature exist on the environment. 
+            environment_features = get_all_environment_features(environment)
+            environment_features_match = environment_features.filter(name=feature.get("name"), value = feature.get("value"))
+
+            if len(environment_features_match) > 0:
+                # The feature exist on the environment, needs to be added to the user. 
+                environment_feature = environment_features.get(name=feature.get("name"), value = feature.get("value"))
+                environment_user.features.add(environment_feature)
+                environment_user.save()
+                data = UserFeatureSerialize(environment_user.features, many=True).data
+
+                return CustomResponse.success(
+                    message="The user features has been updated.",
+                    data=data,
+                )
+
+            # The feature exist in user features, updating it.
+            user_features = environment_user.features.filter(name=feature.get("name"), value=feature.get("value"))
+            if len(user_features) > 0:
+                # Update the saved one
+                user_feature = environment_user.features.get(name=feature.get("name"))
+                user_feature.value = feature.get("value")
+                user_feature.is_enabled = feature.get("is_enabled")
+                user_feature.save()
+                data = UserFeatureSerialize(environment_user.features, many=True).data
+
+                return CustomResponse.success(
+                    message="The user features has been updated.",
+                    data=data,
+                )
+
+            # Create new environment feature and set it to the user.
+            environment_feature = EnvironmentFeature.objects.create(
+                environment=environment,
+                name=feature.get("name"),
+                value=feature.get("value"),
+                is_enabled=feature.get("is_enabled"),
+            )
+
+            environment_user.features.add(environment_feature)
             environment_user.save()
+            data = UserFeatureSerialize(environment_user.features, many=True).data
+
             return CustomResponse.success(
                 message="The user features has been updated.",
-                data=environment_user.features,
+                data=data,
             )
+
         return CustomResponse.bad_request(
             message="Please make sure that you entered a valid data.",
             error=serializer.errors,
@@ -295,18 +333,18 @@ class AddEnvironmentUserAPIView(GenericAPIView):
             if user is None:
                 device_type = serializer.validated_data.get('device').get("device_type")
                 device_version = serializer.validated_data.get('device').get("version")
-                features = serializer.validated_data.get('features')
 
                 user = create_environment_user(
                     username=username,
                     device_type=device_type,
                     device_version=device_version,
-                    features=features
                 )
-
             environment.users.add(user)
             environment.save()
-            return CustomResponse.success(message="User added successfully.", data=AddEnvironmentUserSerializer(user).data)
+            data = AddEnvironmentUserSerializer(user).data
+            data["id"] = user.id
+            data["features"] = UserFeatureSerialize(user.features, many=True).data
+            return CustomResponse.success(message="User added successfully.", data=data)
         return CustomResponse.bad_request(
             message="Please make sure that you entered a valid data.",
             error=serializer.errors,
@@ -332,7 +370,11 @@ class RemoveEnvironmentUserAPIView(GenericAPIView):
 
             environment.users.remove(user)
             environment.save()
-            return CustomResponse.success(message="User removed successfully.", data=AddEnvironmentUserSerializer(user).data)
+            data = AddEnvironmentUserSerializer(user).data
+            data["id"] = user.id
+            data["features"] = UserFeatureSerialize(user.features, many=True).data
+
+            return CustomResponse.success(message="User removed successfully.", data=data)
         return CustomResponse.bad_request(
             message="Please make sure that you entered a valid data.",
             error=serializer.errors,

@@ -1,5 +1,5 @@
 from switchkeys.models.users import ProjectEnvironmentUser, User
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import ModelSerializer, SerializerMethodField
 
 
 class OrganizationUserSerializer(ModelSerializer):
@@ -32,6 +32,9 @@ class ProjectEnvironmentUserSerializer(ModelSerializer):
     This class will be used to get all project users.
     """
 
+    device = SerializerMethodField()
+    features = SerializerMethodField()
+
     class Meta:
         model = ProjectEnvironmentUser
         fields = [
@@ -43,3 +46,11 @@ class ProjectEnvironmentUserSerializer(ModelSerializer):
         read_only_feilds = [
             "features",
         ]
+
+    def get_device(self, obj: ProjectEnvironmentUser):
+        from switchkeys.serializers.environments import EnvironmentUserDeviceSerializer
+        return EnvironmentUserDeviceSerializer(obj.device).data
+
+    def get_features(self, obj: ProjectEnvironmentUser):
+        from switchkeys.serializers.environments import UserFeatureSerialize
+        return UserFeatureSerialize(obj.features, many=True).data

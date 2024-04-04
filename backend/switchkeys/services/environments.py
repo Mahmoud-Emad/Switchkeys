@@ -71,3 +71,6 @@ def create_environment_user(
     return ProjectEnvironmentUser.objects.create(
         username=username, features=features, device=device[0]
     )
+
+def get_all_environment_features(environment: ProjectEnvironment) -> List[EnvironmentFeature]:
+    return EnvironmentFeature.objects.filter(environment__id = environment.id)

@@ -4,6 +4,7 @@ from rest_framework.serializers import (
     Serializer,
     CharField,
     IntegerField,
+    BooleanField,
 )
 
 from switchkeys.models.users import ProjectEnvironmentUser
@@ -42,10 +43,34 @@ class ProjectEnvironmentSerializer(ModelSerializer):
         return ProjectEnvironmentUserSerializer(obj.users, many=True).data
 
 
-class SetEnvironmentSerializer(Serializer):
-    key = CharField()
-    value = CharField()
 
+class FeatureSerializer(Serializer):
+    name = CharField()
+    value = CharField()
+    is_enabled = BooleanField()
+    
+class EnvironmentUserFeatureSerializer(Serializer):
+    username = CharField()
+    feature = FeatureSerializer()
+
+    # class Meta:
+    #     model = EnvironmentFeature
+    #     fields = [
+    #         "id",
+    #         "created",
+    #         "modified",
+    #         "name",
+    #         "value",
+    #         "is_enabled",
+    #         "is_default",
+    #         "username",
+    #     ]
+
+    #     read_only_fields = (
+    #         "id",
+    #         "created",
+    #         "modified",
+    #     )
 
 class EnvironmentFeatureSerialize(ModelSerializer):
 
@@ -58,25 +83,41 @@ class EnvironmentFeatureSerialize(ModelSerializer):
             "created",
             "modified",
             "environment",
-            "key",
+            "name",
             "value",
-            "tag",
-            "tag_color",
-            "description",
-            "enabled_by_default",
+            "is_enabled",
             "is_default",
-            "last_used",
         )
 
         read_only_fields = (
             "id",
             "created",
             "modified",
-            "last_used",
         )
 
     def get_environment(self, obj: EnvironmentFeature):
         return ProjectEnvironmentSerializer(obj.environment).data
+
+
+class UserFeatureSerialize(ModelSerializer):
+
+    class Meta:
+        model = EnvironmentFeature
+        fields = (
+            "id",
+            "created",
+            "modified",
+            "name",
+            "value",
+            "is_enabled",
+            "is_default",
+        )
+
+        read_only_fields = (
+            "id",
+            "created",
+            "modified",
+        )
 
 
 class EnvironmentUserDeviceSerializer(Serializer):
@@ -84,30 +125,21 @@ class EnvironmentUserDeviceSerializer(Serializer):
     device_type = CharField()
 
 
-class AddEnvironmentUserSerializer(ModelSerializer):
+class AddEnvironmentUserSerializer(Serializer):
     """Serializer to add user to an environment"""
 
     device = EnvironmentUserDeviceSerializer()
+    username = CharField()
 
     class Meta:
         model = ProjectEnvironmentUser
         fields = (
-            "id",
-            "created",
-            "modified",
             "username",
             "device",
-            "features",
-        )
-
-        read_only_fields = (
-            "id",
-            "created",
-            "modified",
         )
 
 
 class RemoveEnvironmentUserSerializer(Serializer):
     """Serializer to remove user to an environment"""
-    
+
     username = CharField()

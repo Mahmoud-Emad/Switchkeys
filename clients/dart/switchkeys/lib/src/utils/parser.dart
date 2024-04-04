@@ -117,7 +117,6 @@ List<SwitchKeyUserEnvironmentFeatures> parseFeatures(
   for (var i = 0; i < featuresData.length; i++) {
     features.add(
       SwitchKeyUserEnvironmentFeatures(
-        isEnabled: featuresData[i]['is_enabled'],
         name: featuresData[i]['name'],
         value: featuresData[i]['value'],
       ),

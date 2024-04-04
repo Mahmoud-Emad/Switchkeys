@@ -7,7 +7,8 @@ void environmentsMain() async {
 
   // You can load an environment using it's `key`, it'll offer you all of the environment-related data such as the name, users, organization, project and more.
   var environment = await switchKeys.environments.load(
-    environmentKey: '0246204d-c567-4089-add2-a1155657ecac',
+    // environmentKey: '0246204d-c567-4089-add2-a1155657ecac', // Production
+    environmentKey: 'a502139e-3e21-4c61-ae41-2b467d19ace4', // Development
   );
 
   // final userDevice = SwitchKeyDevice(
@@ -39,11 +40,25 @@ void environmentsMain() async {
   var feature = SwitchKeyUserEnvironmentFeatures(
     name: "Theme",
     value: "dark",
-    isEnabled: false,
+  );
+
+  final userDevice = SwitchKeyDevice(
+    deviceType: SwitchKeyDeviceType.Android,
+    version: "v1.1-0x54s",
+  );
+
+  final user = SwitchKeysEnvironmentsUser(
+    username: "Mahmoud",
+    device: userDevice,
+  );
+
+  await switchKeys.environments.users.addUser(
+    user: user,
+    environment: environment,
   );
 
   await switchKeys.environments.users.addFeature(
-    username: "Adham",
+    username: "Mahmoud",
     feature: feature,
     environment: environment,
   );

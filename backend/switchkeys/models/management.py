@@ -99,11 +99,8 @@ class EnvironmentFeature(TimeStamp):
         null=True,
     )
 
-    name = models.CharField(max_length=20)
+    name = models.CharField(max_length=50)
     value = models.TextField(max_length=750)
-
-    is_enabled = models.BooleanField(default=False)
-    is_default = models.BooleanField(default=False)
 
     def __str__(self) -> str:
         return f"{self.name} | {self.environment.name} | {self.value}"  # Changed to return key instead of name

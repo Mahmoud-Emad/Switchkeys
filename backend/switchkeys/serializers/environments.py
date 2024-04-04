@@ -47,7 +47,6 @@ class ProjectEnvironmentSerializer(ModelSerializer):
 class FeatureSerializer(Serializer):
     name = CharField()
     value = CharField()
-    is_enabled = BooleanField()
     
 class EnvironmentUserFeatureSerializer(Serializer):
     username = CharField()
@@ -109,8 +108,6 @@ class UserFeatureSerialize(ModelSerializer):
             "modified",
             "name",
             "value",
-            "is_enabled",
-            "is_default",
         )
 
         read_only_fields = (

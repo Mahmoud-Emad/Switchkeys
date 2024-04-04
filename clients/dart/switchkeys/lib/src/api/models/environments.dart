@@ -198,8 +198,12 @@ class SwitchKeysEnvironmentUsers {
     required SwitchKeysEnvironmentsUser user,
     required SwitchKeysEnvironmentResponse environment,
   }) async {
-    String apiUrl = SwitchKeysRoutes.getRoute(EndPoints.environmentsKeyAddUser,
-        [environment.environmentKey.toString()]);
+    String apiUrl = SwitchKeysRoutes.getRoute(
+      EndPoints.environmentsKeyAddUser,
+      [
+        environment.environmentKey.toString(),
+      ],
+    );
     String deviceType = (user.device?.deviceType == SwitchKeyDeviceType.Android)
         ? 'Android'
         : 'IPhone';
@@ -225,7 +229,6 @@ class SwitchKeysEnvironmentUsers {
 
       if (response.statusCode < 400) {
         Map<String, dynamic> data = jsonDecode(response.body);
-        print(data["results"]);
         var user = parseEnvironmentUser(data["results"]);
         var isUserInEnvironment = false;
 

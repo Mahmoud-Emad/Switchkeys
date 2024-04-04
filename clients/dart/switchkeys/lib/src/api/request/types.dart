@@ -40,12 +40,10 @@ class SwitchKeyDevice {
 class SwitchKeyUserEnvironmentFeatures {
   String name;
   String value;
-  bool isEnabled;
 
   SwitchKeyUserEnvironmentFeatures({
     required this.name,
     required this.value,
-    required this.isEnabled,
   });
 
   // Method to convert SwitchKeyUserEnvironmentFeatures to a JSON-compatible map
@@ -53,7 +51,6 @@ class SwitchKeyUserEnvironmentFeatures {
     return {
       'name': name,
       'value': value,
-      'is_enabled': isEnabled,
     };
   }
 
@@ -62,7 +59,6 @@ class SwitchKeyUserEnvironmentFeatures {
     return SwitchKeyUserEnvironmentFeatures(
       name: json['name'],
       value: json['value'],
-      isEnabled: json['isEnabled'],
     );
   }
 }

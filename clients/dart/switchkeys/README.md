@@ -8,7 +8,7 @@ To install the SwitchKeys Dart client, add it as a dependency to your Dart proje
 
 ```yaml
 dependencies:
-  switchkeys: ^1.0.3
+  switchkeys: ^1.0.4
 ```
 
 Then, run the following command in your terminal to fetch the package:
@@ -134,6 +134,16 @@ await switchKeys.environments.users.addFeature(
   feature: SwitchKeyUserEnvironmentFeatures(name: "Feature1", value: "Value1"),
   environmentKey: "0246204d-c567-4089-add2-a1155657ecac", // Environment key
 );
+
+// Get the value of a specific feature for a user.
+feature = await switchKeys.environments.users.getFeature(
+  featureName: "debug",
+  username: "Adham",
+  environment: environment,
+);
+
+print("Name: ${feature.name}");
+print("Value: ${feature.value}");
 ```
 
 ---

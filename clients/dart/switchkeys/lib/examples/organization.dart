@@ -13,7 +13,7 @@ void organizationsMain() async {
   final SwitchKeys switchKeys = SwitchKeys();
 
   // Login the user. This step is required if the saved token is expired.
-  await switchKeys.auth.login(email: "ahmed@gmail.com", password: "0000");
+  await switchKeys.auth.login(email: "", password: "");
 
   // Variable to hold organization information
   SwitchKeysOrganizationResponse organization;

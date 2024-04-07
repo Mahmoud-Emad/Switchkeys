@@ -1,0 +1,2 @@
+exec: bash -c "backend/scripts/config.sh"
+oneshot: true

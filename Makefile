@@ -33,3 +33,36 @@ lint:
 
 switchkeys:
 	cd clients/py && python3 -m example
+
+
+# Docker commands
+docker-up:
+ifeq ($(service), backend)
+	docker compose -f ./docker/docker-compose.yml --env-file=./config/.env up backend --build -d
+# else ifeq ($(service), frontend) | docker compose -f ./docker/docker-compose.yml --env-file=./config/.env up frontend --build -d
+else ifeq ($(service), postgres)
+	docker compose -f ./docker/docker-compose.yml --env-file=./config/.env up postgres --build -d
+else
+	docker compose -f ./docker/docker-compose.yml --env-file=./config/.env up --build -d
+endif
+
+docker-down:
+ifeq ($(service), backend)
+	docker compose -f ./docker/docker-compose.yml --env-file=./config/.env down backend
+# else ifeq ($(service), frontend) | docker compose -f ./docker/docker-compose.yml --env-file=./config/.env down frontend
+else ifeq ($(service), postgres)
+	docker compose -f ./docker/docker-compose.yml --env-file=./config/.env down postgres
+else
+	docker compose -f ./docker/docker-compose.yml --env-file=./config/.env down
+endif
+
+docker-logs:
+ifeq ($(service), backend)
+	docker compose -f ./docker/docker-compose.yml --env-file=./config/.env logs -f backend
+# else ifeq ($(service), frontend) | docker compose -f ./docker/docker-compose.yml --env-file=./config/.env logs -f frontend
+else ifeq ($(service), postgres)
+	docker compose -f ./docker/docker-compose.yml --env-file=./config/.env logs -f postgres
+else
+	docker compose -f ./docker/docker-compose.yml --env-file=./config/.env logs -f
+endif
+

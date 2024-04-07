@@ -1,0 +1,3 @@
+exec: bash -c "cd backend && poetry run python3 manage.py runserver [::]:8000"
+after:
+  - backend

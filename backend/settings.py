@@ -64,6 +64,30 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "wsgi.application"
 
+# Database
+# https://docs.djangoproject.com/en/4.1/ref/settings/#databases
+
+if config("ENV") == "production":
+    # use the postgres db for production process.
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": config("DATABASE_NAME"),
+            "USER": config("DATABASE_USER"),
+            "PASSWORD": config("DATABASE_PASSWORD"),
+            "HOST": config("DATABASE_HOST"),
+            "PORT": config("DATABASE_PORT"),
+        }
+    }
+else:
+    # use the sqlite db for development process.
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
+
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
@@ -158,14 +182,26 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = "static/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "backend", "mediafiles")
+MEDIA_URL = "/media/"
+# specify static root
+STATIC_ROOT = os.path.join(BASE_DIR, "backend", "staticfiles")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 AUTH_USER_MODEL = "switchkeys.User"
-STATIC_URL = "static/"
-MEDIA_ROOT = os.path.join(BASE_DIR, "backend", "mediafiles")
-MEDIA_URL = "/media/"
-# specify static root
-STATIC_ROOT = os.path.join(BASE_DIR, "backend", "staticfiles")
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8080",
+    "http://127.0.0.1:8080",
+    f'https://{config("SERVER_DOMAIN_NAME")}',
+    # f'https://{config("CLIENT_DOMAIN_NAME")}',
+]
+
+CSRF_TRUSTED_ORIGINS = [f'https://{config("SERVER_DOMAIN_NAME")}']
+CORS_ORIGIN_ALLOW_ALL = True
+
+APPEND_SLASH = True
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")

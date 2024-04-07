@@ -126,3 +126,7 @@ class RemoveEnvironmentUserSerializer(Serializer):
     """Serializer to remove user to an environment"""
 
     username = CharField()
+
+class GetEnvironmentUserFeatureValueSerializer(Serializer):
+    username = CharField()
+    feature = CharField()

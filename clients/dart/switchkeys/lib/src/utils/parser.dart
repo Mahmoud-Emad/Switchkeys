@@ -125,6 +125,17 @@ List<SwitchKeyUserEnvironmentFeatures> parseFeatures(
   return features;
 }
 
+SwitchKeyUserEnvironmentFeatures parseFeature(
+  Map<String, dynamic> featuresData,
+) {
+  var feature = SwitchKeyUserEnvironmentFeatures(
+    name: featuresData['name'],
+    value: featuresData['value'],
+  );
+
+  return feature;
+}
+
 SwitchKeysEnvironmentsUserResponse parseEnvironmentUser(
   Map<String, dynamic> userData,
 ) {

@@ -11,7 +11,6 @@ from switchkeys.services.environments import (
     get_all_environments,
     get_environment_by_id,
     get_environment_by_key,
-    get_environment_user_by_id,
     get_environment_user_username,
 )
 from switchkeys.models.management import EnvironmentFeature, OrganizationProject, ProjectEnvironment
@@ -19,6 +18,7 @@ from switchkeys.serializers.environments import (
     AddEnvironmentUserSerializer,
     EnvironmentFeatureSerialize,
     EnvironmentUserFeaturesSerializer,
+    GetEnvironmentUserFeatureValueSerializer,
     ProjectEnvironmentSerializer,
     RemoveEnvironmentUserSerializer,
     EnvironmentUserFeatureSerializer,
@@ -49,7 +49,7 @@ class BaseOrganizationProjectEnvironmentApiView(ListAPIView):
         get_queryset = get_all_environments()
         return get_queryset
 
-    def post(self, request: Request) -> Response:
+    def post(self, request: Request) -> CustomResponse:
         """Create new project environment."""
 
         environment = request.data
@@ -95,7 +95,7 @@ class OrganizationProjectEnvironmentApiView(GenericAPIView):
 
         return super(OrganizationProjectEnvironmentApiView, self).get_permissions()
 
-    def get(self, request: Request, environment_id: str) -> Response:
+    def get(self, request: Request, environment_id: str) -> CustomResponse:
         """Get an project environment by its ID."""
         environment = get_environment_by_id(environment_id)
 
@@ -108,7 +108,7 @@ class OrganizationProjectEnvironmentApiView(GenericAPIView):
             message="The project environment found.",
         )
 
-    def put(self, request: Request, environment_id: str) -> Response:
+    def put(self, request: Request, environment_id: str) -> CustomResponse:
         """Update an project environment by its ID."""
         environment = get_environment_by_id(environment_id)
 
@@ -172,7 +172,7 @@ class OrganizationProjectEnvironmentApiView(GenericAPIView):
 class OrganizationProjectEnvironmentKeyApiView(GenericAPIView):
     serializer_class = ProjectEnvironmentSerializer
 
-    def get(self, request: Request, environment_key: UUID):
+    def get(self, request: Request, environment_key: UUID) -> CustomResponse:
         if not is_valid_uuid(environment_key):
             return CustomResponse.bad_request(
                 message=f"{environment_key} is not valid UUID."
@@ -195,7 +195,7 @@ class AddUserEnvironmentFeatureApiView(GenericAPIView):
     serializer_class = EnvironmentUserFeatureSerializer
     permission_classes = [HasEnvironmentKey,]
 
-    def post(self, request: Request, environment_key: UUID):
+    def post(self, request: Request, environment_key: UUID) -> CustomResponse:
         if not is_valid_uuid(environment_key):
             return CustomResponse.bad_request(
                 message=f"{environment_key} is not a valid UUID."
@@ -262,7 +262,7 @@ class AddUserEnvironmentFeaturesApiView(GenericAPIView):
     serializer_class = EnvironmentUserFeaturesSerializer
     permission_classes = [HasEnvironmentKey,]
 
-    def post(self, request: Request, environment_key: UUID):
+    def post(self, request: Request, environment_key: UUID) -> CustomResponse:
         if not is_valid_uuid(environment_key):
             return CustomResponse.bad_request(
                 message=f"{environment_key} is not a valid UUID."
@@ -337,7 +337,7 @@ class BaseEnvironmentFeatureAPIView(ListAPIView):
         get_queryset = get_all_environment_features()
         return get_queryset
 
-    def post(self, request: Request) -> Response:
+    def post(self, request: Request) -> CustomResponse:
         """Create new project environment."""
 
         feature = request.data
@@ -367,7 +367,7 @@ class AddEnvironmentUserAPIView(GenericAPIView):
     serializer_class = AddEnvironmentUserSerializer
     permission_classes = [HasEnvironmentKey]
 
-    def put(self, request: Request, environment_key: str):
+    def put(self, request: Request, environment_key: str) -> CustomResponse:
         environment = get_environment_by_key(environment_key)
         if environment is None:
             return CustomResponse.not_found(
@@ -402,7 +402,7 @@ class RemoveEnvironmentUserAPIView(GenericAPIView):
     serializer_class = RemoveEnvironmentUserSerializer
     permission_classes = [IsAdminUser]
 
-    def put(self, request: Request, environment_key: str):
+    def put(self, request: Request, environment_key: str) -> CustomResponse:
         environment = get_environment_by_key(environment_key)
         if environment is None:
             return CustomResponse.not_found(
@@ -429,5 +429,39 @@ class RemoveEnvironmentUserAPIView(GenericAPIView):
         )
 
 
-class EnvironmentFeatureAPIView(GenericAPIView):
-    pass
+class GetUserFeatureValueAPIView(GenericAPIView):
+    serializer_class = GetEnvironmentUserFeatureValueSerializer
+    permission_classes = [HasEnvironmentKey]
+
+    def get(self, request: Request, environment_key: str) -> CustomResponse:
+        """
+            #### Get the environment user feature based on the username.
+            - Required `feature_name` as a query param.
+            - Required `username` as a query param.
+        """
+
+        feature_name = request.query_params.get("feature_name")
+        username = request.query_params.get("username")
+        environment = get_environment_by_key(environment_key)
+
+        if feature_name is None:
+            return CustomResponse.bad_request(message="You have to send the `feature_name` as a query param.")
+
+        if username is None:
+            return CustomResponse.bad_request(message="You have to send the `username` as a query param.")
+
+        if environment is None:
+            return CustomResponse.not_found(
+                message="The project environment does not exist."
+            )
+
+        user = get_environment_user_username(username)
+        if user is None:
+            return CustomResponse.not_found(message="The user is not found.")
+
+        feature = user.features.filter(name=feature_name).first()
+        if feature is None:
+            return CustomResponse.not_found(message="The user feature is not found.")
+
+        data = UserFeatureSerialize(feature).data
+        return CustomResponse.success(message="The user feature is found successfully.", data=data)

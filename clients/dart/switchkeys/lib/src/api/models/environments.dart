@@ -434,10 +434,46 @@ class SwitchKeysEnvironmentUsers {
     }
   }
 
+  Future<SwitchKeyUserEnvironmentFeatures> getFeature({
+    required String username,
+    required String featureName,
+    required SwitchKeysEnvironmentResponse environment,
+  }) async {
+    String apiUrl = SwitchKeysRoutes.getRoute(
+      EndPoints.environmentUserGetFeature,
+      [environment.environmentKey.toString(), featureName, username],
+    );
+
+    Map<String, String> headers = {
+      "Content-Type": "application/json",
+    };
+
+    try {
+      http.Response response = await http.get(
+        Uri.parse(apiUrl),
+        headers: headers,
+      );
+
+      if (isResponseSuccessful(response)) {
+        Map<String, dynamic> data = jsonDecode(response.body);
+        return parseFeature(data["results"]);
+      } else {
+        throw ResponseError(handleErrorResponseMessage(response));
+      }
+    } catch (e) {
+      throw ResponseError(e.toString());
+    }
+  }
+
+  // featureIsEnabled({
+  //   required String username,
+  //   required String featureName,
+  // }) async {}
+
   String handleErrorResponseMessage(http.Response response) {
     Map<String, dynamic> data = jsonDecode(response.body);
     String message = data['message'] ?? data['detail'];
-    return "Failed to set user feature due: $message ${data['error'] ?? ''}";
+    return "Failed due: $message ${data['error'] ?? ''}";
   }
 
   bool isResponseSuccessful(http.Response response) {

@@ -2,6 +2,7 @@ from django.urls import path
 
 from switchkeys.views.environments import (
     BaseOrganizationProjectEnvironmentApiView,
+    GetUserFeatureValueAPIView,
     OrganizationProjectEnvironmentApiView,
     OrganizationProjectEnvironmentKeyApiView,
     AddUserEnvironmentFeatureApiView,
@@ -31,5 +32,9 @@ urlpatterns = [
     path(
         "key/<str:environment_key>/user/add-features/",
         AddUserEnvironmentFeaturesApiView.as_view(),
+    ),
+    path(
+        "key/<str:environment_key>/user/get-feature/",
+        GetUserFeatureValueAPIView.as_view(),
     ),
 ]

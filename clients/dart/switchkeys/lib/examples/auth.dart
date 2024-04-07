@@ -15,7 +15,7 @@ void authMain() async {
   // Now you can use the auth instance to make API calls
   // Logging in an existing user
   await switchKeys.auth
-      .login(email: "hamada__2020@gmail.com", password: "hamada")
+      .login(email: "email@example.com", password: "password")
       .then((user) => print("Logged in successfully: ${user.email}"))
       .catchError((e) => print("Error logging in: $e"));
 
@@ -24,8 +24,8 @@ void authMain() async {
       .register(
         firstName: "Ahmed",
         lastName: "Zain",
-        email: "hamada__2020@gmail.com",
-        password: "hamada",
+        email: "email@example.com",
+        password: "password",
         userType: UserTypeEnum.administrator,
       )
       .then((user) => print("User registered successfully: ${user.email}"))

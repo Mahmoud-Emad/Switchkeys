@@ -24,6 +24,7 @@ enum EndPoints {
   environmentsId,
   environmentsKeyAddUser,
   environmentsKeyRemoveUser,
+  environmentUserAddFeature,
   environmentUserAddFeatures,
 
   projectsId,
@@ -70,8 +71,10 @@ class SwitchKeysRoutes {
         return "${baseUrl}environments/key/${args![0]}/add-user/";
       case EndPoints.environmentsKeyRemoveUser:
         return "${baseUrl}environments/key/${args![0]}/remove-user/";
-      case EndPoints.environmentUserAddFeatures:
+      case EndPoints.environmentUserAddFeature:
         return "${baseUrl}environments/key/${args![0]}/user/add-feature/";
+      case EndPoints.environmentUserAddFeatures:
+        return "${baseUrl}environments/key/${args![0]}/user/add-features/";
       case EndPoints.environmentsSet:
         return "${baseUrl}environments/key/${args![0]}/user/set/?user_id=${args[1]}";
       case EndPoints.environmentsId:

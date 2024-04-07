@@ -18,6 +18,7 @@ from switchkeys.models.management import EnvironmentFeature, OrganizationProject
 from switchkeys.serializers.environments import (
     AddEnvironmentUserSerializer,
     EnvironmentFeatureSerialize,
+    EnvironmentUserFeaturesSerializer,
     ProjectEnvironmentSerializer,
     RemoveEnvironmentUserSerializer,
     EnvironmentUserFeatureSerializer,
@@ -190,7 +191,7 @@ class OrganizationProjectEnvironmentKeyApiView(GenericAPIView):
         )
 
 
-class SetEnvironmentKeyApiView(GenericAPIView):
+class AddUserEnvironmentFeatureApiView(GenericAPIView):
     serializer_class = EnvironmentUserFeatureSerializer
     permission_classes = [HasEnvironmentKey,]
 
@@ -256,6 +257,67 @@ class SetEnvironmentKeyApiView(GenericAPIView):
             message="Please make sure that you entered valid data.",
             error=serializer.errors,
         )
+
+class AddUserEnvironmentFeaturesApiView(GenericAPIView):
+    serializer_class = EnvironmentUserFeaturesSerializer
+    permission_classes = [HasEnvironmentKey,]
+
+    def post(self, request: Request, environment_key: UUID):
+        if not is_valid_uuid(environment_key):
+            return CustomResponse.bad_request(
+                message=f"{environment_key} is not a valid UUID."
+            )
+
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            environment = get_environment_by_key(environment_key)
+            if not environment:
+                return CustomResponse.not_found(
+                    message="The project environment does not exist."
+                )
+
+            username = serializer.validated_data.get("username")
+            features = serializer.validated_data.get("features")
+
+            environment_user = get_environment_user_username(username)
+            if not environment_user:
+                return CustomResponse.not_found(
+                    message="The environment user does not exist."
+                )
+                
+            if not environment_user in environment.users.all():
+                return CustomResponse.bad_request(
+                    message=f"User `{environment_user.username}` is not on the `{environment.name}` environment, try to add the user first to the environment."
+                )
+
+            for feature in features:
+                # Remove any existing feature with the same name to avoid duplicates.
+                existing_feature = environment_user.features.filter(name=str(feature.get("name")).lower()).first()
+                if existing_feature:
+                    environment_user.features.remove(existing_feature)
+
+                # Check if the feature already exists in the environment.
+                environment_feature = EnvironmentFeature.objects.filter(
+                    environment=environment,
+                    name=str(feature.get("name")).lower(),
+                    value=feature.get("value"),
+                ).first()
+
+                if not environment_feature:
+                    environment_feature = EnvironmentFeature.objects.create(
+                        environment=environment,
+                        name=str(feature.get("name")).lower(),
+                        value=feature.get("value"),
+                    )
+
+                # Add the feature to the user.
+                environment_user.features.add(environment_feature)
+                environment_user.save()
+
+            data = UserFeatureSerialize(environment_user.features.all(), many=True).data
+
+        return CustomResponse.success(message="User features updated.", data=data)
+
 
 class BaseEnvironmentFeatureAPIView(ListAPIView):
 

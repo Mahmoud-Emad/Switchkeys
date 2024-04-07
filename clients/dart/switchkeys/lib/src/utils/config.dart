@@ -16,10 +16,10 @@ class SwitchKeysTokensConfig {
 
   /// Writes the access and refresh tokens to the config file.
   ///
-  /// This method creates or updates the 'config.ini' file in the current directory.
-  /// It adds a section named 'TOKENS' to the config file and sets the access
+  /// - This method creates or updates the 'config.ini' file in the current directory.
+  /// - It adds a section named 'TOKENS' to the config file and sets the access
   /// and refresh tokens under this section.
-  /// Returns a string representation of the config after writing.
+  /// - Returns a string representation of the config after writing.
   TokensType writeTokens(
       {required String accessToken, required String refreshToken}) {
     config.addSection(sectionName);

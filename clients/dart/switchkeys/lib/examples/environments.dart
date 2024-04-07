@@ -7,8 +7,8 @@ void environmentsMain() async {
 
   // You can load an environment using it's `key`, it'll offer you all of the environment-related data such as the name, users, organization, project and more.
   var environment = await switchKeys.environments.load(
-    // environmentKey: '0246204d-c567-4089-add2-a1155657ecac', // Production
-    environmentKey: 'a502139e-3e21-4c61-ae41-2b467d19ace4', // Development
+    environmentKey: '0246204d-c567-4089-add2-a1155657ecac', // Production
+    // environmentKey: 'a502139e-3e21-4c61-ae41-2b467d19ace4', // Development
   );
 
   // final userDevice = SwitchKeyDevice(
@@ -48,7 +48,7 @@ void environmentsMain() async {
   );
 
   final user = SwitchKeysEnvironmentsUser(
-    username: "Mahmoud",
+    username: "Adham",
     device: userDevice,
   );
 
@@ -61,5 +61,28 @@ void environmentsMain() async {
     username: "Mahmoud",
     feature: feature,
     environment: environment,
+  );
+
+  // Use the `bulkCreateFeature` function to create more than one feature to user.
+  // features:
+  List<SwitchKeyUserEnvironmentFeatures> features = [];
+  features.add(
+    SwitchKeyUserEnvironmentFeatures(
+      name: "version",
+      value: "v0.2",
+    ),
+  );
+
+  features.add(
+    SwitchKeyUserEnvironmentFeatures(
+      name: "debug",
+      value: "true",
+    ),
+  );
+
+  await switchKeys.environments.users.bulkCreateFeature(
+    features: features,
+    environment: environment, // Send the environment as it's important.
+    username: 'Adham', // Which user the features will be added.
   );
 }

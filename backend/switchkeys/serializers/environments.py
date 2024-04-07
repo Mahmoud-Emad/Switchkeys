@@ -5,6 +5,7 @@ from rest_framework.serializers import (
     CharField,
     IntegerField,
     BooleanField,
+    ListField
 )
 
 from switchkeys.models.users import ProjectEnvironmentUser
@@ -52,24 +53,9 @@ class EnvironmentUserFeatureSerializer(Serializer):
     username = CharField()
     feature = FeatureSerializer()
 
-    # class Meta:
-    #     model = EnvironmentFeature
-    #     fields = [
-    #         "id",
-    #         "created",
-    #         "modified",
-    #         "name",
-    #         "value",
-    #         "is_enabled",
-    #         "is_default",
-    #         "username",
-    #     ]
-
-    #     read_only_fields = (
-    #         "id",
-    #         "created",
-    #         "modified",
-    #     )
+class EnvironmentUserFeaturesSerializer(Serializer):
+    username = CharField()
+    features = ListField(child=FeatureSerializer())
 
 class EnvironmentFeatureSerialize(ModelSerializer):
 

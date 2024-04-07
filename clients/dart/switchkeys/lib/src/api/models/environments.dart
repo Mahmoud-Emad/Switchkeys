@@ -1,10 +1,10 @@
+import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:switchkeys/src/api/request/types.dart';
 import 'package:switchkeys/src/api/response/types.dart';
 import 'package:switchkeys/src/api/routes.dart';
 import 'package:switchkeys/src/core/exceptions.dart';
 import 'package:switchkeys/src/utils/config.dart';
-import 'package:http/http.dart' as http;
 import 'package:switchkeys/src/utils/parser.dart';
 
 /// Class for managing SwitchKeys environments.
@@ -186,14 +186,76 @@ class SwitchKeysEnvironments {
   }
 }
 
+/// A class that provides methods for managing users in SwitchKeys environments.
+///
+/// This class allows you to add and remove users from environments, as well as add and remove features for a specific user in an environment.
+/// It also provides methods for handling error responses from API calls.
+///
+/// Example usage:
+/// ```dart
+/// SwitchKeysEnvironmentUsers users = SwitchKeysEnvironmentUsers();
+///
+/// // Add a user to an environment
+/// SwitchKeysEnvironmentsUserResponse addedUser = await users.addUser(
+///   user: SwitchKeysEnvironmentsUser(
+///     username: 'john_doe',
+///     device: SwitchKeyDevice(
+///       deviceType: SwitchKeyDeviceType.Android,
+///       version: '10.0',
+///     ),
+///   ),
+///   environment: SwitchKeysEnvironmentResponse(
+///     environmentKey: 'env123',
+///     users: [],
+///   ),
+/// );
+///
+/// // Remove a user from an environment
+/// SwitchKeysEnvironmentsUserResponse removedUser = await users.removeUser(
+///   user: addedUser,
+///   environment: SwitchKeysEnvironmentResponse(
+///     environmentKey: 'env123',
+///     users: [],
+///   ),
+/// );
+///
+/// // Add a feature for a user in an environment
+/// List<SwitchKeyUserEnvironmentFeatures> addedFeatures = await users.addFeature(
+///   username: 'john_doe',
+///   feature: SwitchKeyUserEnvironmentFeatures(
+///     name: 'feature1',
+///     value: true,
+///   ),
+///   environment: SwitchKeysEnvironmentResponse(
+///     environmentKey: 'env123',
+///     users: [],
+///   ),
+/// );
+///
+/// // Bulk create features for a user in an environment
+/// List<SwitchKeyUserEnvironmentFeatures> bulkCreatedFeatures = await users.bulkCreateFeature(
+///   username: 'john_doe',
+///   features: [
+///     SwitchKeyUserEnvironmentFeatures(
+///       name: 'feature1',
+///       value: true,
+///     ),
+///     SwitchKeyUserEnvironmentFeatures(
+///       name: 'feature2',
+///       value: false,
+///     ),
+///   ],
+///   environment: SwitchKeysEnvironmentResponse(
+///     environmentKey: 'env123',
+///     users: [],
+///   ),
+/// );
+/// ```
 class SwitchKeysEnvironmentUsers {
   final config = SwitchKeysTokensConfig();
 
   SwitchKeysEnvironmentUsers();
 
-  /// Adds a user to an environment.
-  ///
-  /// Returns a [SwitchKeysEnvironmentsUserResponse] containing information about the added user.
   Future<SwitchKeysEnvironmentsUserResponse> addUser({
     required SwitchKeysEnvironmentsUser user,
     required SwitchKeysEnvironmentResponse environment,
@@ -226,7 +288,7 @@ class SwitchKeysEnvironmentUsers {
         body: jsonEncode(body),
       );
 
-      if (response.statusCode < 400) {
+      if (isResponseSuccessful(response)) {
         Map<String, dynamic> data = jsonDecode(response.body);
         var user = parseEnvironmentUser(data["results"]);
         var isUserInEnvironment = false;
@@ -243,20 +305,12 @@ class SwitchKeysEnvironmentUsers {
 
         return user;
       } else {
-        Map<String, dynamic> data0 = jsonDecode(response.body);
-        String message = data0['message'] ?? data0['detail'];
-        throw ResponseError(
-          "Failed to add user due: $message ${data0['error'] ?? ''}",
-        );
+        throw ResponseError(handleErrorResponseMessage(response));
       }
     } catch (e) {
       throw ResponseError(e.toString());
     }
   }
-
-  /// removes a user from an environment.
-  ///
-  /// Returns a [SwitchKeysEnvironmentsUserResponse] containing information about the added user.
 
   Future<SwitchKeysEnvironmentsUserResponse> removeUser({
     required SwitchKeysEnvironmentsUser user,
@@ -284,32 +338,23 @@ class SwitchKeysEnvironmentUsers {
         body: jsonEncode(body),
       );
 
-      if (response.statusCode < 400) {
+      if (isResponseSuccessful(response)) {
         Map<String, dynamic> data = jsonDecode(response.body);
         var user = parseEnvironmentUser(data["results"]);
         for (var i = 0; i < environment.users.length; i++) {
           if (environment.users[i].id == user.id) {
-            // Remove the user from the environment.users list
             environment.users.removeAt(i);
             break;
           }
         }
         return user;
       } else {
-        Map<String, dynamic> data0 = jsonDecode(response.body);
-        String message = data0['message'] ?? data0['detail'];
-        throw ResponseError(
-          "Failed to add user due: $message ${data0['error'] ?? ''}",
-        );
+        throw ResponseError(handleErrorResponseMessage(response));
       }
     } catch (e) {
       throw ResponseError(e.toString());
     }
   }
-
-  /// Add user feature on an environment, in case there .
-  ///
-  /// Returns a [SwitchKeysEnvironmentsUserFeatureResponse] containing information about the added user feature.
 
   Future<List<SwitchKeyUserEnvironmentFeatures>> addFeature({
     required String username,
@@ -317,7 +362,7 @@ class SwitchKeysEnvironmentUsers {
     required SwitchKeysEnvironmentResponse environment,
   }) async {
     String apiUrl = SwitchKeysRoutes.getRoute(
-      EndPoints.environmentUserAddFeatures,
+      EndPoints.environmentUserAddFeature,
       [
         environment.environmentKey.toString(),
       ],
@@ -339,18 +384,63 @@ class SwitchKeysEnvironmentUsers {
         body: jsonEncode(body),
       );
 
-      if (response.statusCode < 400) {
+      if (isResponseSuccessful(response)) {
         Map<String, dynamic> data = jsonDecode(response.body);
         return parseFeatures(data["results"]);
       } else {
-        Map<String, dynamic> data0 = jsonDecode(response.body);
-        String message = data0['message'] ?? data0['detail'];
-        throw ResponseError(
-          "Failed to set user feature due: $message ${data0['error'] ?? ''}",
-        );
+        throw ResponseError(handleErrorResponseMessage(response));
       }
     } catch (e) {
       throw ResponseError(e.toString());
     }
+  }
+
+  Future<List<SwitchKeyUserEnvironmentFeatures>> bulkCreateFeature({
+    required String username,
+    required List<SwitchKeyUserEnvironmentFeatures> features,
+    required SwitchKeysEnvironmentResponse environment,
+  }) async {
+    String apiUrl = SwitchKeysRoutes.getRoute(
+      EndPoints.environmentUserAddFeatures,
+      [
+        environment.environmentKey.toString(),
+      ],
+    );
+
+    Map<String, dynamic> body = {
+      "username": username,
+      "features": features,
+    };
+
+    Map<String, String> headers = {
+      "Content-Type": "application/json",
+    };
+
+    try {
+      http.Response response = await http.post(
+        Uri.parse(apiUrl),
+        headers: headers,
+        body: jsonEncode(body),
+      );
+
+      if (isResponseSuccessful(response)) {
+        Map<String, dynamic> data = jsonDecode(response.body);
+        return parseFeatures(data["results"]);
+      } else {
+        throw ResponseError(handleErrorResponseMessage(response));
+      }
+    } catch (e) {
+      throw ResponseError(e.toString());
+    }
+  }
+
+  String handleErrorResponseMessage(http.Response response) {
+    Map<String, dynamic> data = jsonDecode(response.body);
+    String message = data['message'] ?? data['detail'];
+    return "Failed to set user feature due: $message ${data['error'] ?? ''}";
+  }
+
+  bool isResponseSuccessful(http.Response response) {
+    return response.statusCode < 400;
   }
 }

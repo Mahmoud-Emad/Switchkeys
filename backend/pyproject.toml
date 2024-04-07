@@ -19,6 +19,7 @@ black = "^24.3.0"
 flake8 = "^7.0.0"
 djangorestframework-simplejwt = "^5.3.1"
 django-filter = "^24.2"
+tzdata = "^2024.1"
 
 
 [build-system]

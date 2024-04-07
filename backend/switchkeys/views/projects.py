@@ -3,10 +3,13 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 from switchkeys.services.organizations import get_organization_by_id
-from switchkeys.models.management import Organization
 from switchkeys.api.permissions import UserIsAuthenticated, IsAdminUser
 from switchkeys.serializers.projects import OrganizationProjectSerializer
-from switchkeys.services.projects import get_all_projects, get_project_by_id
+from switchkeys.services.projects import (
+    check_project_name,
+    get_all_projects,
+    get_project_by_id,
+)
 from switchkeys.api.custom_response import CustomResponse
 
 
@@ -38,16 +41,22 @@ class BaseOrganizationProjectApiView(ListAPIView):
         serializer = self.get_serializer(data=project)
         if serializer.is_valid():
             organization_id: int = serializer.validated_data.get("organization_id")
+            project_name: str = serializer.validated_data.get("name")
             organization = get_organization_by_id(str(organization_id))
 
             if organization is None:
-                return CustomResponse.not_found(
-                    message="Organization not found."
-                )
+                return CustomResponse.not_found(message="Organization not found.")
 
             if request.user.id != organization.owner.id:
                 return CustomResponse.unauthorized(
                     message="You do not have permission to access this resource because you are not the creator of this organization.",
+                )
+
+            # Check if there are another projects with the same name.
+            created = check_project_name(project_name, organization_id)
+            if created:
+                return CustomResponse.bad_request(
+                    message="Another project with the same name has already been created on this organization."
                 )
 
             serializer.save(organization=organization)
@@ -103,7 +112,19 @@ class OrganizationProjectApiView(GenericAPIView):
         data = request.data
         serializer = self.get_serializer(project, data=data)
         if serializer.is_valid():
-            serializer.save()
+            organization_id: int = serializer.validated_data.get("organization_id")
+            organization = get_organization_by_id(str(organization_id))
+
+            if organization is None:
+                return CustomResponse.not_found(message="Organization not found.")
+
+            if request.user.id != organization.owner.id:
+                return CustomResponse.unauthorized(
+                    message="You do not have permission to access this resource because you are not the creator of this organization.",
+                )
+
+            serializer.save(organization=organization)
+
             return CustomResponse.success(
                 data=serializer.data,
                 message="Organization project has been updated successfully.",

@@ -2,22 +2,39 @@ from django.urls import path
 
 from switchkeys.views.environments import (
     BaseOrganizationProjectEnvironmentApiView,
+    GetUserFeatureValueAPIView,
     OrganizationProjectEnvironmentApiView,
     OrganizationProjectEnvironmentKeyApiView,
-    SetEnvironmentKeyApiView,
-    BaseEnvironmentFeatureAPIView
+    AddUserEnvironmentFeatureApiView,
+    AddUserEnvironmentFeaturesApiView,
+    BaseEnvironmentFeatureAPIView,
+    AddEnvironmentUserAPIView,
+    RemoveEnvironmentUserAPIView,
 )
 
 urlpatterns = [
     path("", BaseOrganizationProjectEnvironmentApiView.as_view()),
-    path("<str:environments_id>/", OrganizationProjectEnvironmentApiView.as_view()),
+    path("<str:environment_id>/", OrganizationProjectEnvironmentApiView.as_view()),
     path(
         "key/<str:environment_key>/", OrganizationProjectEnvironmentKeyApiView.as_view()
     ),
+    path("key/<str:environment_key>/add-user/", AddEnvironmentUserAPIView.as_view()),
     path(
-        "key/<str:environment_key>/user/set/", SetEnvironmentKeyApiView.as_view()
+        "key/<str:environment_key>/remove-user/", RemoveEnvironmentUserAPIView.as_view()
     ),
     path(
         "key/<str:environment_key>/features/", BaseEnvironmentFeatureAPIView.as_view()
+    ),
+    path(
+        "key/<str:environment_key>/user/add-feature/",
+        AddUserEnvironmentFeatureApiView.as_view(),
+    ),
+    path(
+        "key/<str:environment_key>/user/add-features/",
+        AddUserEnvironmentFeaturesApiView.as_view(),
+    ),
+    path(
+        "key/<str:environment_key>/user/get-feature/",
+        GetUserFeatureValueAPIView.as_view(),
     ),
 ]

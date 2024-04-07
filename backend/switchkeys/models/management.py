@@ -16,7 +16,7 @@ class Organization(TimeStamp):
     )
 
     def __str__(self) -> str:
-        return f"{self.name}"
+        return f"{self.owner} | {self.name}"
 
     class Meta:
         verbose_name = "Organization"
@@ -93,28 +93,23 @@ class ProjectEnvironment(TimeStamp):
 class EnvironmentFeature(TimeStamp):
     environment = models.ForeignKey(
         ProjectEnvironment,
-        related_name="environment_keys",
+        related_name="environment_features",
         on_delete=models.CASCADE,
         blank=True,
         null=True,
     )
-    key = models.CharField(max_length=20)
-    value = models.TextField(max_length=750)
-    tag = models.CharField(max_length=20, null=True, blank=True)
-    tag_color = models.CharField(max_length=25, null=True, blank=True)
 
-    description = models.TextField(max_length=750, null=True, blank=True)
-    enabled_by_default = models.BooleanField(default=False)
-    is_default = models.BooleanField(default=False)
-    last_used = models.DateTimeField(auto_now=True)
+    name = models.CharField(max_length=50)
+    value = models.TextField(max_length=750)
 
     def __str__(self) -> str:
-        return f"{self.key} | {self.environment.name} :: Project = {self.environment.project.name}"  # Changed to return key instead of name
+        return f"{self.name} | {self.environment.name} | {self.value}"  # Changed to return key instead of name
 
     class Meta:
         verbose_name = "Environment Feature"
         verbose_name_plural = "Environment Features"
         unique_together = (
             "environment",
-            "key",
+            "name",
+            "value",
         )

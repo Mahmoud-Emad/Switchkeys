@@ -1,6 +1,6 @@
 from typing import List
 from switchkeys.models.users import User
-from switchkeys.models.management import Organization
+from switchkeys.models.management import Organization, OrganizationProject
 
 
 def get_all_organization() -> List[Organization]:
@@ -17,10 +17,25 @@ def get_organization_by_id(id: str) -> Organization:
     except Organization.DoesNotExist:
         return None
 
+
 def check_organization_name(user: User, name: str):
     """Check if there is an organization created by the requested user with the same name"""
-    organizations = Organization.objects.filter(
-        name = name,
-        owner__id = user.id
-    )
+    organizations = Organization.objects.filter(name=name, owner__id=user.id)
     return len(organizations) > 0
+
+
+def get_user_organization_by_name(user: User, name: str):
+    """Get the organization based on the user and the organization name"""
+    try:
+        organization = Organization.objects.get(
+            owner__id=user.id,
+            name=name,
+        )
+        return organization
+    except Organization.DoesNotExist:
+        return None
+
+
+def get_organization_projects(organization_id: str) -> List[OrganizationProject]:
+    """Filter all projects and get only the projects that has the same organization ID."""
+    return OrganizationProject.objects.filter(organization__id=organization_id)

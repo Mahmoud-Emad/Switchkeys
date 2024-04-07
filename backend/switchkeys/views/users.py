@@ -19,7 +19,7 @@ class BaseGeneralUserAPIView(ListAPIView, GenericAPIView):
         return query_set
 
 
-class GeneralUserAPIView(ListAPIView, GenericAPIView):
+class GeneralUserAPIView(GenericAPIView):
     permission_classes = [UserIsAuthenticated]
     serializer_class = OrganizationUserSerializer
 

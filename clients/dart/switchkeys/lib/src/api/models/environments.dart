@@ -333,7 +333,7 @@ class SwitchKeysEnvironmentUsers {
 
     Map<String, String> headers = {
       "Content-Type": "application/json",
-      "Authorization": "Bearer ${tokens.accessToken}",
+      // "Authorization": "Bearer ${tokens.accessToken}",
     };
 
     try {
@@ -350,7 +350,7 @@ class SwitchKeysEnvironmentUsers {
         Map<String, dynamic> data0 = jsonDecode(response.body);
         String message = data0['message'] ?? data0['detail'];
         throw ResponseError(
-          "Failed to add user due: $message ${data0['error'] ?? ''}",
+          "Failed to set user feature due: $message ${data0['error'] ?? ''}",
         );
       }
     } catch (e) {

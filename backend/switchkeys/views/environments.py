@@ -23,7 +23,7 @@ from switchkeys.serializers.environments import (
     EnvironmentUserFeatureSerializer,
     UserFeatureSerialize,
 )
-from switchkeys.api.permissions import UserIsAuthenticated, IsAdminUser
+from switchkeys.api.permissions import UserIsAuthenticated, IsAdminUser, HasEnvironmentKey
 from switchkeys.api.custom_response import CustomResponse
 
 
@@ -192,6 +192,7 @@ class OrganizationProjectEnvironmentKeyApiView(GenericAPIView):
 
 class SetEnvironmentKeyApiView(GenericAPIView):
     serializer_class = EnvironmentUserFeatureSerializer
+    permission_classes = [HasEnvironmentKey,]
 
     def post(self, request: Request, environment_key: UUID):
         if not is_valid_uuid(environment_key):

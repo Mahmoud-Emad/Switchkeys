@@ -52,10 +52,10 @@ void environmentsMain() async {
     device: userDevice,
   );
 
-  // await switchKeys.environments.users.addUser(
-  //   user: user,
-  //   environment: environment,
-  // );
+  await switchKeys.environments.users.addUser(
+    user: user,
+    environment: environment,
+  );
 
   await switchKeys.environments.users.addFeature(
     username: "Mahmoud",

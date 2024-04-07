@@ -214,10 +214,9 @@ class SwitchKeysEnvironmentUsers {
         "version": user.device?.version,
       },
     };
-    var tokens = config.readTokens();
+
     Map<String, String> headers = {
       "Content-Type": "application/json",
-      "Authorization": "Bearer ${tokens.accessToken}",
     };
 
     try {
@@ -329,11 +328,8 @@ class SwitchKeysEnvironmentUsers {
       "feature": feature.toJson(),
     };
 
-    var tokens = config.readTokens();
-
     Map<String, String> headers = {
       "Content-Type": "application/json",
-      // "Authorization": "Bearer ${tokens.accessToken}",
     };
 
     try {
@@ -357,54 +353,4 @@ class SwitchKeysEnvironmentUsers {
       throw ResponseError(e.toString());
     }
   }
-
-  // addFeatures({
-  //   required List<SwitchKeyUserEnvironmentFeatures> features,
-  //   required String username,
-  // }) async {
-  //   String apiUrl = SwitchKeysRoutes.getRoute(
-  //     EndPoints.environmentUserAddFeatures,
-  //   );
-
-  //   var jsonFeatures = [];
-  //   for (var i = 0; i < features.length; i++) {
-  //     jsonFeatures.add({
-  //       "name": features[i].name,
-  //       "value": features[i].value,
-  //       "is_enabled": features[i].isEnabled,
-  //     });
-  //   }
-
-  //   Map<String, dynamic> body = {
-  //     "username": username,
-  //     "features": jsonFeatures
-  //   };
-
-  //   var tokens = config.readTokens();
-  //   Map<String, String> headers = {
-  //     "Content-Type": "application/json",
-  //     "Authorization": "Bearer ${tokens.accessToken}",
-  //   };
-
-  //   try {
-  //     http.Response response = await http.put(
-  //       Uri.parse(apiUrl),
-  //       headers: headers,
-  //       body: jsonEncode(body),
-  //     );
-
-  //     if (response.statusCode < 400) {
-  //       Map<String, dynamic> data = jsonDecode(response.body);
-  //       return parseEnvironmentUser(data["results"]);
-  //     } else {
-  //       Map<String, dynamic> data0 = jsonDecode(response.body);
-  //       String message = data0['message'] ?? data0['detail'];
-  //       throw ResponseError(
-  //         "Failed to add user due: $message ${data0['error'] ?? ''}",
-  //       );
-  //     }
-  //   } catch (e) {
-  //     throw ResponseError(e.toString());
-  //   }
-  // }
 }

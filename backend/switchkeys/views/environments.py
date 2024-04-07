@@ -303,7 +303,7 @@ class BaseEnvironmentFeatureAPIView(ListAPIView):
 
 class AddEnvironmentUserAPIView(GenericAPIView):
     serializer_class = AddEnvironmentUserSerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [HasEnvironmentKey]
 
     def put(self, request: Request, environment_key: str):
         environment = get_environment_by_key(environment_key)

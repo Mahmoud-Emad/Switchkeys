@@ -24,7 +24,7 @@ environmentsMain();
 
 ### Operations
 
-1. **Load an Environment**: 
+1. **Load an Environment**:
    - Loads an environment using its key.
 
 2. **Add a User to the Environment**:

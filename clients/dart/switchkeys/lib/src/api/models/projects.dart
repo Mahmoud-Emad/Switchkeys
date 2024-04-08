@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:switchkeys/src/utils/parser.dart';
 
 class SwitchKeysProjects {
-  final config = SwitchKeysTokensConfig();
+  final _config = SwitchKeysTokensConfig();
   SwitchKeysProjects();
 
   Future<SwitchKeysProjectResponse> create(
@@ -22,7 +22,7 @@ class SwitchKeysProjects {
     };
 
     // Get the tokens
-    var tokens = config.readTokens();
+    var tokens = _config.readTokens();
 
     // Headers
     Map<String, String> headers = {
@@ -95,7 +95,7 @@ class SwitchKeysProjects {
     };
 
     // Get the tokens
-    var tokens = config.readTokens();
+    var tokens = _config.readTokens();
 
     // Headers
     Map<String, String> headers = {
@@ -129,7 +129,7 @@ class SwitchKeysProjects {
         SwitchKeysRoutes.getRoute(EndPoints.projectsId, [projectID.toString()]);
 
     // Get the tokens
-    var tokens = config.readTokens();
+    var tokens = _config.readTokens();
 
     // Headers
     Map<String, String> headers = {

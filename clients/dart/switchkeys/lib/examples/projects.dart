@@ -11,9 +11,11 @@ void projectsMain() async {
 
   try {
     // Get the organization where the project will be created
-    final SwitchKeysOrganizationResponse organization = await switchKeys
-        .organizations
-        .getByName(organizationName: 'Cloud for students');
+    final SwitchKeysOrganizationResponse organization =
+        await switchKeys.organizations.getByName(
+      organizationName: 'Cloud for students',
+    );
+
     print("Organization name: ${organization.name}");
     print("Organization ID: ${organization.id}");
 
@@ -23,21 +25,27 @@ void projectsMain() async {
     // print("Project name: ${project.name}");
 
     // Get an existing project by its ID
-    final SwitchKeysProjectResponse project =
-        await switchKeys.projects.getByID(projectID: 2);
+    final SwitchKeysProjectResponse project = await switchKeys.projects.getByID(
+      projectID: 2,
+    );
+
     print("Project name: ${project.name}");
 
     // Update the existing project with new data
     // The `organizationID` can be changed to another organization or remain the same.
     final updatedProject = await switchKeys.projects.update(
-        name: 'TFGrid Hub',
-        organizationID: organization.id,
-        projectID: project.id);
+      name: 'TFGrid Hub',
+      organizationID: organization.id,
+      projectID: project.id,
+    );
+
     print("Updated project name: ${updatedProject.name}");
 
     // Delete the project
-    final isDeleted =
-        await switchKeys.projects.delete(projectID: updatedProject.id);
+    final isDeleted = await switchKeys.projects.delete(
+      projectID: updatedProject.id,
+    );
+
     print("Is the project deleted: $isDeleted");
   } catch (e) {
     // Handle any errors that may occur during project operations.

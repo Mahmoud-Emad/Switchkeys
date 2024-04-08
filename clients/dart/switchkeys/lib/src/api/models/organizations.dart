@@ -8,7 +8,7 @@ import 'package:switchkeys/src/utils/config.dart';
 import 'package:switchkeys/src/utils/parser.dart';
 
 class SwitchKeysOrganizations {
-  final config = SwitchKeysTokensConfig();
+  final _config = SwitchKeysTokensConfig();
   SwitchKeysOrganizations();
 
   Future<SwitchKeysOrganizationResponse> create(
@@ -22,7 +22,7 @@ class SwitchKeysOrganizations {
     };
 
     // Get the tokens
-    var tokens = config.readTokens();
+    var tokens = _config.readTokens();
 
     // Headers
     Map<String, String> headers = {
@@ -66,7 +66,7 @@ class SwitchKeysOrganizations {
     };
 
     // Get the tokens
-    var tokens = config.readTokens();
+    var tokens = _config.readTokens();
 
     // Headers
     Map<String, String> headers = {
@@ -132,7 +132,7 @@ class SwitchKeysOrganizations {
         EndPoints.organizationsName, [organizationName]);
 
     // Get the tokens
-    var tokens = config.readTokens();
+    var tokens = _config.readTokens();
 
     // Headers
     Map<String, String> headers = {
@@ -197,7 +197,7 @@ class SwitchKeysOrganizations {
         EndPoints.organizationsId, [organizationID.toString()]);
 
     // Get the tokens
-    var tokens = config.readTokens();
+    var tokens = _config.readTokens();
 
     // Headers
     Map<String, String> headers = {
@@ -234,7 +234,7 @@ class SwitchKeysOrganizations {
     };
 
     // Get the tokens
-    var tokens = config.readTokens();
+    var tokens = _config.readTokens();
 
     // Headers
     Map<String, String> headers = {
@@ -275,7 +275,7 @@ class SwitchKeysOrganizations {
     };
 
     // Get the tokens
-    var tokens = config.readTokens();
+    var tokens = _config.readTokens();
 
     // Headers
     Map<String, String> headers = {

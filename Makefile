@@ -31,8 +31,11 @@ lint:
 	$(backend) && $(CMD) flake8 .  --exclude=__init__.py
 	# $(frontend) && yarn lint
 
-switchkeys:
+py-switchkeys:
 	cd clients/py && python3 -m example
+
+dart-switchkeys:
+	cd clients/dart/switchkeys && dart example.dart
 
 
 # Docker commands

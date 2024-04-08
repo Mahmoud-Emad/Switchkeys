@@ -25,28 +25,40 @@ void organizationsMain() async {
     // print("Organization ID: ${organization.id}");
 
     // Get an organization based on its name since the name is unique for the user.
-    organization = await switchKeys.organizations
-        .getByName(organizationName: 'Cloud for students');
+    organization = await switchKeys.organizations.getByName(
+      organizationName: 'Cloud for students',
+    );
+
     print("Organization name: ${organization.name}");
 
     // We can add members to an organization by passing the memberID.
-    organization = await switchKeys.organizations
-        .addMember(organizationID: organization.id, memberID: 2);
+    organization = await switchKeys.organizations.addMember(
+      organizationID: organization.id,
+      memberID: 2,
+    );
 
     // As we used the `addMember` method to add a member on the organization, also we can remove the added member or any member from the organization.
-    organization = await switchKeys.organizations
-        .removeMember(organizationID: organization.id, memberID: 2);
+    organization = await switchKeys.organizations.removeMember(
+      organizationID: organization.id,
+      memberID: 2,
+    );
 
     print("Members ${organization.members[0].fullName}");
 
     // Update an existing organization by specifying its ID.
     // organization = await switchKeys.organizations.update(
-    //     organizationID: organization.id, newName: "EGClouds", newMembers: []);
+    //   organizationID: organization.id,
+    //   newName: "EGClouds",
+    //   newMembers: [],
+    // );
+
     // print("Organization name: ${organization.name}");
 
     // Delete the organization based on its ID, returns `true` if the organization is deleted.
-    // final isDeleted =
-    //     await switchKeys.organizations.delete(organizationID: organization.id);
+    // final isDeleted = await switchKeys.organizations.delete(
+    //   organizationID: organization.id,
+    // );
+
     // print("Is the organization deleted: $isDeleted");
   } catch (e) {
     // Handle any errors that may occur during organization operations.

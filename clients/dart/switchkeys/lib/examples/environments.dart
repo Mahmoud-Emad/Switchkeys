@@ -17,10 +17,12 @@ void environmentsMain() async {
     deviceType: SwitchKeyDeviceType.Android,
     version: "v1.1-0x54s",
   );
+
   final user = SwitchKeysEnvironmentsUser(
     username: "Adham",
     device: userDevice,
   );
+
   await switchKeys.environments.users.addUser(
     user: user,
     environment: environment,
@@ -31,6 +33,7 @@ void environmentsMain() async {
     name: "Theme",
     value: "dark",
   );
+
   await switchKeys.environments.users.addFeature(
     username: "Mahmoud",
     feature: feature,
@@ -45,12 +48,14 @@ void environmentsMain() async {
       value: "v0.2",
     ),
   );
+
   features.add(
     SwitchKeyUserEnvironmentFeatures(
       name: "debug",
       value: "true",
     ),
   );
+
   await switchKeys.environments.users.bulkCreateFeature(
     features: features,
     environment: environment,

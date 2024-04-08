@@ -9,7 +9,7 @@ import 'package:switchkeys/src/utils/parser.dart';
 
 /// Class for managing SwitchKeys environments.
 class SwitchKeysEnvironments {
-  final config = SwitchKeysTokensConfig();
+  final _config = SwitchKeysTokensConfig();
   final users = SwitchKeysEnvironmentUsers();
   SwitchKeysEnvironments();
 
@@ -25,7 +25,7 @@ class SwitchKeysEnvironments {
       "name": name,
       "project_id": projectID,
     };
-    var tokens = config.readTokens();
+    var tokens = _config.readTokens();
     Map<String, String> headers = {
       "Content-Type": "application/json",
       "Authorization": "Bearer ${tokens.accessToken}",
@@ -121,7 +121,7 @@ class SwitchKeysEnvironments {
   }) async {
     String apiUrl = SwitchKeysRoutes.getRoute(
         EndPoints.environmentsId, [environmentId.toString()]);
-    var tokens = config.readTokens();
+    var tokens = _config.readTokens();
     Map<String, String> headers = {
       "Content-Type": "application/json",
       "Authorization": "Bearer ${tokens.accessToken}",
@@ -159,7 +159,7 @@ class SwitchKeysEnvironments {
       "name": name,
       "project_id": projectID,
     };
-    var tokens = config.readTokens();
+    var tokens = _config.readTokens();
     Map<String, String> headers = {
       "Content-Type": "application/json",
       "Authorization": "Bearer ${tokens.accessToken}",

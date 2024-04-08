@@ -23,6 +23,7 @@ enum EndPoints {
   environmentsSet,
   environmentsId,
   environmentsKeyAddUser,
+  environmentsKeyAddUsers,
   environmentsKeyRemoveUser,
   environmentUserAddFeature,
   environmentUserAddFeatures,
@@ -70,6 +71,8 @@ class SwitchKeysRoutes {
         return "${baseUrl}environments/key/${args![0]}/";
       case EndPoints.environmentsKeyAddUser:
         return "${baseUrl}environments/key/${args![0]}/add-user/";
+      case EndPoints.environmentsKeyAddUsers:
+        return "${baseUrl}environments/key/${args![0]}/add-users/";
       case EndPoints.environmentsKeyRemoveUser:
         return "${baseUrl}environments/key/${args![0]}/remove-user/";
       case EndPoints.environmentUserAddFeature:
@@ -87,7 +90,7 @@ class SwitchKeysRoutes {
       case EndPoints.groupsId:
         return "${baseUrl}groups/${args![0]}/";
       case EndPoints.usersId:
-        return "${baseUrl}auth/users/${args![0]}/";
+        return "${baseUrl}users/${args![0]}/";
       default:
         throw ArgumentError("Invalid endpoint: $endpoint");
     }

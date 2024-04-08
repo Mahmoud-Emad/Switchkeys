@@ -16,6 +16,7 @@ from switchkeys.services.environments import (
 from switchkeys.models.management import EnvironmentFeature, OrganizationProject, ProjectEnvironment
 from switchkeys.serializers.environments import (
     AddEnvironmentUserSerializer,
+    AddEnvironmentUsersSerializer,
     EnvironmentFeatureSerialize,
     EnvironmentUserFeaturesSerializer,
     GetEnvironmentUserFeatureValueSerializer,
@@ -397,6 +398,51 @@ class AddEnvironmentUserAPIView(GenericAPIView):
             message="Please make sure that you entered a valid data.",
             error=serializer.errors,
         )
+
+class AddEnvironmentUsersAPIView(GenericAPIView):
+    serializer_class = AddEnvironmentUsersSerializer
+    permission_classes = [HasEnvironmentKey]
+
+    def put(self, request: Request, environment_key: str) -> CustomResponse:
+        environment = get_environment_by_key(environment_key)
+        if environment is None:
+            return CustomResponse.not_found(
+                message="The project environment does not exist."
+            )
+
+
+        serializer = self.get_serializer(data=request.data)
+        data = []
+        if serializer.is_valid():
+            users = serializer.validated_data.get("users")
+            for _user in users:                
+                username = _user.get('username')
+                user = get_environment_user_username(username)
+
+                if user is None:
+                    device_type = _user.get('device').get("device_type")
+                    device_version = _user.get('device').get("version")
+
+                    user = create_environment_user(
+                        username=username,
+                        device_type=device_type,
+                        device_version=device_version,
+                    )
+                environment.users.add(user)
+                environment.save()
+
+                _data = AddEnvironmentUserSerializer(user).data
+                _data["id"] = user.id
+                _data["features"] = UserFeatureSerialize(user.features, many=True).data
+                data.append(
+                    _data
+                )
+            return CustomResponse.success(message="User added successfully.", data=data)
+        return CustomResponse.bad_request(
+            message="Please make sure that you entered a valid data.",
+            error=serializer.errors,
+        )
+
 
 class RemoveEnvironmentUserAPIView(GenericAPIView):
     serializer_class = RemoveEnvironmentUserSerializer

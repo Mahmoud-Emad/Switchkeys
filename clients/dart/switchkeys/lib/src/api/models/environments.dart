@@ -288,7 +288,7 @@ class SwitchKeysEnvironmentUsers {
         body: jsonEncode(body),
       );
 
-      if (isResponseSuccessful(response)) {
+      if (_isResponseSuccessful(response)) {
         Map<String, dynamic> data = jsonDecode(response.body);
         var user = parseEnvironmentUser(data["results"]);
         var isUserInEnvironment = false;
@@ -305,7 +305,65 @@ class SwitchKeysEnvironmentUsers {
 
         return user;
       } else {
-        throw ResponseError(handleErrorResponseMessage(response));
+        throw ResponseError(_handleErrorResponseMessage(response));
+      }
+    } catch (e) {
+      throw ResponseError(e.toString());
+    }
+  }
+
+  Future<List<SwitchKeysEnvironmentsUserResponse>> addUsers({
+    required List<SwitchKeysEnvironmentsUser> users,
+    required SwitchKeysEnvironmentResponse environment,
+  }) async {
+    final apiUrl = SwitchKeysRoutes.getRoute(
+      EndPoints.environmentsKeyAddUsers,
+      [environment.environmentKey.toString()],
+    );
+
+    final List<Map<String, dynamic>> payload = users.map((user) {
+      String deviceType =
+          (user.device?.deviceType == SwitchKeyDeviceType.Android)
+              ? 'Android'
+              : 'IPhone';
+      return {
+        "username": user.username,
+        "device": {
+          "device_type": deviceType,
+          "version": user.device?.version,
+        },
+      };
+    }).toList();
+
+    Map<String, dynamic> body = {"users": payload};
+
+    final headers = {
+      "Content-Type": "application/json",
+    };
+
+    try {
+      final response = await http.put(
+        Uri.parse(apiUrl),
+        headers: headers,
+        body: jsonEncode(body),
+      );
+
+      if (_isResponseSuccessful(response)) {
+        final Map<String, dynamic> data = jsonDecode(response.body);
+        final List<SwitchKeysEnvironmentsUserResponse> parsedUsers =
+            parseEnvironmentUsers(
+          data["results"],
+        );
+
+        for (final user in parsedUsers) {
+          if (!environment.users.any((u) => u.id == user.id)) {
+            environment.users.add(user);
+          }
+        }
+
+        return environment.users;
+      } else {
+        throw ResponseError(_handleErrorResponseMessage(response));
       }
     } catch (e) {
       throw ResponseError(e.toString());
@@ -338,7 +396,7 @@ class SwitchKeysEnvironmentUsers {
         body: jsonEncode(body),
       );
 
-      if (isResponseSuccessful(response)) {
+      if (_isResponseSuccessful(response)) {
         Map<String, dynamic> data = jsonDecode(response.body);
         var user = parseEnvironmentUser(data["results"]);
         for (var i = 0; i < environment.users.length; i++) {
@@ -349,7 +407,7 @@ class SwitchKeysEnvironmentUsers {
         }
         return user;
       } else {
-        throw ResponseError(handleErrorResponseMessage(response));
+        throw ResponseError(_handleErrorResponseMessage(response));
       }
     } catch (e) {
       throw ResponseError(e.toString());
@@ -384,11 +442,11 @@ class SwitchKeysEnvironmentUsers {
         body: jsonEncode(body),
       );
 
-      if (isResponseSuccessful(response)) {
+      if (_isResponseSuccessful(response)) {
         Map<String, dynamic> data = jsonDecode(response.body);
         return parseFeatures(data["results"]);
       } else {
-        throw ResponseError(handleErrorResponseMessage(response));
+        throw ResponseError(_handleErrorResponseMessage(response));
       }
     } catch (e) {
       throw ResponseError(e.toString());
@@ -423,11 +481,11 @@ class SwitchKeysEnvironmentUsers {
         body: jsonEncode(body),
       );
 
-      if (isResponseSuccessful(response)) {
+      if (_isResponseSuccessful(response)) {
         Map<String, dynamic> data = jsonDecode(response.body);
         return parseFeatures(data["results"]);
       } else {
-        throw ResponseError(handleErrorResponseMessage(response));
+        throw ResponseError(_handleErrorResponseMessage(response));
       }
     } catch (e) {
       throw ResponseError(e.toString());
@@ -454,11 +512,11 @@ class SwitchKeysEnvironmentUsers {
         headers: headers,
       );
 
-      if (isResponseSuccessful(response)) {
+      if (_isResponseSuccessful(response)) {
         Map<String, dynamic> data = jsonDecode(response.body);
         return parseFeature(data["results"]);
       } else {
-        throw ResponseError(handleErrorResponseMessage(response));
+        throw ResponseError(_handleErrorResponseMessage(response));
       }
     } catch (e) {
       throw ResponseError(e.toString());
@@ -470,13 +528,13 @@ class SwitchKeysEnvironmentUsers {
   //   required String featureName,
   // }) async {}
 
-  String handleErrorResponseMessage(http.Response response) {
+  String _handleErrorResponseMessage(http.Response response) {
     Map<String, dynamic> data = jsonDecode(response.body);
     String message = data['message'] ?? data['detail'];
     return "Failed due: $message ${data['error'] ?? ''}";
   }
 
-  bool isResponseSuccessful(http.Response response) {
+  bool _isResponseSuccessful(http.Response response) {
     return response.statusCode < 400;
   }
 }

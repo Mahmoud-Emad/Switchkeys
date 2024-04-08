@@ -121,6 +121,8 @@ class AddEnvironmentUserSerializer(Serializer):
             "device",
         )
 
+class AddEnvironmentUsersSerializer(Serializer):
+    users = ListField(child = AddEnvironmentUserSerializer())
 
 class RemoveEnvironmentUserSerializer(Serializer):
     """Serializer to remove user to an environment"""

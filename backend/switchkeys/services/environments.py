@@ -61,7 +61,7 @@ def get_environment_user_username(username: str) -> ProjectEnvironmentUser | Non
 
 
 def create_environment_user(
-    username: str, device_type: DeviceType, device_version: str, features: Dict
+    username: str, device_type: DeviceType, device_version: str
 ) -> ProjectEnvironmentUser | None:
     """Create the user."""
     device = UserDevice.objects.get_or_create(
@@ -69,7 +69,7 @@ def create_environment_user(
     )
 
     return ProjectEnvironmentUser.objects.create(
-        username=username, features=features, device=device[0]
+        username=username, device=device[0]
     )
 
 def get_all_environment_features(environment: ProjectEnvironment) -> List[EnvironmentFeature]:

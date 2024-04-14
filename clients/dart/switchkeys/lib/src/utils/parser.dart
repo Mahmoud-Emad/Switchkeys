@@ -60,12 +60,12 @@ List<SwitchKeysUserResponse> parseUsers(List<dynamic> usersData) {
 
 SwitchKeysProjectResponse parseProject(Map<String, dynamic> projectData) {
   return SwitchKeysProjectResponse(
-    id: projectData['id'],
-    name: projectData['name'],
-    organization: parseOrganization(projectData['organization']),
-    created: projectData['created'],
-    modified: projectData['modified'],
-  );
+      id: projectData['id'],
+      name: projectData['name'],
+      organization: parseOrganization(projectData['organization']),
+      created: projectData['created'],
+      modified: projectData['modified'],
+      environments: parseEnvironmentsNameKey(projectData['environments']));
 }
 
 List<SwitchKeysProjectResponse> parseProjects(
@@ -73,12 +73,15 @@ List<SwitchKeysProjectResponse> parseProjects(
 ) {
   List<SwitchKeysProjectResponse> projects = [];
   for (var i = 0; i < projectsData.length; i++) {
-    projects.add(SwitchKeysProjectResponse(
-      created: projectsData[i]['created'],
-      modified: projectsData[i]['modified'],
-      id: projectsData[i]['id'],
-      name: projectsData[i]['name'],
-    ));
+    projects.add(
+      SwitchKeysProjectResponse(
+        created: projectsData[i]['created'],
+        modified: projectsData[i]['modified'],
+        id: projectsData[i]['id'],
+        name: projectsData[i]['name'],
+        environments: parseEnvironmentsNameKey(projectsData[i]['environments']),
+      ),
+    );
   }
 
   return projects;
@@ -144,6 +147,62 @@ SwitchKeysEnvironmentsUserResponse parseEnvironmentUser(
     username: userData['username'],
     device: parseDevice(userData['device']),
     features: parseFeatures(userData['features']),
+  );
+}
+
+SwitchKeysEnvironmentNameKeyResponse parseEnvironmentsNameKey(
+  List<dynamic> envsData,
+) {
+  return SwitchKeysEnvironmentNameKeyResponse(
+    development: parseProjectEnvironment(envsData, 'development'),
+    staging: parseProjectEnvironment(envsData, 'staging'),
+    production: parseProjectEnvironment(envsData, 'production'),
+  );
+}
+
+SwitchKeysEnvironmentNameKeyValueResponse parseProjectEnvironment(
+  List<dynamic> envsData,
+  String type,
+) {
+  var development = SwitchKeysEnvironmentNameKeyValueResponse(
+    name: "",
+    environmentKey: "",
+  );
+
+  var staging = SwitchKeysEnvironmentNameKeyValueResponse(
+    name: "",
+    environmentKey: "",
+  );
+
+  var production = SwitchKeysEnvironmentNameKeyValueResponse(
+    name: "",
+    environmentKey: "",
+  );
+
+  for (var i = 0; i < envsData.length; i++) {
+    if (envsData[i]["name"] == "development") {
+      development.name = envsData[i]["name"] ?? "";
+      development.environmentKey = envsData[i]["environment_key"] ?? "";
+    }
+
+    if (envsData[i]["name"] == "staging") {
+      staging.name = envsData[i]["name"] ?? "";
+      staging.environmentKey = envsData[i]["environment_key"] ?? "";
+    }
+
+    if (envsData[i]["name"] == "production") {
+      production.name = envsData[i]["name"] ?? "";
+      production.environmentKey = envsData[i]["environment_key"] ?? "";
+    }
+  }
+
+  if (type == 'development') return development;
+  if (type == 'staging') return staging;
+  if (type == 'production') return production;
+
+  return SwitchKeysEnvironmentNameKeyValueResponse(
+    name: "",
+    environmentKey: "",
   );
 }
 

@@ -1,4 +1,5 @@
-from typing import Dict, List
+from enum import Enum
+from typing import List
 from switchkeys.models.users import DeviceType, ProjectEnvironmentUser, UserDevice
 from switchkeys.models.management import (
     EnvironmentFeature,
@@ -6,6 +7,11 @@ from switchkeys.models.management import (
     OrganizationProject,
 )
 
+
+class EnvironmentsName(Enum):
+    DEVELOPMENT = "development"
+    STAGING = "staging"
+    PRODUCTION = "production"
 
 def get_all_environments() -> List[ProjectEnvironment]:
     """Return all environments"""
@@ -68,9 +74,25 @@ def create_environment_user(
         device_type=device_type, version=device_version
     )
 
-    return ProjectEnvironmentUser.objects.create(
-        username=username, device=device[0]
+    return ProjectEnvironmentUser.objects.create(username=username, device=device[0])
+
+
+def get_all_environment_features(
+    environment: ProjectEnvironment,
+) -> List[EnvironmentFeature]:
+    return EnvironmentFeature.objects.filter(environment__id=environment.id)
+
+
+def create_environments(project: OrganizationProject) -> List[ProjectEnvironment]:
+    """When creating new projects, we need to create three environments: Development, Staging, and Production."""
+    ProjectEnvironment.objects.get_or_create(
+        project=project, name=EnvironmentsName.DEVELOPMENT.value
     )
 
-def get_all_environment_features(environment: ProjectEnvironment) -> List[EnvironmentFeature]:
-    return EnvironmentFeature.objects.filter(environment__id = environment.id)
+    ProjectEnvironment.objects.get_or_create(project=project, name=EnvironmentsName.STAGING.value)
+
+    ProjectEnvironment.objects.get_or_create(
+        project=project, name=EnvironmentsName.PRODUCTION.value
+    )
+
+    return ProjectEnvironment.objects.filter(project=project)

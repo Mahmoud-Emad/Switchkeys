@@ -260,9 +260,8 @@ class OrganizationProjectsApiView(GenericAPIView):
     """Get all projects of an organization"""
 
     serializer_class = OrganizationProjectsSerializer
-    permission_classes = []
 
-    def get(self, request: Request, organization_id: str) -> Response:
+    def get_queryset(self, request: Request, organization_id: str) -> Response:
         """Get all projects exists on the organization"""
 
         organization = get_organization_by_id(organization_id)
@@ -271,8 +270,4 @@ class OrganizationProjectsApiView(GenericAPIView):
             return CustomResponse.not_found(message="The organization does not exist.")
 
         projects = get_organization_projects(organization_id)
-
-        return CustomResponse.success(
-            data=OrganizationProjectsSerializer(projects, many=True).data,
-            message="Organization projects.",
-        )
+        return projects

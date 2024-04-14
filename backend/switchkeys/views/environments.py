@@ -320,7 +320,7 @@ class AddUserEnvironmentFeaturesApiView(GenericAPIView):
         return CustomResponse.success(message="User features updated.", data=data)
 
 
-class BaseEnvironmentFeatureAPIView(ListAPIView):
+class BaseEnvironmentFeatureAPIView(GenericAPIView):
 
     serializer_class = EnvironmentFeatureSerialize
     permission_classes = []

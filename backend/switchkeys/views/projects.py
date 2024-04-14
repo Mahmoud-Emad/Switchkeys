@@ -2,6 +2,7 @@ from rest_framework.generics import GenericAPIView, ListAPIView
 from rest_framework.request import Request
 from rest_framework.response import Response
 
+from switchkeys.services.environments import create_environments
 from switchkeys.services.organizations import get_organization_by_id
 from switchkeys.api.permissions import UserIsAuthenticated, IsAdminUser
 from switchkeys.serializers.projects import OrganizationProjectSerializer
@@ -59,10 +60,13 @@ class BaseOrganizationProjectApiView(ListAPIView):
                     message="Another project with the same name has already been created on this organization."
                 )
 
-            serializer.save(organization=organization)
+            project = serializer.save(organization=organization)
+            # When creating new projects, we need to create three environments: Development, Staging, and Production.
+            create_environments(project)
+            data = serializer.data
 
             return CustomResponse.success(
-                data=serializer.data,
+                data=data,
                 message="Organization project has been created successfully.",
             )
 

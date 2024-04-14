@@ -4,8 +4,9 @@ from rest_framework.serializers import (
     IntegerField,
 )
 
+from switchkeys.serializers.environments import EnvironmentKeyAndNameSerializer
 from switchkeys.serializers.organizations import OrganizationSerializer
-from switchkeys.models.management import OrganizationProject
+from switchkeys.models.management import OrganizationProject, ProjectEnvironment
 
 
 class OrganizationProjectSerializer(ModelSerializer):
@@ -15,6 +16,7 @@ class OrganizationProjectSerializer(ModelSerializer):
 
     organization = SerializerMethodField()
     organization_id = IntegerField()
+    environments = SerializerMethodField()
 
     class Meta:
         model = OrganizationProject
@@ -25,9 +27,16 @@ class OrganizationProjectSerializer(ModelSerializer):
             "modified",
             "organization",
             "organization_id",
+            "environments",
         )
         read_only_fields = ("id", "created", "modified")
         write_only_fields = ("name", "organization_id")
 
     def get_organization(self, obj: OrganizationProject):
+        """Return the `OrganizationSerializer` serializer"""
         return OrganizationSerializer(obj.organization).data
+
+    def get_environments(self, obj: OrganizationProject):
+        """Return the `EnvironmentKeyAndNameSerializer` serializer."""
+        envs = ProjectEnvironment.objects.filter(project=obj)
+        return EnvironmentKeyAndNameSerializer(envs, many=True).data

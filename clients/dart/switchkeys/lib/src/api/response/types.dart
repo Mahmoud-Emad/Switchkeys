@@ -39,6 +39,7 @@ class SwitchKeysProjectResponse {
   final String name;
   final String created;
   final String modified;
+  final SwitchKeysEnvironmentNameKeyResponse environments;
   final SwitchKeysOrganizationResponse? organization;
 
   SwitchKeysProjectResponse({
@@ -46,6 +47,7 @@ class SwitchKeysProjectResponse {
     required this.name,
     required this.created,
     required this.modified,
+    required this.environments,
     this.organization,
   });
 }
@@ -148,5 +150,27 @@ class SwitchKeysEnvironmentsUserFeatureResponse {
     required this.isDefault,
     required this.created,
     required this.modified,
+  });
+}
+
+class SwitchKeysEnvironmentNameKeyValueResponse {
+  String name;
+  String environmentKey;
+
+  SwitchKeysEnvironmentNameKeyValueResponse({
+    required this.name,
+    required this.environmentKey,
+  });
+}
+
+class SwitchKeysEnvironmentNameKeyResponse {
+  final SwitchKeysEnvironmentNameKeyValueResponse development;
+  final SwitchKeysEnvironmentNameKeyValueResponse staging;
+  final SwitchKeysEnvironmentNameKeyValueResponse production;
+
+  SwitchKeysEnvironmentNameKeyResponse({
+    required this.development,
+    required this.staging,
+    required this.production,
   });
 }

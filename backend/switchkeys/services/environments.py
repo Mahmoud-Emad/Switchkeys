@@ -13,6 +13,7 @@ class EnvironmentsName(Enum):
     STAGING = "staging"
     PRODUCTION = "production"
 
+
 def get_all_environments() -> List[ProjectEnvironment]:
     """Return all environments"""
     return ProjectEnvironment.objects.all().order_by("name")
@@ -53,11 +54,6 @@ def get_environment_user_by_id(user_id: str) -> ProjectEnvironmentUser | None:
         return None
 
 
-def get_all_environment_features() -> List[EnvironmentFeature]:
-    """Return all environment features"""
-    return EnvironmentFeature.objects.all().order_by("key")
-
-
 def get_environment_user_username(username: str) -> ProjectEnvironmentUser | None:
     """Check and return the user if created or none if not."""
     try:
@@ -89,7 +85,9 @@ def create_environments(project: OrganizationProject) -> List[ProjectEnvironment
         project=project, name=EnvironmentsName.DEVELOPMENT.value
     )
 
-    ProjectEnvironment.objects.get_or_create(project=project, name=EnvironmentsName.STAGING.value)
+    ProjectEnvironment.objects.get_or_create(
+        project=project, name=EnvironmentsName.STAGING.value
+    )
 
     ProjectEnvironment.objects.get_or_create(
         project=project, name=EnvironmentsName.PRODUCTION.value

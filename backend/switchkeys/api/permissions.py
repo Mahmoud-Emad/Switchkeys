@@ -29,6 +29,7 @@ class IsAdminUser(permissions.BasePermission):
             and request.user.user_type == UserType.ADMINISTRATOR
         )
 
+
 class HasEnvironmentKey(permissions.BasePermission):
     """
     check if the user has the environment key.

@@ -4,7 +4,6 @@ from rest_framework.serializers import (
     Serializer,
     CharField,
     IntegerField,
-    BooleanField,
     ListField,
 )
 
@@ -38,6 +37,7 @@ class ProjectEnvironmentSerializer(ModelSerializer):
 
     def get_project(self, obj: ProjectEnvironment):
         from switchkeys.serializers.projects import OrganizationProjectSerializer
+
         return OrganizationProjectSerializer(obj.project).data
 
     def get_users(self, obj: ProjectEnvironment):
@@ -139,6 +139,7 @@ class GetEnvironmentUserFeatureValueSerializer(Serializer):
 
 class EnvironmentKeyAndNameSerializer(ModelSerializer):
     """Serializer to serialize the `ProjectEnvironment` model and return only the `[name, environment_key]` fields."""
+
     class Meta:
         model = ProjectEnvironment
         fields = [

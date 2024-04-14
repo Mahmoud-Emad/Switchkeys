@@ -49,8 +49,10 @@ class ProjectEnvironmentUserSerializer(ModelSerializer):
 
     def get_device(self, obj: ProjectEnvironmentUser):
         from switchkeys.serializers.environments import EnvironmentUserDeviceSerializer
+
         return EnvironmentUserDeviceSerializer(obj.device).data
 
     def get_features(self, obj: ProjectEnvironmentUser):
         from switchkeys.serializers.environments import UserFeatureSerialize
+
         return UserFeatureSerialize(obj.features, many=True).data

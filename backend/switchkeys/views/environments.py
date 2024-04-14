@@ -13,7 +13,11 @@ from switchkeys.services.environments import (
     get_environment_by_key,
     get_environment_user_username,
 )
-from switchkeys.models.management import EnvironmentFeature, OrganizationProject, ProjectEnvironment
+from switchkeys.models.management import (
+    EnvironmentFeature,
+    OrganizationProject,
+    ProjectEnvironment,
+)
 from switchkeys.serializers.environments import (
     AddEnvironmentUserSerializer,
     AddEnvironmentUsersSerializer,
@@ -25,7 +29,11 @@ from switchkeys.serializers.environments import (
     EnvironmentUserFeatureSerializer,
     UserFeatureSerialize,
 )
-from switchkeys.api.permissions import UserIsAuthenticated, IsAdminUser, HasEnvironmentKey
+from switchkeys.api.permissions import (
+    UserIsAuthenticated,
+    IsAdminUser,
+    HasEnvironmentKey,
+)
 from switchkeys.api.custom_response import CustomResponse
 
 
@@ -194,7 +202,9 @@ class OrganizationProjectEnvironmentKeyApiView(GenericAPIView):
 
 class AddUserEnvironmentFeatureApiView(GenericAPIView):
     serializer_class = EnvironmentUserFeatureSerializer
-    permission_classes = [HasEnvironmentKey,]
+    permission_classes = [
+        HasEnvironmentKey,
+    ]
 
     def post(self, request: Request, environment_key: UUID) -> CustomResponse:
         if not is_valid_uuid(environment_key):
@@ -218,14 +228,16 @@ class AddUserEnvironmentFeatureApiView(GenericAPIView):
                 return CustomResponse.not_found(
                     message="The environment user does not exist."
                 )
-                
-            if not environment_user in environment.users.all():
+
+            if environment_user not in environment.users.all():
                 return CustomResponse.bad_request(
                     message=f"User `{environment_user.username}` is not on the `{environment.name}` environment, try to add the user first to the environment."
                 )
 
             # Remove any existing feature with the same name to avoid duplicates.
-            existing_feature = environment_user.features.filter(name=str(feature.get("name")).lower()).first()
+            existing_feature = environment_user.features.filter(
+                name=str(feature.get("name")).lower()
+            ).first()
             if existing_feature:
                 environment_user.features.remove(existing_feature)
 
@@ -259,9 +271,12 @@ class AddUserEnvironmentFeatureApiView(GenericAPIView):
             error=serializer.errors,
         )
 
+
 class AddUserEnvironmentFeaturesApiView(GenericAPIView):
     serializer_class = EnvironmentUserFeaturesSerializer
-    permission_classes = [HasEnvironmentKey,]
+    permission_classes = [
+        HasEnvironmentKey,
+    ]
 
     def post(self, request: Request, environment_key: UUID) -> CustomResponse:
         if not is_valid_uuid(environment_key):
@@ -285,15 +300,17 @@ class AddUserEnvironmentFeaturesApiView(GenericAPIView):
                 return CustomResponse.not_found(
                     message="The environment user does not exist."
                 )
-                
-            if not environment_user in environment.users.all():
+
+            if environment_user not in environment.users.all():
                 return CustomResponse.bad_request(
                     message=f"User `{environment_user.username}` is not on the `{environment.name}` environment, try to add the user first to the environment."
                 )
 
             for feature in features:
                 # Remove any existing feature with the same name to avoid duplicates.
-                existing_feature = environment_user.features.filter(name=str(feature.get("name")).lower()).first()
+                existing_feature = environment_user.features.filter(
+                    name=str(feature.get("name")).lower()
+                ).first()
                 if existing_feature:
                     environment_user.features.remove(existing_feature)
 
@@ -377,11 +394,11 @@ class AddEnvironmentUserAPIView(GenericAPIView):
 
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
-            username = serializer.validated_data.get('username')
+            username = serializer.validated_data.get("username")
             user = get_environment_user_username(username)
             if user is None:
-                device_type = serializer.validated_data.get('device').get("device_type")
-                device_version = serializer.validated_data.get('device').get("version")
+                device_type = serializer.validated_data.get("device").get("device_type")
+                device_version = serializer.validated_data.get("device").get("version")
 
                 user = create_environment_user(
                     username=username,
@@ -399,6 +416,7 @@ class AddEnvironmentUserAPIView(GenericAPIView):
             error=serializer.errors,
         )
 
+
 class AddEnvironmentUsersAPIView(GenericAPIView):
     serializer_class = AddEnvironmentUsersSerializer
     permission_classes = [HasEnvironmentKey]
@@ -410,18 +428,17 @@ class AddEnvironmentUsersAPIView(GenericAPIView):
                 message="The project environment does not exist."
             )
 
-
         serializer = self.get_serializer(data=request.data)
         data = []
         if serializer.is_valid():
             users = serializer.validated_data.get("users")
-            for _user in users:                
-                username = _user.get('username')
+            for _user in users:
+                username = _user.get("username")
                 user = get_environment_user_username(username)
 
                 if user is None:
-                    device_type = _user.get('device').get("device_type")
-                    device_version = _user.get('device').get("version")
+                    device_type = _user.get("device").get("device_type")
+                    device_version = _user.get("device").get("version")
 
                     user = create_environment_user(
                         username=username,
@@ -434,9 +451,7 @@ class AddEnvironmentUsersAPIView(GenericAPIView):
                 _data = AddEnvironmentUserSerializer(user).data
                 _data["id"] = user.id
                 _data["features"] = UserFeatureSerialize(user.features, many=True).data
-                data.append(
-                    _data
-                )
+                data.append(_data)
             return CustomResponse.success(message="User added successfully.", data=data)
         return CustomResponse.bad_request(
             message="Please make sure that you entered a valid data.",
@@ -457,7 +472,7 @@ class RemoveEnvironmentUserAPIView(GenericAPIView):
 
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
-            username = serializer.validated_data.get('username')
+            username = serializer.validated_data.get("username")
             user = get_environment_user_username(username)
             if user is None:
                 return CustomResponse.not_found(message="User not found.")
@@ -468,7 +483,9 @@ class RemoveEnvironmentUserAPIView(GenericAPIView):
             data["id"] = user.id
             data["features"] = UserFeatureSerialize(user.features, many=True).data
 
-            return CustomResponse.success(message="User removed successfully.", data=data)
+            return CustomResponse.success(
+                message="User removed successfully.", data=data
+            )
         return CustomResponse.bad_request(
             message="Please make sure that you entered a valid data.",
             error=serializer.errors,
@@ -481,9 +498,9 @@ class GetUserFeatureValueAPIView(GenericAPIView):
 
     def get(self, request: Request, environment_key: str) -> CustomResponse:
         """
-            #### Get the environment user feature based on the username.
-            - Required `feature_name` as a query param.
-            - Required `username` as a query param.
+        #### Get the environment user feature based on the username.
+        - Required `feature_name` as a query param.
+        - Required `username` as a query param.
         """
 
         feature_name = request.query_params.get("feature_name")
@@ -491,10 +508,14 @@ class GetUserFeatureValueAPIView(GenericAPIView):
         environment = get_environment_by_key(environment_key)
 
         if feature_name is None:
-            return CustomResponse.bad_request(message="You have to send the `feature_name` as a query param.")
+            return CustomResponse.bad_request(
+                message="You have to send the `feature_name` as a query param."
+            )
 
         if username is None:
-            return CustomResponse.bad_request(message="You have to send the `username` as a query param.")
+            return CustomResponse.bad_request(
+                message="You have to send the `username` as a query param."
+            )
 
         if environment is None:
             return CustomResponse.not_found(
@@ -510,4 +531,6 @@ class GetUserFeatureValueAPIView(GenericAPIView):
             return CustomResponse.not_found(message="The user feature is not found.")
 
         data = UserFeatureSerialize(feature).data
-        return CustomResponse.success(message="The user feature is found successfully.", data=data)
+        return CustomResponse.success(
+            message="The user feature is found successfully.", data=data
+        )

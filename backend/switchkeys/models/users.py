@@ -92,7 +92,7 @@ class ProjectEnvironmentUser(TimeStamp):
         "UserDevice", on_delete=models.SET_NULL, null=True, related_name="user_device"
     )
 
-    features = models.ManyToManyField('EnvironmentFeature', blank=True)
+    features = models.ManyToManyField("EnvironmentFeature", blank=True)
 
     def __str__(self) -> str:
         return f"{self.username}"
@@ -100,6 +100,7 @@ class ProjectEnvironmentUser(TimeStamp):
     class Meta:
         verbose_name = "Project User"
         verbose_name_plural = "Project User"
+
 
 class UserDevice(TimeStamp):
     device_type = models.CharField(

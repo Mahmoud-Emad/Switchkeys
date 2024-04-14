@@ -1,0 +1,19 @@
+{
+  "name": "switchkeys",
+  "version": "1.0.0",
+  "description": "The TypeScript client facilitates seamless management and interaction with the SwitchKeys system. It empowers users to effortlessly create organizations, establish projects within them, and subsequently create environments. Users can efficiently add users and features to these environments, streamlining project management processes. This client ensures smooth project operations without the need for redeployment after introducing new features. it enhances the management of projects with robust capabilities.",
+  "main": "example.ts",
+  "repository": "https://github.com/Mahmoud-Emad/Switchkeys",
+  "author": "Mahmoud Emad",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@types/node": "^20.12.7",
+    "axios": "^1.6.8",
+    "dotenv": "^16.4.5",
+    "typescript": "^5.4.5"
+  }
+}

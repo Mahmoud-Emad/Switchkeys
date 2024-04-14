@@ -1,0 +1,6 @@
+# Exclude files ignored by Git but included in the package
+
+docs/auth.model.md
+docs/environments.model.md
+docs/organization.model.md
+docs/projects.model.md

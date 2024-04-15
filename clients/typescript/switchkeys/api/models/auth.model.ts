@@ -1,4 +1,5 @@
 import SwitchKeysConfig from "../../utils/config";
+import { SwitchKeysLogger } from "../../utils/logger";
 import { SwitchKeysAuthTokens } from "../../utils/types";
 import { SwitchKeysApiRoutes, SwitchKeysRequest, SwitchKeysRequestMethod } from "../request/request";
 import { SwitchKeysAuthLoginData, SwitchKeysAuthRegisterData } from "../request/types";
@@ -12,6 +13,8 @@ class SwitchKeysAuth {
   private config = new SwitchKeysConfig();
   private authRoutes = SwitchKeysApiRoutes.auth;
   private request: SwitchKeysRequest = new SwitchKeysRequest();
+  private logger: SwitchKeysLogger = new SwitchKeysLogger();
+  private configFile: string = 'config.ini';
 
   /**
    * Registers a new user with the SwitchKeys authentication service.
@@ -28,16 +31,17 @@ class SwitchKeysAuth {
       user_type: data.userType,
     };
 
-    const request = await this.request.call(url, SwitchKeysRequestMethod.POST, requestBody);
-    const response = new SwitchKeysAuthRegisterResponse();
-    let userData: ISwitchKeysAuthRegisterResponse = response.init();
+    const response = await this.request.call(url, SwitchKeysRequestMethod.POST, requestBody);
+    const switchKeysAuthRegisterResponse = new SwitchKeysAuthRegisterResponse();
+    let userData: ISwitchKeysAuthRegisterResponse = switchKeysAuthRegisterResponse.init();
 
-    if (request) {
-      userData = response.parseAuth(request);
+    if (response) {
+      userData = switchKeysAuthRegisterResponse.parseAuth(response);
       if (userData.accessToken && userData.refreshToken) {
         this.tokens.accessToken = userData.accessToken;
         this.tokens.refreshToken = userData.refreshToken;
         this.config.write(this.tokens);
+        this.logger.info(`Tokens written to: ${this.configFile}.`);
       }
     }
 
@@ -47,10 +51,25 @@ class SwitchKeysAuth {
   /**
    * Logs in an existing user with the SwitchKeys authentication service.
    * @param data The login credentials for the user.
+   * @returns A promise that resolves to the logged in user's data.
    */
-  async login(data: SwitchKeysAuthLoginData) {
-    // Implement login functionality here
-    console.log("this.config.load()", this.config.load());
+  async login(data: SwitchKeysAuthLoginData): Promise<ISwitchKeysAuthRegisterResponse> {
+    const url = this.authRoutes.loginURL;
+    const response = await this.request.call(url, SwitchKeysRequestMethod.POST, data);
+
+    const switchKeysAuthRegisterResponse = new SwitchKeysAuthRegisterResponse();
+    let userData: ISwitchKeysAuthRegisterResponse = switchKeysAuthRegisterResponse.init();
+
+    if (response) {
+      userData = switchKeysAuthRegisterResponse.parseAuth(response);
+      if (userData.accessToken && userData.refreshToken) {
+        this.tokens.accessToken = userData.accessToken;
+        this.tokens.refreshToken = userData.refreshToken;
+        this.config.write(this.tokens);
+      }
+    }
+
+    return userData;
   }
 }
 

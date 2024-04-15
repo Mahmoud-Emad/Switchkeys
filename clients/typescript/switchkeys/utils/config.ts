@@ -100,7 +100,6 @@ class SwitchKeysConfig {
       try {
         const content = this.parser.stringify()
         fs.writeFileSync(configFile, content);
-        this.logger.info(`Tokens written to: ${configFile}.`);
       } catch (error) {
         this.logger.error(`Error writing tokens to: ${configFile} due: ${error}`);
       }

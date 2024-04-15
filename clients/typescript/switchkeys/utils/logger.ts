@@ -1,7 +1,13 @@
+/**
+ * Utility class for logging messages with timestamps and colored output.
+ */
 class SwitchKeysLogger {
   private now: Date;
   private time: string;
 
+  /**
+   * Creates an instance of SwitchKeysLogger.
+   */
   constructor() {
     this.now = new Date();
     this.time = `└─(${this.now.getHours()}:${this.now.getMinutes()}:${this.now.getSeconds()})──> `;
@@ -12,7 +18,7 @@ class SwitchKeysLogger {
    * @param message - The error message to log.
    */
   error(message: string): void {
-    console.error(`${this.time}: \x1b[31m${message}\x1b[0m`); // Red color
+    console.error(`${this.time} \x1b[31m${message}\x1b[0m`); // Red color
   }
 
   /**
@@ -20,7 +26,7 @@ class SwitchKeysLogger {
    * @param message - The log message to log.
    */
   log(message: string): void {
-    console.log(`{this.time}: \x1b[90m$${message}\x1b[0m`); // Gray color
+    console.log(`${this.time} \x1b[90m${message}\x1b[0m`); // Gray color
   }
 
   /**
@@ -28,7 +34,7 @@ class SwitchKeysLogger {
    * @param message - The warning message to log.
    */
   warning(message: string): void {
-    console.warn(`${this.time}: \x1b[33m${message}\x1b[0m`); // Yellow color
+    console.warn(`${this.time} \x1b[33m${message}\x1b[0m`); // Yellow color
   }
 
   /**
@@ -36,7 +42,7 @@ class SwitchKeysLogger {
    * @param message - The info message to log.
    */
   info(message: string): void {
-    console.info(`${this.time}: \x1b[34m${message}\x1b[0m`); // Blue color
+    console.info(`${this.time} \x1b[34m${message}\x1b[0m`); // Blue color
   }
 }
 

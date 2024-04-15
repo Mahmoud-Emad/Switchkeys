@@ -13,6 +13,7 @@
   "dependencies": {
     "@types/node": "^20.12.7",
     "axios": "^1.6.8",
+    "config-ini-parser": "^1.6.1",
     "dotenv": "^16.4.5",
     "typescript": "^5.4.5"
   }

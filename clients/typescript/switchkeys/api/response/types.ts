@@ -1,6 +1,9 @@
-import { SwitchKeysAuthTokens } from "../../utils/types";
+import { ISwitchKeysAuthTokens } from "../../utils/types";
 
-interface ISwitchKeysAuthRegisterResponse{
+/**
+ * Interface for SwitchKeys authentication register response.
+ */
+interface ISwitchKeysUserAuthResponse {
   id: number;
   firstName: string;
   lastName: string;
@@ -10,7 +13,22 @@ interface ISwitchKeysAuthRegisterResponse{
   refreshToken: string;
 }
 
-class SwitchKeysTokensResponse implements SwitchKeysAuthTokens {
+/**
+ * Interface for SwitchKeys user info response.
+ */
+interface ISwitchKeysUserInfoResponse {
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  joiningAt: string;
+  isActive?: boolean;
+}
+
+/**
+ * Represents the response containing authentication tokens.
+ */
+class SwitchKeysTokensResponse implements ISwitchKeysAuthTokens {
   accessToken: string | undefined;
   refreshToken: string | undefined;
 
@@ -20,25 +38,10 @@ class SwitchKeysTokensResponse implements SwitchKeysAuthTokens {
   }
 }
 
-class SwitchKeysAuthRegisterResponse implements ISwitchKeysAuthRegisterResponse{
-  id: number = 0;
-  firstName: string = "";
-  lastName: string = "";
-  email: string = "";
-  joiningAt: string = "";
-  userType: string = "";
-  accessToken: string = "";
-  refreshToken: string = "";
 
-  parseAuth(authData: any){
-    this.id = authData['id']
-    this.firstName = authData['first_name']
-    this.lastName = authData['last_name']
-    this.joiningAt = authData['joining_at']
-    this.userType = authData['user_type']
-    this.accessToken = authData['access_token']
-    this.refreshToken = authData['refresh_token']
-  }
-}
 
-export { SwitchKeysTokensResponse, SwitchKeysAuthRegisterResponse };
+export {
+  SwitchKeysTokensResponse,
+  ISwitchKeysUserAuthResponse,
+  ISwitchKeysUserInfoResponse,
+};

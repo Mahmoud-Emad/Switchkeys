@@ -1,28 +1,40 @@
 import * as fs from "fs";
 import { SwitchKeysTokensResponse } from "../api/response/types";
 import { SwitchKeysLogger } from "./logger";
+import { ISwitchKeysAuthTokens } from "./types";
+import { ConfigIniParser } from "config-ini-parser";
 
+/**
+ * Manages loading and writing tokens from/to a configuration file.
+ */
 class SwitchKeysConfig {
   private logger: SwitchKeysLogger = new SwitchKeysLogger();
+  private parser = new ConfigIniParser();
 
-
+  /**
+   * Checks if the configuration file exists and contains the required values.
+   * @param configFile Path to the configuration file. Default is `config.ini`.
+   * @returns `true` if the config file exists and contains the required values, `false` otherwise.
+   */
   public check(configFile: string = "config.ini"): boolean {
     if (!fs.existsSync(configFile)) {
       this.logger.error(`Config file '${configFile}' does not exist.`);
       return false;
     }
-
+    
     try {
-      const data = fs.readFileSync(configFile, "utf-8");
-      const config = JSON.parse(data);
+      const content = fs.readFileSync(configFile, "utf-8");
+      const config = this.parser.parse(content)
 
-      if (!config.TOKENS) {
+      if (!config.isHaveSection('TOKENS')) {
         this.logger.error("No [TOKENS] section found in the config file.");
         return false;
       }
 
-      const { access_token, refresh_token } = config.TOKENS;
-      if (access_token && refresh_token) {
+      const accessToken = config.get("TOKENS", "accessToken");
+      const refreshToken = config.get("TOKENS", "refreshToken");
+
+      if (accessToken && refreshToken) {
         this.logger.info("Config file contains access and refresh tokens.");
         return true;
       } else {
@@ -37,15 +49,22 @@ class SwitchKeysConfig {
     }
   }
 
+  /**
+   * Loads access and refresh tokens from the specified configuration file.
+   * @param configFile Path to the configuration file. Default is `config.ini`.
+   * @returns A `SwitchKeysTokensResponse` object containing the access and refresh tokens.
+   */
   public load(configFile: string = "config.ini"): SwitchKeysTokensResponse {
     try {
-      const data = fs.readFileSync(configFile, "utf-8");
-      const config = JSON.parse(data);
+      const content = fs.readFileSync(configFile, "utf-8");
+      const config = this.parser.parse(content)
 
-      if (config.TOKENS) {
-        const { access_token, refresh_token } = config.TOKENS;
-        if (access_token && refresh_token) {
-          return new SwitchKeysTokensResponse(access_token, refresh_token);
+      if (config.isHaveSection("TOKENS")) {
+        const accessToken = config.get("TOKENS", "accessToken");
+        const refreshToken = config.get("TOKENS", "refreshToken");
+
+        if (accessToken && refreshToken) {
+          return new SwitchKeysTokensResponse(accessToken, refreshToken);
         } else {
           this.logger.warning(
             "Tokens not found in the config file, maybe you have to login first."
@@ -64,20 +83,28 @@ class SwitchKeysConfig {
     }
   }
 
+  /**
+   * Writes access and refresh tokens to the specified configuration file.
+   * @param tokens `ISwitchKeysAuthTokens` object containing the access and refresh tokens.
+   * @param configFile Path to the configuration file. Default is `config.ini`.
+   */
   public write(
-    access_token: string,
-    refresh_token: string,
+    tokens: ISwitchKeysAuthTokens,
     configFile: string = "config.ini"
   ): void {
-    const configData = JSON.stringify({
-      TOKENS: { access_token, refresh_token },
-    });
+    if(tokens.accessToken && tokens.refreshToken){
+      this.parser.addSection('TOKENS')
+      this.parser.set('TOKENS', 'accessToken', tokens.accessToken)
+      this.parser.set('TOKENS', 'refreshToken', tokens.refreshToken)
 
-    try {
-      fs.writeFileSync(configFile, configData);
-      this.logger.info(`Tokens written to: ${configFile}.`);
-    } catch (error) {
-      this.logger.error(`Error writing tokens to: ${configFile} due: ${error}`);
+      try {
+        const content = this.parser.stringify()
+        fs.writeFileSync(configFile, content);
+      } catch (error) {
+        this.logger.error(`Error writing tokens to: ${configFile} due: ${error}`);
+      }
+    } else {
+      this.logger.error("The tokens cannot be set to null values. Both the `accessToken` and `refreshToken` fields are currently null.")
     }
   }
 }

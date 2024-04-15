@@ -1,27 +1,33 @@
 import SwitchKeysConfig from "../../utils/config";
 import { SwitchKeysLogger } from "../../utils/logger";
-import { SwitchKeysAuthTokens } from "../../utils/types";
-import { SwitchKeysApiRoutes, SwitchKeysRequest, SwitchKeysRequestMethod } from "../request/request";
-import { SwitchKeysAuthLoginData, SwitchKeysAuthRegisterData } from "../request/types";
-import { ISwitchKeysAuthRegisterResponse, SwitchKeysAuthRegisterResponse } from "../response/types";
+import { ISwitchKeysAuthTokens } from "../../utils/types";
+import { SwitchKeysRequest, SwitchKeysRequestMethod } from "../request/request";
+import { SwitchKeysApiRoutes } from "../request/routes";
+import {
+  SwitchKeysAuthLoginData,
+  SwitchKeysAuthRegisterData,
+} from "../request/types";
+import { ISwitchKeysUserAuthResponse } from "../response/types";
 
 /**
  * Class for managing authentication operations with the SwitchKeys system.
  */
 class SwitchKeysAuth {
-  private tokens: SwitchKeysAuthTokens = { accessToken: "", refreshToken: "" };
+  private tokens: ISwitchKeysAuthTokens = { accessToken: "", refreshToken: "" };
   private config = new SwitchKeysConfig();
   private authRoutes = SwitchKeysApiRoutes.auth;
   private request: SwitchKeysRequest = new SwitchKeysRequest();
   private logger: SwitchKeysLogger = new SwitchKeysLogger();
-  private configFile: string = 'config.ini';
+  private configFile: string = "config.ini";
 
   /**
    * Registers a new user with the SwitchKeys authentication service.
    * @param data The registration data for the new user.
    * @returns A promise that resolves to the registered user's data.
    */
-  async register(data: SwitchKeysAuthRegisterData): Promise<ISwitchKeysAuthRegisterResponse> {
+  async register(
+    data: SwitchKeysAuthRegisterData
+  ): Promise<ISwitchKeysUserAuthResponse> {
     const url = this.authRoutes.registerURL;
     const requestBody = {
       email: data.email,
@@ -31,12 +37,16 @@ class SwitchKeysAuth {
       user_type: data.userType,
     };
 
-    const response = await this.request.call(url, SwitchKeysRequestMethod.POST, requestBody);
-    const switchKeysAuthRegisterResponse = new SwitchKeysAuthRegisterResponse();
-    let userData: ISwitchKeysAuthRegisterResponse = switchKeysAuthRegisterResponse.init();
+    const response = await this.request.call(
+      url,
+      SwitchKeysRequestMethod.POST,
+      requestBody
+    );
+    const switchKeysAuthResponse = new SwitchKeysAuthResponse();
+    let userData: ISwitchKeysUserAuthResponse = switchKeysAuthResponse.init();
 
     if (response) {
-      userData = switchKeysAuthRegisterResponse.parseAuth(response);
+      userData = switchKeysAuthResponse.parseAuth(response);
       if (userData.accessToken && userData.refreshToken) {
         this.tokens.accessToken = userData.accessToken;
         this.tokens.refreshToken = userData.refreshToken;
@@ -53,15 +63,21 @@ class SwitchKeysAuth {
    * @param data The login credentials for the user.
    * @returns A promise that resolves to the logged in user's data.
    */
-  async login(data: SwitchKeysAuthLoginData): Promise<ISwitchKeysAuthRegisterResponse> {
+  async login(
+    data: SwitchKeysAuthLoginData
+  ): Promise<ISwitchKeysUserAuthResponse> {
     const url = this.authRoutes.loginURL;
-    const response = await this.request.call(url, SwitchKeysRequestMethod.POST, data);
+    const response = await this.request.call(
+      url,
+      SwitchKeysRequestMethod.POST,
+      data
+    );
 
-    const switchKeysAuthRegisterResponse = new SwitchKeysAuthRegisterResponse();
-    let userData: ISwitchKeysAuthRegisterResponse = switchKeysAuthRegisterResponse.init();
+    const switchKeysAuthResponse = new SwitchKeysAuthResponse();
+    let userData: ISwitchKeysUserAuthResponse = switchKeysAuthResponse.init();
 
     if (response) {
-      userData = switchKeysAuthRegisterResponse.parseAuth(response);
+      userData = switchKeysAuthResponse.parseAuth(response);
       if (userData.accessToken && userData.refreshToken) {
         this.tokens.accessToken = userData.accessToken;
         this.tokens.refreshToken = userData.refreshToken;
@@ -70,6 +86,58 @@ class SwitchKeysAuth {
     }
 
     return userData;
+  }
+}
+
+/**
+ * Represents the response for registering a user with SwitchKeys authentication.
+ */
+class SwitchKeysAuthResponse implements ISwitchKeysUserAuthResponse {
+  id: number = 0;
+  firstName: string = "";
+  lastName: string = "";
+  email: string = "";
+  joiningAt: string = "";
+  accessToken: string = "";
+  refreshToken: string = "";
+
+  /**
+   * Parses authentication data and sets the properties of the response object.
+   * @param authData The authentication data to parse.
+   * @returns The parsed authentication response object.
+   */
+  parseAuth(authData: any): ISwitchKeysUserAuthResponse {
+    this.id = authData["id"];
+    this.firstName = authData["first_name"];
+    this.lastName = authData["last_name"];
+    this.joiningAt = authData["joining_at"];
+    this.accessToken = authData["access_token"];
+    this.refreshToken = authData["refresh_token"];
+
+    return {
+      id: this.id,
+      email: this.email,
+      accessToken: this.accessToken,
+      refreshToken: this.refreshToken,
+      firstName: this.firstName,
+      lastName: this.lastName,
+      joiningAt: this.joiningAt,
+    };
+  }
+
+  /**
+   * Represents the response containing authentication tokens.
+   */
+  init(): ISwitchKeysUserAuthResponse {
+    return {
+      id: 0,
+      email: "",
+      accessToken: "",
+      refreshToken: "",
+      firstName: "",
+      lastName: "",
+      joiningAt: "",
+    };
   }
 }
 

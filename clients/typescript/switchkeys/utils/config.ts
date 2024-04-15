@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import { SwitchKeysTokensResponse } from "../api/response/types";
 import { SwitchKeysLogger } from "./logger";
-import { SwitchKeysAuthTokens } from "./types";
+import { ISwitchKeysAuthTokens } from "./types";
 import { ConfigIniParser } from "config-ini-parser";
 
 /**
@@ -85,11 +85,11 @@ class SwitchKeysConfig {
 
   /**
    * Writes access and refresh tokens to the specified configuration file.
-   * @param tokens `SwitchKeysAuthTokens` object containing the access and refresh tokens.
+   * @param tokens `ISwitchKeysAuthTokens` object containing the access and refresh tokens.
    * @param configFile Path to the configuration file. Default is `config.ini`.
    */
   public write(
-    tokens: SwitchKeysAuthTokens,
+    tokens: ISwitchKeysAuthTokens,
     configFile: string = "config.ini"
   ): void {
     if(tokens.accessToken && tokens.refreshToken){

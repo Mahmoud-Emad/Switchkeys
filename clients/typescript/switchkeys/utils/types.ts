@@ -16,7 +16,7 @@ enum SwitchKeysUserType {
 /**
  * Interface representing authentication tokens used in the SwitchKeys system.
  */
-interface SwitchKeysAuthTokens {
+interface ISwitchKeysAuthTokens {
   /**
    * Access token for authentication.
    */
@@ -28,4 +28,4 @@ interface SwitchKeysAuthTokens {
   refreshToken?: string;
 }
 
-export { SwitchKeysUserType, SwitchKeysAuthTokens };
+export { SwitchKeysUserType, ISwitchKeysAuthTokens };

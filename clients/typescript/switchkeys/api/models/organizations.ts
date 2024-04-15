@@ -1,5 +1,5 @@
-class SwitchKeysOrganization{
+class SwitchKeysOrganizations{
   
 }
 
-export default SwitchKeysOrganization;
+export default SwitchKeysOrganizations;

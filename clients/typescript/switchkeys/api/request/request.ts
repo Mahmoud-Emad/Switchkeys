@@ -1,45 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
-import * as dotenv from 'dotenv';
 import { SwitchKeysLogger } from '../../utils/logger';
-
-dotenv.config(); // Load environment variables from .env file
-
-/**
- * Represents authentication routes for making API requests.
- */
-class SwitchKeysAuthRoutes {
-  private BASE_URL: string;
-
-  /**
-   * Constructs a new SwitchKeysAuthRoutes instance.
-   */
-  constructor() {
-    this.BASE_URL = process.env.BASE_URL || '';
-  }
-
-  /**
-   * Gets the URL for user registration.
-   * @returns The URL for user registration.
-   */
-  get registerURL(): string {
-    return `${this.BASE_URL}/api/auth/signup/`;
-  }
-
-  /**
-   * Gets the URL for user login.
-   * @returns The URL for user login.
-   */
-  get loginURL(): string {
-    return `${this.BASE_URL}/api/auth/login/`;
-  }
-}
-
-/**
- * Represents API routes for making requests.
- */
-class SwitchKeysApiRoutes {
-  static auth: SwitchKeysAuthRoutes = new SwitchKeysAuthRoutes();
-}
+import { SwitchKeysConnectionError, SwitchKeysRecordNotFoundError } from '../../core/exceptions';
 
 /**
  * Enum representing HTTP request methods.
@@ -85,13 +46,13 @@ class SwitchKeysRequest {
    */
   private readResponse(response: AxiosResponse) {
     if (!response){
-      return this.logger.error("Server might be down or your connection is a bit slow, Please check your connection/server connection.")
+      throw new SwitchKeysConnectionError("Server might be down or your connection is a bit slow, Please check your connection/server connection.")
     }
 
     const { status, data } = response;
 
     if (status >= 400 || data.error) {
-      return this.displayError(data.message, data.error);
+      return this.displayError(data.message, data.error, status);
     } else {
       return this.wrapResults(data.results);
     }
@@ -102,16 +63,19 @@ class SwitchKeysRequest {
    * @param message The error message to display.
    * @param error Optional additional error details.
    */
-  private displayError(message: string, error?: any) {
-    let errorMessage = `${message}\nError Details:`;
+  private displayError(message: string, error?: any, status?: number) {
+    if (status && status === 404){
+      throw new SwitchKeysRecordNotFoundError(message)
+    }
 
     if (error) {
+      message += `\nError Details:`;
       for (const key of Object.keys(error)) {
-        errorMessage += `\n- ${key}: ${error[key]}`;
+        message += `\n- ${key}: ${error[key]}`;
       }
     }
 
-    this.logger.error(errorMessage);
+    this.logger.error(message)
   }
 
   /**
@@ -123,4 +87,4 @@ class SwitchKeysRequest {
   }
 }
 
-export { SwitchKeysApiRoutes, SwitchKeysRequest, SwitchKeysRequestMethod };
+export { SwitchKeysRequest, SwitchKeysRequestMethod };

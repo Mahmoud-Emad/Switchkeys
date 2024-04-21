@@ -1,5 +1,4 @@
 import * as fs from "fs";
-import { SwitchKeysTokensResponse } from "../api/response/types";
 import { SwitchKeysLogger } from "./logger";
 import { ISwitchKeysAuthTokens } from "./types";
 import { ConfigIniParser } from "config-ini-parser";
@@ -54,7 +53,7 @@ class SwitchKeysConfig {
    * @param configFile Path to the configuration file. Default is `config.ini`.
    * @returns A `SwitchKeysTokensResponse` object containing the access and refresh tokens.
    */
-  public load(configFile: string = "config.ini"): SwitchKeysTokensResponse {
+  public load(configFile: string = "config.ini"): ISwitchKeysAuthTokens {
     try {
       const content = fs.readFileSync(configFile, "utf-8");
       const config = this.parser.parse(content)
@@ -64,22 +63,22 @@ class SwitchKeysConfig {
         const refreshToken = config.get("TOKENS", "refreshToken");
 
         if (accessToken && refreshToken) {
-          return new SwitchKeysTokensResponse(accessToken, refreshToken);
+          return { accessToken, refreshToken}
         } else {
           this.logger.warning(
             "Tokens not found in the config file, maybe you have to login first."
           );
-          return new SwitchKeysTokensResponse();
+          return {}
         }
       } else {
         this.logger.warning(
           "No [TOKENS] section found in the config file, maybe you have to login first."
         );
-        return new SwitchKeysTokensResponse();
+        return {}
       }
     } catch (error) {
       this.logger.error(`Error reading config file: ${error}`);
-      return new SwitchKeysTokensResponse();
+      return {}
     }
   }
 

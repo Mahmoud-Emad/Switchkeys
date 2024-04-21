@@ -63,11 +63,34 @@ class SwitchKeysUserRoutes {
 }
 
 /**
+ * Represents organization routes for making API requests.
+ */
+class SwitchKeysOrganizationRoutes {
+  private BASE_URL: string;
+
+  /**
+   * Constructs a new `SwitchKeysUserRoutes` instance.
+   */
+  constructor() {
+    this.BASE_URL = process.env.BASE_URL || '';
+  }
+
+  /**
+   * Gets the URL for user by its ID.
+   * @returns The URL for getting a user.
+   */
+  get create(): string {
+    return `${this.BASE_URL}/api/organizations/`;
+  }
+}
+
+/**
  * Represents API routes for making requests.
  */
 class SwitchKeysApiRoutes {
   static auth: SwitchKeysAuthRoutes = new SwitchKeysAuthRoutes();
-  static users: SwitchKeysUserRoutes = new SwitchKeysUserRoutes();
+  static members: SwitchKeysUserRoutes = new SwitchKeysUserRoutes();
+  static organizations: SwitchKeysOrganizationRoutes = new SwitchKeysOrganizationRoutes();
 }
 
 export {

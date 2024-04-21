@@ -15,7 +15,7 @@ void switchKeysFullExample() async {
     lastName: "Anwar",
     email: "ahmed@gmail.com",
     password: "0000",
-    userType: UserTypeEnum.administrator,
+    memberType: UserTypeEnum.administrator,
   );
 
   // Register new user as a `user` to use this user later when creating an organization.
@@ -25,7 +25,7 @@ void switchKeysFullExample() async {
     lastName: "Mohamed",
     email: "khaled@gmail.com",
     password: "0000",
-    userType: UserTypeEnum.user,
+    memberType: UserTypeEnum.user,
   );
 
   // Now we need to login with the created user to save the user tokens

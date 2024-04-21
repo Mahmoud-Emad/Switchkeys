@@ -9,7 +9,7 @@ SwitchKeysAuthResponse parseAuth(Map<String, dynamic> authData) {
     email: authData['email'],
     password: authData['password'],
     joiningAt: authData['joining_at'],
-    userType: authData['user_type'],
+    memberType: authData['user_type'],
     accessToken: authData['access_token'],
     refreshToken: authData['refresh_token'],
   );

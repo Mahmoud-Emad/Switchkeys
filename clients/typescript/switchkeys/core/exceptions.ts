@@ -21,7 +21,7 @@ class SwitchKeysConnectionError extends Error {
  */
 class SwitchKeysRecordNotFoundError extends Error {
   /**
-   * Constructs a new SwitchKeysConnectionError with the specified error message.
+   * Constructs a new `SwitchKeysRecordNotFoundError` with the specified error message.
    * @param message The error message.
    */
   constructor(message: string) {
@@ -30,4 +30,22 @@ class SwitchKeysRecordNotFoundError extends Error {
   }
 }
 
-export { SwitchKeysConnectionError, SwitchKeysRecordNotFoundError };
+/**
+ * Custom error class for representing unauthorized errors in SwitchKeys.
+ */
+class SwitchKeysUnauthorizedError extends Error {
+  /**
+   * Constructs a new SwitchKeysUnauthorizedError with the specified error message.
+   * @param message The error message.
+   */
+  constructor(message: string) {
+    super(message);
+    logger.error(message);
+  }
+}
+
+export {
+  SwitchKeysConnectionError,
+  SwitchKeysRecordNotFoundError,
+  SwitchKeysUnauthorizedError,
+};

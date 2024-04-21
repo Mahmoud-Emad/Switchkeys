@@ -7,7 +7,7 @@ import 'dart:convert';
 
 import 'package:switchkeys/src/utils/parser.dart';
 
-class SwitchKeysUsers {
+class SwitchKeysOrganizationMember {
   final _config = SwitchKeysTokensConfig();
 
   Future<SwitchKeysUserResponse> getUserById({

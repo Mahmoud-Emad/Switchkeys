@@ -1,15 +1,20 @@
-import axios, { AxiosResponse } from 'axios';
-import { SwitchKeysLogger } from '../../utils/logger';
-import { SwitchKeysConnectionError, SwitchKeysRecordNotFoundError } from '../../core/exceptions';
+import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+import { SwitchKeysLogger } from "../../utils/logger";
+import {
+  SwitchKeysConnectionError,
+  SwitchKeysRecordNotFoundError,
+  SwitchKeysUnauthorizedError,
+} from "../../core/exceptions";
+import SwitchKeysConfig from "../../utils/config";
 
 /**
  * Enum representing HTTP request methods.
  */
 enum SwitchKeysRequestMethod {
-  POST = 'POST',
-  GET = 'GET',
-  PUT = 'PUT',
-  DELETE = 'DELETE',
+  POST = "POST",
+  GET = "GET",
+  PUT = "PUT",
+  DELETE = "DELETE",
 }
 
 /**
@@ -17,6 +22,7 @@ enum SwitchKeysRequestMethod {
  */
 class SwitchKeysRequest {
   private logger: SwitchKeysLogger = new SwitchKeysLogger();
+  private config = new SwitchKeysConfig();
 
   /**
    * Makes an HTTP request to the specified URL using the provided method and data.
@@ -26,13 +32,22 @@ class SwitchKeysRequest {
    * @returns The response data if the request is successful, or an error message if it fails.
    */
   async call(url: string, method: SwitchKeysRequestMethod, data?: any) {
-    try {
-      const response = await axios.request({
-        url,
-        method,
-        data,
-      });
+    let accessToken;
+    const requestConfig: AxiosRequestConfig = {
+      url,
+      method,
+      data,
+    };
 
+    if (method !== SwitchKeysRequestMethod.GET) {
+      accessToken = this.config.load().accessToken;
+      requestConfig.headers = {
+        Authorization: `Bearer ${accessToken}`,
+      };
+    }
+
+    try {
+      const response = await axios.request(requestConfig);
       return this.readResponse(response);
     } catch (error: any) {
       return this.readResponse(error.response);
@@ -45,14 +60,16 @@ class SwitchKeysRequest {
    * @returns The response data if the request is successful, or an error message if it fails.
    */
   private readResponse(response: AxiosResponse) {
-    if (!response){
-      throw new SwitchKeysConnectionError("Server might be down or your connection is a bit slow, Please check your connection/server connection.")
+    if (!response) {
+      throw new SwitchKeysConnectionError(
+        "Server might be down or your connection is a bit slow, Please check your connection/server connection."
+      );
     }
 
     const { status, data } = response;
 
     if (status >= 400 || data.error) {
-      return this.displayError(data.message, data.error, status);
+      return this.displayError(data.message || data.detail, data.error, status);
     } else {
       return this.wrapResults(data.results);
     }
@@ -64,8 +81,12 @@ class SwitchKeysRequest {
    * @param error Optional additional error details.
    */
   private displayError(message: string, error?: any, status?: number) {
-    if (status && status === 404){
-      throw new SwitchKeysRecordNotFoundError(message)
+    if (status && status === 401) {
+      throw new SwitchKeysUnauthorizedError(message);
+    }
+
+    if (status && status === 404) {
+      throw new SwitchKeysRecordNotFoundError(message);
     }
 
     if (error) {
@@ -75,7 +96,7 @@ class SwitchKeysRequest {
       }
     }
 
-    this.logger.error(message)
+    this.logger.error(message);
   }
 
   /**

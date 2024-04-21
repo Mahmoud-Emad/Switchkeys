@@ -1,13 +1,12 @@
 import SwitchKeysConfig from "../../utils/config";
 import { SwitchKeysLogger } from "../../utils/logger";
-import { ISwitchKeysAuthTokens } from "../../utils/types";
+import { ISwitchKeysAuthTokens, IUserAuthResponse } from "../../utils/types";
 import { SwitchKeysRequest, SwitchKeysRequestMethod } from "../request/request";
 import { SwitchKeysApiRoutes } from "../request/routes";
 import {
-  SwitchKeysAuthLoginData,
-  SwitchKeysAuthRegisterData,
+  ISwitchKeysAuthLoginData,
+  ISwitchKeysAuthRegisterData,
 } from "../request/types";
-import { ISwitchKeysUserAuthResponse } from "../response/types";
 
 /**
  * Class for managing authentication operations with the SwitchKeys system.
@@ -26,15 +25,15 @@ class SwitchKeysAuth {
    * @returns A promise that resolves to the registered user's data.
    */
   async register(
-    data: SwitchKeysAuthRegisterData
-  ): Promise<ISwitchKeysUserAuthResponse> {
+    data: ISwitchKeysAuthRegisterData
+  ): Promise<IUserAuthResponse> {
     const url = this.authRoutes.registerURL;
     const requestBody = {
       email: data.email,
       password: data.password,
       first_name: data.firstName,
       last_name: data.lastName,
-      user_type: data.userType,
+      user_type: data.memberType,
     };
 
     const response = await this.request.call(
@@ -42,8 +41,9 @@ class SwitchKeysAuth {
       SwitchKeysRequestMethod.POST,
       requestBody
     );
+
     const switchKeysAuthResponse = new SwitchKeysAuthResponse();
-    let userData: ISwitchKeysUserAuthResponse = switchKeysAuthResponse.init();
+    let userData: IUserAuthResponse = switchKeysAuthResponse.init();
 
     if (response) {
       userData = switchKeysAuthResponse.parseAuth(response);
@@ -64,8 +64,8 @@ class SwitchKeysAuth {
    * @returns A promise that resolves to the logged in user's data.
    */
   async login(
-    data: SwitchKeysAuthLoginData
-  ): Promise<ISwitchKeysUserAuthResponse> {
+    data: ISwitchKeysAuthLoginData
+  ): Promise<IUserAuthResponse> {
     const url = this.authRoutes.loginURL;
     const response = await this.request.call(
       url,
@@ -74,7 +74,7 @@ class SwitchKeysAuth {
     );
 
     const switchKeysAuthResponse = new SwitchKeysAuthResponse();
-    let userData: ISwitchKeysUserAuthResponse = switchKeysAuthResponse.init();
+    let userData: IUserAuthResponse = switchKeysAuthResponse.init();
 
     if (response) {
       userData = switchKeysAuthResponse.parseAuth(response);
@@ -92,7 +92,7 @@ class SwitchKeysAuth {
 /**
  * Represents the response for registering a user with SwitchKeys authentication.
  */
-class SwitchKeysAuthResponse implements ISwitchKeysUserAuthResponse {
+class SwitchKeysAuthResponse implements IUserAuthResponse {
   id: number = 0;
   firstName: string = "";
   lastName: string = "";
@@ -106,7 +106,7 @@ class SwitchKeysAuthResponse implements ISwitchKeysUserAuthResponse {
    * @param authData The authentication data to parse.
    * @returns The parsed authentication response object.
    */
-  parseAuth(authData: any): ISwitchKeysUserAuthResponse {
+  parseAuth(authData: any): IUserAuthResponse {
     this.id = authData["id"];
     this.firstName = authData["first_name"];
     this.lastName = authData["last_name"];
@@ -128,7 +128,7 @@ class SwitchKeysAuthResponse implements ISwitchKeysUserAuthResponse {
   /**
    * Represents the response containing authentication tokens.
    */
-  init(): ISwitchKeysUserAuthResponse {
+  init(): IUserAuthResponse {
     return {
       id: 0,
       email: "",

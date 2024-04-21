@@ -1,6 +1,6 @@
 import SwitchKeysAuth from "../api/models/auth";
 import SwitchKeysOrganizations from "../api/models/organizations";
-import SwitchKeysUsers from "../api/models/users";
+import SwitchKeysOrganizationMember from "../api/models/organizations.members";
 
 /**
  * Main class for managing interactions with the `SwitchKeys` system.
@@ -13,9 +13,6 @@ class SwitchKeys {
 
   /** Instance of `SwitchKeysOrganization` for managing `organization-related` operations. */
   organizations: SwitchKeysOrganizations = new SwitchKeysOrganizations();
-
-  /** Instance of `SwitchKeysUsers` for managing `users-related` operations. */
-  users: SwitchKeysUsers = new SwitchKeysUsers();
 }
 
 export default SwitchKeys;

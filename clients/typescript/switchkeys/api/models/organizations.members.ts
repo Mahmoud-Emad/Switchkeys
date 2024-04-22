@@ -15,8 +15,8 @@ class SwitchKeysOrganizationMember {
    * @param memberId The ID of the member to retrieve.
    * @returns A promise that resolves to the member information.
    */
-  async getByID(memberId: number): Promise<ISwitchKeysMemberResponse> {
-    const url = this.memberRoutes.getByID(memberId);
+  async getById(memberId: number): Promise<ISwitchKeysMemberResponse> {
+    const url = this.memberRoutes.getById(memberId);
     const response = await this.request.call(url, SwitchKeysRequestMethod.GET);
 
     const member = new SwitchKeysMemberResponse();
@@ -54,7 +54,7 @@ class SwitchKeysOrganizationMember {
    * @returns A promise that resolves to the member information.
    */
   // async update(memberId: number, data: IUpdateMemberData): Promise<ISwitchKeysMemberResponse> {
-  //   const url = this.memberRoutes.getByID(memberId);
+  //   const url = this.memberRoutes.getById(memberId);
   //   const response = await this.request.call(url, SwitchKeysRequestMethod.PUT, data);
 
   //   const member = new SwitchKeysUserResponse();

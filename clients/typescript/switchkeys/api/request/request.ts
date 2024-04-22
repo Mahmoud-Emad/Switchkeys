@@ -23,6 +23,7 @@ enum SwitchKeysRequestMethod {
 class SwitchKeysRequest {
   private logger: SwitchKeysLogger = new SwitchKeysLogger();
   private config = new SwitchKeysConfig();
+  private requestLock: Promise<any> = Promise.resolve();
 
   /**
    * Makes an HTTP request to the specified URL using the provided method and data.
@@ -32,26 +33,28 @@ class SwitchKeysRequest {
    * @returns The response data if the request is successful, or an error message if it fails.
    */
   async call(url: string, method: SwitchKeysRequestMethod, data?: any) {
-    let accessToken;
-    const requestConfig: AxiosRequestConfig = {
-      url,
-      method,
-      data,
-    };
-
-    if (method !== SwitchKeysRequestMethod.GET) {
-      accessToken = this.config.load().accessToken;
-      requestConfig.headers = {
-        Authorization: `Bearer ${accessToken}`,
+    return this.requestLock = this.requestLock.then(async () => {
+      let accessToken;
+      const requestConfig: AxiosRequestConfig = {
+        url,
+        method,
+        data,
       };
-    }
 
-    try {
-      const response = await axios.request(requestConfig);
-      return this.readResponse(response);
-    } catch (error: any) {
-      return this.readResponse(error.response);
-    }
+      if (method !== 'GET') {
+        accessToken = this.config.load().accessToken;
+        requestConfig.headers = {
+          Authorization: `Bearer ${accessToken}`,
+        };
+      }
+
+      try {
+        const response = await axios.request(requestConfig);
+        return this.readResponse(response);
+      } catch (error: any) {
+        return this.readResponse(error.response);
+      }
+    });
   }
 
   /**

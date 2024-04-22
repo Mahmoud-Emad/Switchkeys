@@ -8,7 +8,6 @@ import { ConfigIniParser } from "config-ini-parser";
  */
 class SwitchKeysConfig {
   private logger: SwitchKeysLogger = new SwitchKeysLogger();
-  private parser = new ConfigIniParser();
 
   /**
    * Checks if the configuration file exists and contains the required values.
@@ -20,10 +19,11 @@ class SwitchKeysConfig {
       this.logger.error(`Config file '${configFile}' does not exist.`);
       return false;
     }
-    
+
     try {
+      const parser = new ConfigIniParser(); // Create a new instance of ConfigIniParser
       const content = fs.readFileSync(configFile, "utf-8");
-      const config = this.parser.parse(content)
+      const config = parser.parse(content);
 
       if (!config.isHaveSection('TOKENS')) {
         this.logger.error("No [TOKENS] section found in the config file.");
@@ -55,15 +55,16 @@ class SwitchKeysConfig {
    */
   public load(configFile: string = "config.ini"): ISwitchKeysAuthTokens {
     try {
+      const parser = new ConfigIniParser(); // Create a new instance of ConfigIniParser
       const content = fs.readFileSync(configFile, "utf-8");
-      const config = this.parser.parse(content)
+      const config = parser.parse(content);
 
       if (config.isHaveSection("TOKENS")) {
         const accessToken = config.get("TOKENS", "accessToken");
         const refreshToken = config.get("TOKENS", "refreshToken");
 
         if (accessToken && refreshToken) {
-          return { accessToken, refreshToken}
+          return { accessToken, refreshToken }
         } else {
           this.logger.warning(
             "Tokens not found in the config file, maybe you have to login first."
@@ -91,13 +92,14 @@ class SwitchKeysConfig {
     tokens: ISwitchKeysAuthTokens,
     configFile: string = "config.ini"
   ): void {
-    if(tokens.accessToken && tokens.refreshToken){
-      this.parser.addSection('TOKENS')
-      this.parser.set('TOKENS', 'accessToken', tokens.accessToken)
-      this.parser.set('TOKENS', 'refreshToken', tokens.refreshToken)
+    if (tokens.accessToken && tokens.refreshToken) {
+      const parser = new ConfigIniParser(); // Create a new instance of ConfigIniParser
+      parser.addSection('TOKENS')
+      parser.set('TOKENS', 'accessToken', tokens.accessToken)
+      parser.set('TOKENS', 'refreshToken', tokens.refreshToken)
 
       try {
-        const content = this.parser.stringify()
+        const content = parser.stringify()
         fs.writeFileSync(configFile, content);
       } catch (error) {
         this.logger.error(`Error writing tokens to: ${configFile} due: ${error}`);

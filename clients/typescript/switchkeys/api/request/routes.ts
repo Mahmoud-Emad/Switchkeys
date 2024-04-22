@@ -1,4 +1,4 @@
-import * as dotenv from 'dotenv';
+import * as dotenv from "dotenv";
 
 dotenv.config(); // Load environment variables from .env file
 
@@ -12,7 +12,7 @@ class SwitchKeysAuthRoutes {
    * Constructs a new SwitchKeysAuthRoutes instance.
    */
   constructor() {
-    this.BASE_URL = process.env.BASE_URL || '';
+    this.BASE_URL = process.env.BASE_URL || "";
   }
 
   /**
@@ -42,14 +42,14 @@ class SwitchKeysUserRoutes {
    * Constructs a new `SwitchKeysUserRoutes` instance.
    */
   constructor() {
-    this.BASE_URL = process.env.BASE_URL || '';
+    this.BASE_URL = process.env.BASE_URL || "";
   }
 
   /**
    * Gets the URL for user by its ID.
    * @returns The URL for getting a user.
    */
-  getByID(id: number): string {
+  getById(id: number): string {
     return `${this.BASE_URL}/api/users/${id}/`;
   }
 
@@ -72,15 +72,39 @@ class SwitchKeysOrganizationRoutes {
    * Constructs a new `SwitchKeysUserRoutes` instance.
    */
   constructor() {
-    this.BASE_URL = process.env.BASE_URL || '';
+    this.BASE_URL = process.env.BASE_URL || "";
   }
 
   /**
-   * Gets the URL for user by its ID.
-   * @returns The URL for getting a user.
+   * Gets the URL for organization by its ID.
+   * @returns The URL for getting an organization.
    */
   get create(): string {
     return `${this.BASE_URL}/api/organizations/`;
+  }
+
+  /**
+   * Gets the URL for organization by its ID.
+   * @returns The URL for getting an organization.
+   */
+  getById(id: number): string {
+    return `${this.BASE_URL}/api/organizations/${id}/`;
+  }
+
+  /**
+   * Gets the URL for adding a member on organization by its ID.
+   * @returns The URL for getting an organization adding member.
+   */
+  addMember(id: number): string {
+    return `${this.BASE_URL}/api/organizations/${id}/add-member/`;
+  }
+
+  /**
+   * Gets the URL for removing a member on organization by its ID.
+   * @returns The URL for getting an organization removing member.
+   */
+  removeMember(id: number): string {
+    return `${this.BASE_URL}/api/organizations/${id}/remove-member/`;
   }
 }
 
@@ -90,9 +114,8 @@ class SwitchKeysOrganizationRoutes {
 class SwitchKeysApiRoutes {
   static auth: SwitchKeysAuthRoutes = new SwitchKeysAuthRoutes();
   static members: SwitchKeysUserRoutes = new SwitchKeysUserRoutes();
-  static organizations: SwitchKeysOrganizationRoutes = new SwitchKeysOrganizationRoutes();
+  static organizations: SwitchKeysOrganizationRoutes =
+    new SwitchKeysOrganizationRoutes();
 }
 
-export {
-  SwitchKeysApiRoutes
-}
+export { SwitchKeysApiRoutes };

@@ -25,7 +25,7 @@ void projectsMain() async {
     // print("Project name: ${project.name}");
 
     // Get an existing project by its ID
-    final SwitchKeysProjectResponse project = await switchKeys.projects.getByID(
+    final SwitchKeysProjectResponse project = await switchKeys.projects.getById(
       projectID: 2,
     );
 

@@ -63,6 +63,12 @@ export interface IOrganizationResponse {
 export interface IOrganizationRequest {
   /** Organization name */
   name: string;
-  /** List of members IDs */
-  members?: number[]; 
+}
+
+/**
+ * Interface for SwitchKeys organization add memeber request data.
+ */
+export interface IOrganizationMemberRequest {
+  /** Member ID */
+  memberId: number; 
 }

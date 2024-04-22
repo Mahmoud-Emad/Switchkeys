@@ -95,7 +95,7 @@ class SwitchKeysOrganizations {
     }
   }
 
-  Future<SwitchKeysOrganizationResponse> getByID(
+  Future<SwitchKeysOrganizationResponse> getById(
       {required int organizationID}) async {
     String apiUrl = SwitchKeysRoutes.getRoute(
         EndPoints.organizationsId, [organizationID.toString()]);

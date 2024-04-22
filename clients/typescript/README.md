@@ -6,6 +6,7 @@ The SwitchKeys TS Client is a TypeScript client library for interacting with the
 
 - **User Authentication**: Register new users, log in to existing users, and manage user tokens.
 - **User Management**: Retrieve user information by ID or email, create new users, update existing users, and delete users.
+- **Organization Management**: Create, retrieve, update, and delete organizations. Add and remove members from organizations.
 - **Configuration Management**: Load, check, and write configuration settings, including user tokens.
 
 ## Installation
@@ -43,7 +44,7 @@ async function main() {
   console.log(`User logged in. Access token: ${loggedInUser.accessToken}`);
 
   // Retrieve user data by ID
-  const userByID = await switchkeys.users.getByID(1);
+  const userByID = await switchkeys.users.getById(1);
   console.log(`User data retrieved by ID. First name: ${userByID.firstName}`);
 
   // Retrieve user data by email
@@ -55,6 +56,51 @@ main();
 ```
 
 For more detailed usage instructions, refer to the [documentation](link-to-docs).
+
+## Organization Management
+
+The SwitchKeys TS Client allows you to manage organizations within the SwitchKeys system. Here are some examples of organization-related operations:
+
+### Creating an Organization
+
+```typescript
+const organization = await switchkeys.organizations.create({ name: "Test Organization" });
+console.log(`Organization created. ID: ${organization.id}`);
+```
+
+### Retrieving Organization Data
+
+```typescript
+const organizationById = await switchkeys.organizations.getById(1);
+console.log(`Organization data retrieved by ID. Name: ${organizationById.name}`);
+
+const organizationByName = await switchkeys.organizations.getByName("Test Organization");
+console.log(`Organization data retrieved by name. ID: ${organizationByName.id}`);
+```
+
+### Updating an Organization
+
+```typescript
+const updatedOrganization = await switchkeys.organizations.update(1, { name: "Updated Organization" });
+console.log(`Organization updated. New name: ${updatedOrganization.name}`);
+```
+
+### Adding and Removing Members
+
+```typescript
+await switchkeys.organizations.addMember(1, { memberId: 2 });
+console.log("Member added to organization.");
+
+await switchkeys.organizations.removeMember(1, { memberId: 2 });
+console.log("Member removed from organization.");
+```
+
+### Deleting an Organization
+
+```typescript
+await switchkeys.organizations.delete(1);
+console.log("Organization deleted.");
+```
 
 ## Configuration
 

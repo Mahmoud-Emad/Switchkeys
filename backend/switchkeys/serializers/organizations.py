@@ -62,19 +62,3 @@ class OrganizationAddMemberSerializer(ModelSerializer):
 
     def get_members(self, obj: Organization):
         return OrganizationUserSerializer(obj.members, many=True).data
-
-
-class OrganizationProjectsSerializer(ModelSerializer):
-    """
-    ``Serializer`` for serialize ``Organization`` projects.
-    """
-
-    class Meta:
-        model = OrganizationProject
-        fields = (
-            "id",
-            "name",
-            "created",
-            "modified",
-        )
-        read_only_fields = fields

@@ -45,7 +45,7 @@ await switchKeys.auth
       lastName: "Zain",
       email: "hamada__2020@gmail.com",
       password: "hamada",
-      userType: UserTypeEnum.administrator,
+      memberType: UserTypeEnum.administrator,
     )
     .then((user) => print("User registered successfully: ${user.email}"))
     .catchError((e) => print("Error registering user: $e"));

@@ -26,7 +26,7 @@ void authMain() async {
         lastName: "Zain",
         email: "",
         password: "",
-        userType: UserTypeEnum.administrator,
+        memberType: UserTypeEnum.administrator,
       )
       .then((user) => print("User registered successfully: ${user.email}"))
       .catchError((e) => print("Error registering user: $e"));

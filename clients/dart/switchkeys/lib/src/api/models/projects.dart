@@ -51,7 +51,7 @@ class SwitchKeysProjects {
     }
   }
 
-  Future<SwitchKeysProjectResponse> getByID({required int projectID}) async {
+  Future<SwitchKeysProjectResponse> getById({required int projectID}) async {
     String apiUrl =
         SwitchKeysRoutes.getRoute(EndPoints.projectsId, [projectID.toString()]);
 

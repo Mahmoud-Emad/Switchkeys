@@ -1,51 +1,79 @@
 import { SwitchKeysUserType } from "../../utils/types";
 
 /**
- * Interface for the data required to register a new user.
+ * Interface for the data required to register a new member.
  */
-interface SwitchKeysAuthRegisterData {
+interface ISwitchKeysAuthRegisterData {
   /**
-   * User's email address.
+   * Member's email address.
    */
   email: string;
   
   /**
-   * User's password.
+   * Member's password.
    */
   password: string;
   
   /**
-   * User's first name.
+   * Member's first name.
    */
   firstName: string;
   
   /**
-   * User's last name.
+   * Member's last name.
    */
   lastName: string;
   
   /**
-   * User's type (optional). Defaults to 'user' if not provided.
+   * Member's type (optional). Defaults to 'member' if not provided.
    */
-  userType?: SwitchKeysUserType;
+  memberType?: SwitchKeysUserType;
 }
 
 /**
- * Interface for the data required to log in a user.
+ * Interface for the data required to log in a member.
  */
-interface SwitchKeysAuthLoginData {
+interface ISwitchKeysAuthLoginData {
   /**
-   * User's email address.
+   * Member's email address.
    */
   email: string;
   
   /**
-   * User's password.
+   * Member's password.
    */
   password: string;
 }
 
+interface IUpdateMemberData {
+  /**
+   * Member's email address.
+   */
+  email?: string;
+  
+  /**
+   * Member's password.
+   */
+  password?: string;
+  
+  /**
+   * Member's first name.
+   */
+  firstName?: string;
+  
+  /**
+   * Member's last name.
+   */
+  lastName?: string;
+  
+  /**
+   * Member's type (optional). Defaults to 'member' if not provided.
+   */
+  memberType?: SwitchKeysUserType;
+}
+
 export {
-  SwitchKeysAuthRegisterData,
-  SwitchKeysAuthLoginData,
+  ISwitchKeysAuthRegisterData,
+  ISwitchKeysAuthLoginData,
+  IUpdateMemberData
 };

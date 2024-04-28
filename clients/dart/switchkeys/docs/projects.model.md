@@ -54,7 +54,7 @@ To use this script, follow these steps:
    ```dart
    try {
       final SwitchKeysProjectResponse project =
-        await switchKeys.projects.getByID(projectID: 2);
+        await switchKeys.projects.getById(projectID: 2);
     print("Project name: ${project.name}");
    } catch (e) {
        // Error handling

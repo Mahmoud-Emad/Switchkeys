@@ -42,7 +42,7 @@ class SwitchKeysLogger {
    * @param message - The info message to log.
    */
   info(message: string): void {
-    console.info(`${this.time} \x1b[34m${message}\x1b[0m`); // Blue color
+    console.log(`${this.time} \x1b[34m${message}\x1b[0m`); // Blue color
   }
 }
 

@@ -153,7 +153,7 @@ class SwitchKeysProjectResponse:
         self.modified = modified
 
 
-class SwitchKeysTokensResponse:
+class ISwitchKeysTokensResponse:
     """
     Represents a response containing access and refresh tokens.
 
@@ -162,12 +162,12 @@ class SwitchKeysTokensResponse:
         refresh_token (str): The refresh token.
 
     Methods:
-        __init__(access_token: str, refresh_token: str): Initializes a SwitchKeysTokensResponse object with the provided access and refresh tokens.
+        __init__(access_token: str, refresh_token: str): Initializes a ISwitchKeysTokensResponse object with the provided access and refresh tokens.
     """
 
     def __init__(self, access_token: str, refresh_token: str):
         """
-        Initialize the SwitchKeysTokensResponse object.
+        Initialize the ISwitchKeysTokensResponse object.
 
         Args:
             access_token (str): The access token.

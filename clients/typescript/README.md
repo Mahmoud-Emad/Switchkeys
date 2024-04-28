@@ -6,7 +6,8 @@ The SwitchKeys TS Client is a TypeScript client library for interacting with the
 
 - **User Authentication**: Register new users, log in to existing users, and manage user tokens.
 - **User Management**: Retrieve user information by ID or email, create new users, update existing users, and delete users.
-- **Configuration Management**: Load, check, and write configuration settings, including user tokens.
+- **Organization Management**: Create, retrieve, update, and delete organizations. Add and remove members from organizations.
+- **Project Management**: Create, retrieve, update, and delete projects.
 
 ## Installation
 
@@ -43,7 +44,7 @@ async function main() {
   console.log(`User logged in. Access token: ${loggedInUser.accessToken}`);
 
   // Retrieve user data by ID
-  const userByID = await switchkeys.users.getByID(1);
+  const userByID = await switchkeys.users.getById(1);
   console.log(`User data retrieved by ID. First name: ${userByID.firstName}`);
 
   // Retrieve user data by email
@@ -56,6 +57,86 @@ main();
 
 For more detailed usage instructions, refer to the [documentation](link-to-docs).
 
+## Organization Management
+
+The SwitchKeys TS Client allows you to manage organizations within the SwitchKeys system. Here are some examples of organization-related operations:
+
+### Creating an Organization
+
+```typescript
+const organization = await switchkeys.organizations.create({ name: "Test Organization" });
+console.log(`Organization created. ID: ${organization.id}`);
+```
+
+### Retrieving Organization Data
+
+```typescript
+const organizationById = await switchkeys.organizations.getById(1);
+console.log(`Organization data retrieved by ID. Name: ${organizationById.name}`);
+
+const organizationByName = await switchkeys.organizations.getByName("Test Organization");
+console.log(`Organization data retrieved by name. ID: ${organizationByName.id}`);
+```
+
+### Updating an Organization
+
+```typescript
+const updatedOrganization = await switchkeys.organizations.update(1, { name: "Updated Organization" });
+console.log(`Organization updated. New name: ${updatedOrganization.name}`);
+```
+
+### Adding and Removing Members
+
+```typescript
+await switchkeys.organizations.addMember(1, { memberId: 2 });
+console.log("Member added to organization.");
+
+await switchkeys.organizations.removeMember(1, { memberId: 2 });
+console.log("Member removed from organization.");
+```
+
+### Deleting an Organization
+
+```typescript
+await switchkeys.organizations.delete(1);
+console.log("Organization deleted.");
+```
+
+## Project Management
+
+The SwitchKeys TS Client also allows you to manage projects within organizations. Here are some examples of project-related operations:
+
+### Creating a Project
+
+```typescript
+const project = await switchkeys.organizations.projects.create({
+  name: "Test Project",
+  organizationId: 1,
+});
+console.log(`Project created. ID: ${project.id}`);
+```
+
+### Retrieving Project Data
+
+```typescript
+const projectById = await switchkeys.organizations.projects.getById(1);
+console.log(`Project data retrieved by ID. Name: ${projectById.name}`);
+```
+
+### Updating a Project
+
+```typescript
+const updatedProject = await switchkeys.organizations.projects.update(1, { name: "Updated Project" });
+console.log(`Project updated. New name: ${updatedProject.name}`);
+```
+
+### Deleting a Project
+
+```typescript
+await switchkeys.organizations.projects.delete(1);
+console.log("Project deleted.");
+```
+
 ## Configuration
 
 Before using the SwitchKeys TS Client, make sure to set up the necessary environment variables and configuration files. Refer to the [configuration documentation](link-to-config-docs) for details.
@@ -66,4 +147,4 @@ Contributions are welcome! If you find a bug or have a feature request, please o
 
 ## License
 
-This project is licensed under the [MIT License](link-to-license).
+This project is licensed under the [MIT License](./LICENSE)

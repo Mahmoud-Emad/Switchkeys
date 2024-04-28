@@ -85,7 +85,7 @@ class SwitchKeysEnvironments {
   /// Gets an environment by its ID.
   ///
   /// Returns a [SwitchKeysEnvironmentResponse] containing information about the environment.
-  Future<SwitchKeysEnvironmentResponse> getByID({
+  Future<SwitchKeysEnvironmentResponse> getById({
     required int environmentId,
   }) async {
     String apiUrl = SwitchKeysRoutes.getRoute(

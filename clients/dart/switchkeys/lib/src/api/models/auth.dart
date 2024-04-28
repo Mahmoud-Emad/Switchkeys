@@ -55,7 +55,7 @@ class SwitchKeyAuth {
     required String lastName,
     required String email,
     required String password,
-    required UserTypeEnum userType,
+    required UserTypeEnum memberType,
   }) async {
     // API endpoint for registration
     String apiUrl = SwitchKeysRoutes.getRoute(EndPoints.signUp);
@@ -66,7 +66,7 @@ class SwitchKeyAuth {
       "last_name": lastName,
       "email": email,
       "password": password,
-      "user_type": userType.value,
+      "user_type": memberType.value,
     };
 
     // Headers

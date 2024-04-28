@@ -59,7 +59,7 @@ class SwitchKeysAuthResponse {
   final String email;
   final String? password;
   final String? joiningAt;
-  final String userType;
+  final String memberType;
   final String accessToken;
   final String refreshToken;
 
@@ -70,7 +70,7 @@ class SwitchKeysAuthResponse {
     required this.email,
     this.password,
     this.joiningAt,
-    required this.userType,
+    required this.memberType,
     required this.accessToken,
     required this.refreshToken,
   });

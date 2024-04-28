@@ -1,17 +1,15 @@
-// This example demonstrates the usage of the SwitchKeys TS Client to interact with the SwitchKeys system.
-
-// First, import the SwitchKeys class.
-import SwitchKeys from "switchkeys-ts-client";
+// Import the SwitchKeys class from the client library.
+// import SwitchKeys from "switchkeys-ts-client";
+import SwitchKeys from "./switchkeys/core/base";
 
 /**
- * Main function to demonstrate SwitchKeys usage.
+ * Main function demonstrating the usage of the SwitchKeys client.
  */
 async function main() {
+  // Create an instance of the SwitchKeys client.
   const switchkeys = new SwitchKeys();
 
-  // Register a new member if it's the first time using SwitchKeys and no member has been created yet.
-  // PS: This will also generate and save member tokens into the `config.ini` file.
-  // Uncomment the following code and replace placeholders with actual member data.
+  // Uncomment and replace placeholders with actual data to register a new member.
   /*
   const newMember = await switchkeys.auth.register({
     email: "<member_email>",
@@ -22,8 +20,7 @@ async function main() {
   console.log(`New member registered. Access token: ${newMember.accessToken}`);
   */
 
-  // Log in an existing member using their email and password to generate and save tokens in the `config.ini` file.
-  // Uncomment the following code and replace placeholders with actual member credentials.
+  // Uncomment and replace placeholders with actual credentials to log in an existing member.
   /*
   const loggedInMember = await switchkeys.auth.login({
     email: "<member_email>",
@@ -32,72 +29,62 @@ async function main() {
   console.log(`Member logged in. Access token: ${loggedInMember.accessToken}`);
   */
 
-  // Retrieve a member's data by their ID using the `getById` method under the `organizations.members` module.
-  // Uncomment the following code and replace the ID placeholder with the actual member ID.
+  // Uncomment and replace the ID placeholder with the actual member ID to retrieve member data by ID.
   /*
   const memberId = 9; // Replace with the actual member ID
   const memberByID = await switchkeys.organizations.members.getById(memberId);
   console.log(`Member data retrieved by ID. First name: ${memberByID.firstName}`);
   */
 
-  // Retrieve a member's data by their email using the `getByEmail` method under the `organizations.members` module.
-  // Uncomment the following code and replace the email placeholder with the actual member email.
+  // Uncomment and replace the email placeholder with the actual member email to retrieve member data by email.
   /*
- const memberEmail = "john@example.com"; // Replace with the actual member email
- const memberByEmail = await switchkeys.organizations.members.getByEmail(memberEmail)
- console.log(`Member data retrieved by email. First name: ${memberByEmail.firstName}`);
- */
+  const memberEmail = "john@example.com"; // Replace with the actual member email
+  const memberByEmail = await switchkeys.organizations.members.getByEmail(memberEmail);
+  console.log(`Member data retrieved by email. First name: ${memberByEmail.firstName}`);
+  */
 
-  // Update a member's data using the `update` method under the `organizations.members` module.
-  // Uncomment the following code and replace the memberId placeholder with the actual member ID.
+  // Uncomment and replace the memberId placeholder with the actual member ID to update member data.
+  // Use the login method before updating the user tokens.
+  /*
+  await switchkeys.auth.login({ email: "admin@gmail.com", password: "0000" });
+  const memberId = 9; // Replace with the actual member ID
+  const member = await switchkeys.organizations.members.getById(memberId);
+  console.log(`Member data retrieved by ID. First name: ${member.firstName}`);
+  */
 
-  // Use the login method to update the user tokens.
-  // await switchkeys.auth.login({ email: "admin@gmail.com", password: "0000" });
+  // Uncomment and replace the data placeholder with actual organization data to create a new organization.
+  /*
+  const organization = await switchkeys.organizations.create({ name: "Test" });
+  console.log(`Organization ID: ${organization.id}`);
+  */
 
-  // const memberId = 9; // Replace with the actual member ID
-  // Get the member first to check the first name.
-  // const member = await switchkeys.organizations.members.getById(memberId);
-  // Print it out
-  // console.log(`Member data retrieved by ID. First name: ${member.firstName}`); // Mahmoud
+  // Uncomment and replace the organization ID placeholder with the actual ID to get organization data by ID.
+  /*
+  const organization = await switchkeys.organizations.getById(5);
+  console.log(`Organization name: ${organization.name}`);
+  */
 
-  // Create an organization
-  // Uncomment the following code and replace the data placeholder with the actual organization data.
-  /** 
-   const organization = await switchkeys.organizations.create({ name: "Test" });
-   console.log(`Organization ID: ${organization.id}`);
-   */
+  // Uncomment and replace the organization ID placeholder with the actual ID to delete an organization.
+  /*
+  await switchkeys.organizations.delete(5); // Returns null or error
+  */
 
-  // after creating an organization, also, if you have an already created organization, you can get it's data by accessing the `getById` method.
-  // Uncomment the following code and replace the data placeholder with the actual organization data.
-  /**
-   const organization = await switchkeys.organizations.getById(5);
-   console.log(`Organization name: ${organization.name}`);
-   */
-
-  // Can delete an organization by accessing the `delete` method.
-  // Uncomment the following code and replace the data placeholder with the actual organization data.
-  /**
-   await switchkeys.organizations.delete(5); // Returns null or error
-   */
-
-  // Can update by accessing the `update` method
-  // Get the organization first to print it's data
-
+  // Uncomment, update the organization ID, and run to demonstrate organization update.
+  /*
   let organization = await switchkeys.organizations.getById(6);
   console.log(`Organization name: ${organization.name}`);
+  organization = await switchkeys.organizations.update(6, { name: "Test 2" });
+  console.log(`Organization name: ${organization.name}`);
+  */
 
-  // Then update it's name
+  // Uncomment and replace placeholders with actual data to demonstrate project-related operations.
+  /*
+  const organizationId = 6; // Replace with the actual organization ID
+  const projects = await switchkeys.organizations.projects.all(organizationId);
+  console.log(`First project name: ${projects[0].name}`);
+  */
 
-  // organization = await switchkeys.organizations.update(6, {name: "Test 2"});
-  // console.log(`Organization name: ${organization.name}`);
-
-  // Adding members into it
-  console.log(`Organization members: ${organization.members}`);
-  organization = await switchkeys.organizations.addMember(organization.id, {memberId: 4});
-  console.log(`Organization members: ${organization.members}`);
-  // Removing the added member
-  organization = await switchkeys.organizations.removeMember(organization.id, {memberId: 4});
-  console.log(`Organization members: ${organization.members}`);
+  // Add more project-related operations here...
 }
 
 // Call the main function to execute the example.

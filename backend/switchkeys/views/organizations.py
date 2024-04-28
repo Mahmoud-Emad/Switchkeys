@@ -2,11 +2,12 @@ from rest_framework.generics import GenericAPIView, ListAPIView
 from rest_framework.request import Request
 from rest_framework.response import Response
 
+from switchkeys.serializers.projects import OrganizationProjectSerializer
+from switchkeys.models.management import OrganizationProject
 from switchkeys.services.users import get_user_by_id
 from switchkeys.api.permissions import UserIsAuthenticated, IsAdminUser
 from switchkeys.serializers.organizations import (
     OrganizationAddMemberSerializer,
-    OrganizationProjectsSerializer,
     OrganizationSerializer,
 )
 from switchkeys.services.organizations import (
@@ -256,18 +257,20 @@ class OrganizationRemoveMemberApiView(GenericAPIView):
         )
 
 
-class OrganizationProjectsApiView(GenericAPIView):
+class OrganizationProjectsApiView(ListAPIView):
     """Get all projects of an organization"""
 
-    serializer_class = OrganizationProjectsSerializer
+    serializer_class = OrganizationProjectSerializer
 
-    def get_queryset(self, request: Request, organization_id: str) -> Response:
-        """Get all projects exists on the organization"""
-
+    def get_queryset(self):
+        """Get the queryset of projects for the specified organization"""
+        organization_id = self.kwargs.get('organization_id')
         organization = get_organization_by_id(organization_id)
-
         if organization is None:
-            return CustomResponse.not_found(message="The organization does not exist.")
+            return OrganizationProject.objects.none()
+        return get_organization_projects(organization_id)
 
-        projects = get_organization_projects(organization_id)
-        return projects
+    def get(self, request, organization_id):
+        """Get all projects exists on the organization"""
+        projects = self.get_queryset()
+        return CustomResponse.success(data=self.serializer_class(projects, many=True).data)

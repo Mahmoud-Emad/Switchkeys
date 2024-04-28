@@ -13,11 +13,12 @@ import SwitchKeysProject from "./organizations.projects";
  * Class representing operations related to organizations.
  */
 class SwitchKeysOrganizations {
-  /** Instance of `SwitchKeysOrganizationMember` for managing `member-related` operations. */
   private organizationRoutes = SwitchKeysApiRoutes.organizations;
   private request: SwitchKeysRequest = new SwitchKeysRequest();
-
+  
+  /** Instance of `SwitchKeysOrganizationMember` for managing `member-related` operations. */
   members: SwitchKeysOrganizationMember = new SwitchKeysOrganizationMember();
+  /** Instance of `SwitchKeysProject` for managing `project-related` operations. */
   projects: SwitchKeysProject = new SwitchKeysProject();
 
   /**
@@ -143,9 +144,9 @@ class SwitchKeysOrganizations {
    * Deletes an organization.
    * @param orgId The ID of the organization to delete.
    */
-  async delete(orgId: number) {
+  async delete(orgId: number): Promise<string | Error> {
     const url = this.organizationRoutes.getById(orgId);
-    await this.request.call(url, SwitchKeysRequestMethod.DELETE);
+    return await this.request.call(url, SwitchKeysRequestMethod.DELETE);
   }
 }
 

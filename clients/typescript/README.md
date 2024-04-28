@@ -7,7 +7,7 @@ The SwitchKeys TS Client is a TypeScript client library for interacting with the
 - **User Authentication**: Register new users, log in to existing users, and manage user tokens.
 - **User Management**: Retrieve user information by ID or email, create new users, update existing users, and delete users.
 - **Organization Management**: Create, retrieve, update, and delete organizations. Add and remove members from organizations.
-- **Configuration Management**: Load, check, and write configuration settings, including user tokens.
+- **Project Management**: Create, retrieve, update, and delete projects.
 
 ## Installation
 
@@ -102,6 +102,41 @@ await switchkeys.organizations.delete(1);
 console.log("Organization deleted.");
 ```
 
+## Project Management
+
+The SwitchKeys TS Client also allows you to manage projects within organizations. Here are some examples of project-related operations:
+
+### Creating a Project
+
+```typescript
+const project = await switchkeys.organizations.projects.create({
+  name: "Test Project",
+  organizationId: 1,
+});
+console.log(`Project created. ID: ${project.id}`);
+```
+
+### Retrieving Project Data
+
+```typescript
+const projectById = await switchkeys.organizations.projects.getById(1);
+console.log(`Project data retrieved by ID. Name: ${projectById.name}`);
+```
+
+### Updating a Project
+
+```typescript
+const updatedProject = await switchkeys.organizations.projects.update(1, { name: "Updated Project" });
+console.log(`Project updated. New name: ${updatedProject.name}`);
+```
+
+### Deleting a Project
+
+```typescript
+await switchkeys.organizations.projects.delete(1);
+console.log("Project deleted.");
+```
+
 ## Configuration
 
 Before using the SwitchKeys TS Client, make sure to set up the necessary environment variables and configuration files. Refer to the [configuration documentation](link-to-config-docs) for details.
@@ -112,4 +147,4 @@ Contributions are welcome! If you find a bug or have a feature request, please o
 
 ## License
 
-This project is licensed under the [MIT License](link-to-license).
+This project is licensed under the [MIT License](./LICENSE)

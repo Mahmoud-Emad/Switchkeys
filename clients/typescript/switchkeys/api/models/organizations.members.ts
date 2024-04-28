@@ -47,27 +47,6 @@ class SwitchKeysOrganizationMember {
 
     return memberData;
   }
-
-  /**
-   * Updates member information by member ID.
-   * @param memberId The ID of the member to update.
-   * @returns A promise that resolves to the member information.
-   */
-  // async update(memberId: number, data: IUpdateMemberData): Promise<ISwitchKeysMemberResponse> {
-  //   const url = this.memberRoutes.getById(memberId);
-  //   const response = await this.request.call(url, SwitchKeysRequestMethod.PUT, data);
-
-  //   const member = new SwitchKeysUserResponse();
-  //   let memberData: ISwitchKeysMemberResponse = member.init();
-
-  //   if (response) {
-  //     memberData = member.parse(response);
-  //   }
-
-  //   return memberData;
-  // }
-
-  // async delete() {}
 }
 
 export default SwitchKeysOrganizationMember;

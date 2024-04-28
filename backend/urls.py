@@ -1,10 +1,11 @@
 from django.contrib import admin
 from django.urls import path, include
+from views.home import display_urls
 import settings
 from django.conf.urls.static import static
 
-
 urlpatterns = [
+    path("", display_urls),
     path("admin/", admin.site.urls),
     path(
         "api/",

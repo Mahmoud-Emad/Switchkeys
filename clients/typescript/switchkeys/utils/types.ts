@@ -72,3 +72,36 @@ export interface IOrganizationMemberRequest {
   /** Member ID */
   memberId: number; 
 }
+
+export interface IEnvironmentResponse {
+  /** Environment name */
+  name: string;
+  /** Environment Key */
+  environmentKey: string;
+}
+
+export interface IDefaultEnvironmentsResponse {
+  /** Development environment data | Auto created */
+  development: IEnvironmentResponse;
+  /** Staging environment data | Auto created */
+  staging: IEnvironmentResponse;
+  /** Production environment data | Auto created */
+  production: IEnvironmentResponse;
+}
+
+export interface IProjectResponse {
+  /** Project ID */
+  id: number;
+  /** Project name */
+  name: string;
+  /** The organization details */
+  organization: IOrganizationResponse;
+  /** The organization ID */
+  organizationId: number;
+  /** The environments details */
+  environments: IDefaultEnvironmentsResponse;
+  /** Crated at date time */
+  created: string;
+  /** Modified at date time */
+  modified: string;
+}

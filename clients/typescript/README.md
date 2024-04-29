@@ -109,7 +109,7 @@ The SwitchKeys TS Client also allows you to manage projects within organizations
 ### Creating a Project
 
 ```typescript
-const project = await switchkeys.organizations.projects.create({
+const project = await switchkeys.projects.create({
   name: "Test Project",
   organizationId: 1,
 });
@@ -119,21 +119,21 @@ console.log(`Project created. ID: ${project.id}`);
 ### Retrieving Project Data
 
 ```typescript
-const projectById = await switchkeys.organizations.projects.getById(1);
+const projectById = await switchkeys.projects.getById(1);
 console.log(`Project data retrieved by ID. Name: ${projectById.name}`);
 ```
 
 ### Updating a Project
 
 ```typescript
-const updatedProject = await switchkeys.organizations.projects.update(1, { name: "Updated Project" });
+const updatedProject = await switchkeys.projects.update(1, { name: "Updated Project" });
 console.log(`Project updated. New name: ${updatedProject.name}`);
 ```
 
 ### Deleting a Project
 
 ```typescript
-await switchkeys.organizations.projects.delete(1);
+await switchkeys.projects.delete(1);
 console.log("Project deleted.");
 ```
 

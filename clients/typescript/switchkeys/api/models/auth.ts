@@ -9,7 +9,7 @@ import {
 } from "../request/types";
 
 /**
- * Class for managing authentication operations with the SwitchKeys system.
+ * Manages authentication operations with the SwitchKeys system.
  */
 class SwitchKeysAuth {
   private tokens: ISwitchKeysAuthTokens = { accessToken: "", refreshToken: "" };
@@ -21,7 +21,7 @@ class SwitchKeysAuth {
 
   /**
    * Registers a new user with the SwitchKeys authentication service.
-   * @param data The registration data for the new user.
+   * @param data - Registration data for the new user.
    * @returns A promise that resolves to the registered user's data.
    */
   async register(
@@ -60,12 +60,10 @@ class SwitchKeysAuth {
 
   /**
    * Logs in an existing user with the SwitchKeys authentication service.
-   * @param data The login credentials for the user.
+   * @param data - Login credentials for the user.
    * @returns A promise that resolves to the logged in user's data.
    */
-  async login(
-    data: ISwitchKeysAuthLoginData
-  ): Promise<IUserAuthResponse> {
+  async login(data: ISwitchKeysAuthLoginData): Promise<IUserAuthResponse> {
     const url = this.authRoutes.loginURL;
     const response = await this.request.call(
       url,
@@ -103,7 +101,7 @@ class SwitchKeysAuthResponse implements IUserAuthResponse {
 
   /**
    * Parses authentication data and sets the properties of the response object.
-   * @param authData The authentication data to parse.
+   * @param authData - Authentication data to parse.
    * @returns The parsed authentication response object.
    */
   parseAuth(authData: any): IUserAuthResponse {

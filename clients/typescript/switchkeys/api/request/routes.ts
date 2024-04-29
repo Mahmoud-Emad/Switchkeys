@@ -109,7 +109,7 @@ class SwitchKeysOrganizationRoutes {
 }
 
 /**
- * Represents authentication routes for making API requests.
+ * Represents project routes for making API requests.
  */
 class SwitchKeysProjectRoutes {
   private BASE_URL: string;
@@ -147,12 +147,51 @@ class SwitchKeysProjectRoutes {
 }
 
 /**
+ * Represents environment routes for making API requests.
+ */
+class SwitchKeysEnvironmentRoutes {
+  private BASE_URL: string;
+
+  /**
+   * Constructs a new `SwitchKeysEnvironmentRoutes` instance.
+   */
+  constructor() {
+    this.BASE_URL = process.env.BASE_URL || "";
+  }
+
+  /**
+   * Gets the URL for creating a environment.
+   * @returns The URL for creating a environment.
+   */
+  get create(): string {
+    return `${this.BASE_URL}/api/environments/`;
+  }
+
+  /**
+   * Gets the URL for environment by its ID.
+   * @returns The URL for getting an environment.
+   */
+  load(environmentKey: string): string {
+    return `${this.BASE_URL}/api/environments/key/${environmentKey}/`;
+  }
+
+  /**
+   * Gets the URL for adding a feature for a user on environment by the environment key.
+   * @returns The URL for adding a feature for a user on environment by the environment key.
+   */
+  addFeature(environmentKey: string): string {
+    return `${this.BASE_URL}/api/environments/key/${environmentKey}/user/add-feature/`;
+  }
+}
+
+/**
  * Represents API routes for making requests.
  */
 class SwitchKeysApiRoutes {
   static auth: SwitchKeysAuthRoutes = new SwitchKeysAuthRoutes();
   static members: SwitchKeysUserRoutes = new SwitchKeysUserRoutes();
   static projects: SwitchKeysProjectRoutes = new SwitchKeysProjectRoutes();
+  static environments: SwitchKeysEnvironmentRoutes = new SwitchKeysEnvironmentRoutes();
   static organizations: SwitchKeysOrganizationRoutes =
     new SwitchKeysOrganizationRoutes();
 }

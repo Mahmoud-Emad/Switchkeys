@@ -1,34 +1,28 @@
-// This file containes all response parser classes
-
 import {
-  IDefaultEnvironmentsResponse,
+  ISwitchKeysMemberResponse,
   IOrganizationResponse,
   IProjectResponse,
-  ISwitchKeysMemberResponse,
+  IEnvironmentResponse,
+  IEnvironmentUserResponse,
+  IDefaultEnvironmentsResponse,
+  IEnvironmentFeaturesResponse,
 } from "../../utils/types";
 
 /**
- * Class representing member response data.
+ * Class for parsing member response data.
  */
 class SwitchKeysMemberResponse implements ISwitchKeysMemberResponse {
-  id: number;
-  firstName: string;
-  lastName: string;
-  email: string;
-  joiningAt: string;
+  id: number = 0;
+  firstName: string = "";
+  lastName: string = "";
+  email: string = "";
+  joiningAt: string = "";
   isActive?: boolean | undefined;
 
   /**
    * Initializes default member response data.
    */
-  constructor() {
-    const defaultData = this.init();
-    this.id = defaultData.id;
-    this.email = defaultData.email;
-    this.firstName = defaultData.firstName;
-    this.lastName = defaultData.lastName;
-    this.joiningAt = defaultData.joiningAt;
-  }
+  constructor() {}
 
   /**
    * Initializes default member response data.
@@ -51,48 +45,32 @@ class SwitchKeysMemberResponse implements ISwitchKeysMemberResponse {
    * @returns Parsed member response data.
    */
   parse(data: any): ISwitchKeysMemberResponse {
-    this.id = data["id"];
-    this.firstName = data["first_name"];
-    this.lastName = data["last_name"];
-    this.joiningAt = data["joining_at"];
-    if (data["is_active"]) {
-      this.isActive = data["is_active"];
-    }
-
     return {
-      id: this.id,
-      email: this.email,
-      firstName: this.firstName,
-      lastName: this.lastName,
-      joiningAt: this.joiningAt,
-      isActive: this.isActive,
+      id: data["id"] || 0,
+      firstName: data["first_name"] || "",
+      lastName: data["last_name"] || "",
+      email: data["email"] || "",
+      joiningAt: data["joining_at"] || "",
+      isActive: data["is_active"] || false,
     };
   }
 }
 
 /**
- * Class representing organization response data.
+ * Class for parsing organization response data.
  */
 class OrganizationResponse implements IOrganizationResponse {
-  id: number;
-  owner: ISwitchKeysMemberResponse;
-  name: string;
-  members: ISwitchKeysMemberResponse[];
-  created: string;
-  modified: string;
+  id: number = 0;
+  owner: ISwitchKeysMemberResponse = new SwitchKeysMemberResponse();
+  name: string = "";
+  members: ISwitchKeysMemberResponse[] = [];
+  created: string = "";
+  modified: string = "";
 
   /**
    * Initializes default organization response data.
    */
-  constructor() {
-    const defaultData = this.init();
-    this.id = defaultData.id;
-    this.owner = defaultData.owner;
-    this.name = defaultData.name;
-    this.members = defaultData.members;
-    this.created = defaultData.created;
-    this.modified = defaultData.modified;
-  }
+  constructor() {}
 
   /**
    * Initializes default organization response data.
@@ -106,10 +84,10 @@ class OrganizationResponse implements IOrganizationResponse {
       members: [],
       name: "",
       owner: {
+        id: 0,
         email: "",
         firstName: "",
         lastName: "",
-        id: 0,
         joiningAt: "",
         isActive: false,
       },
@@ -122,97 +100,57 @@ class OrganizationResponse implements IOrganizationResponse {
    * @returns Parsed organization response data.
    */
   parse(data: any): IOrganizationResponse {
-    const member = new SwitchKeysMemberResponse();
     return {
-      id: data["id"],
-      created: data["created"],
-      modified: data["modified"],
-      members: data["members"],
-      name: data["name"],
-      owner: member.parse(data["owner"]),
+      id: data["id"] || 0,
+      created: data["created"] || "",
+      modified: data["modified"] || "",
+      name: data["name"] || "",
+      owner: new SwitchKeysMemberResponse().parse(data["owner"]),
+      members: (data["members"] || []).map((memberData: any) =>
+        new SwitchKeysMemberResponse().parse(memberData)
+      ),
     };
-  }
-}
-
-class EnvironmentsResponse {
-  init(): IDefaultEnvironmentsResponse {
-    return {
-      development: {
-        name: "",
-        environmentKey: "",
-      },
-      staging: {
-        name: "",
-        environmentKey: "",
-      },
-      production: {
-        name: "",
-        environmentKey: "",
-      },
-    };
-  }
-
-  parse(data: any[]): IDefaultEnvironmentsResponse {
-    const parsedData = {
-      development: {
-        name: data[0]['name'],
-        environmentKey: data[0]["environment_key"],
-      },
-      staging: {
-        name: data[1]['name'],
-        environmentKey: data[1]["environment_key"],
-      },
-      production: {
-        name: data[2]['name'],
-        environmentKey: data[2]["environment_key"],
-      },
-    };
-    return parsedData
   }
 }
 
 /**
- * Class representing organization project response data.
+ * Class for parsing project response data.
  */
 class ProjectResponse implements IProjectResponse {
-  id: number;
-  name: string;
-  organization: IOrganizationResponse;
-  organizationId: number;
-  environments: IDefaultEnvironmentsResponse;
-  created: string;
-  modified: string;
+  id: number = 0;
+  name: string = "";
+  organization: IOrganizationResponse = new OrganizationResponse();
+  organizationId: number = 0;
+  environments: IDefaultEnvironmentsResponse = {
+    development: { name: "", environmentKey: "" },
+    staging: { name: "", environmentKey: "" },
+    production: { name: "", environmentKey: "" },
+  };
+  created: string = "";
+  modified: string = "";
 
   /**
    * Initializes default project response data.
    */
-  constructor() {
-    const defaultData = this.init();
-    this.id = defaultData.id;
-    this.name = defaultData.name;
-    this.organization = defaultData.organization;
-    this.organizationId = defaultData.organizationId;
-    this.environments = defaultData.environments;
-    this.created = defaultData.created;
-    this.modified = defaultData.modified;
-  }
+  constructor() {}
 
   /**
    * Initializes default project response data.
    * @returns Default project response data.
    */
   init(): IProjectResponse {
-    const organization = new OrganizationResponse();
-    const environments = new EnvironmentsResponse();
-
     return {
       id: 0,
       created: "",
       modified: "",
       name: "",
-      environments: environments.init(),
+      environments: {
+        development: { name: "", environmentKey: "" },
+        staging: { name: "", environmentKey: "" },
+        production: { name: "", environmentKey: "" },
+      },
       organizationId: 0,
-      organization: organization.init(),
+      organization: new OrganizationResponse().init(),
     };
   }
 
@@ -222,17 +160,28 @@ class ProjectResponse implements IProjectResponse {
    * @returns Parsed project response data.
    */
   parse(data: any): IProjectResponse {
-    const organization = new OrganizationResponse();
-    const environments = new EnvironmentsResponse();
-
     return {
-      id: data["id"],
-      created: data["created"],
-      modified: data["modified"],
-      name: data["name"],
-      organizationId: data["organization_id"],
-      organization: organization.parse(data["organization"]),
-      environments: environments.parse(data["environments"]),
+      id: data["id"] || 0,
+      name: data["name"] || "",
+      created: data["created"] || "",
+      modified: data["modified"] || "",
+      organizationId: data["organization_id"] || 0,
+      organization: new OrganizationResponse().parse(data["organization"]),
+      environments: {
+        development: {
+          name: data?.environments?.development?.name || "",
+          environmentKey:
+            data?.environments?.development?.environment_key || "",
+        },
+        staging: {
+          name: data?.environments?.staging?.name || "",
+          environmentKey: data?.environments?.staging?.environment_key || "",
+        },
+        production: {
+          name: data?.environments?.production?.name || "",
+          environmentKey: data?.environments?.production?.environment_key || "",
+        },
+      },
     };
   }
 
@@ -242,14 +191,80 @@ class ProjectResponse implements IProjectResponse {
    * @returns Parsed projects response data.
    */
   parseAll(data: any): IProjectResponse[] {
-    const projects: IProjectResponse[] = []
-
-    for(const project of data){
-      projects.push(this.parse(project))
-    }
-
-    return projects
+    return Array.isArray(data)
+      ? data.map((projectData: any) => this.parse(projectData))
+      : [];
   }
 }
 
-export { SwitchKeysMemberResponse, OrganizationResponse, ProjectResponse };
+/**
+ * Class for parsing environment response data.
+ */
+class EnvironmentResponse implements IEnvironmentResponse {
+  id: number = 0;
+  name: string = "";
+  created: string = "";
+  modified: string = "";
+  projectId: number = 0;
+  project: IProjectResponse = new ProjectResponse();
+  environmentKey: string = "";
+  users: IEnvironmentUserResponse[] = [];
+  features: IEnvironmentFeaturesResponse[] = [];
+
+  /**
+   * Initializes default environment response data.
+   */
+  constructor() {}
+
+  /**
+   * Initializes default environment response data.
+   * @returns Default environment response data.
+   */
+  init(): IEnvironmentResponse {
+    return {
+      id: 0,
+      name: "",
+      created: "",
+      modified: "",
+      projectId: 0,
+      project: new ProjectResponse().init(),
+      environmentKey: "",
+      users: [],
+      features: [],
+    };
+  }
+
+  /**
+   * Parses raw data into environment response data.
+   * @param data Raw data to parse.
+   * @returns Parsed environment response data.
+   */
+  parse(data: any): IEnvironmentResponse {
+    return {
+      id: data["id"] || 0,
+      name: data["name"] || "",
+      created: data["created"] || "",
+      modified: data["modified"] || "",
+      projectId: data["project_id"] || 0,
+      project: new ProjectResponse().parse(data["project"]),
+      environmentKey: data["environment_key"] || "",
+      users: (data["users"] || []).map((userData: any) => ({
+        id: userData["id"] || 0,
+        username: userData["username"] || "",
+        device: {
+          deviceType: userData["device"]?.deviceType || "",
+          version: userData["device"]?.version || "",
+        },
+        features: userData["features"] || [],
+      })),
+      features: data['features'] || []
+    };
+  }
+}
+
+export {
+  SwitchKeysMemberResponse,
+  OrganizationResponse,
+  ProjectResponse,
+  EnvironmentResponse,
+};

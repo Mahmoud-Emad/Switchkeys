@@ -15,11 +15,9 @@ import SwitchKeysProject from "./organizations.projects";
 class SwitchKeysOrganizations {
   private organizationRoutes = SwitchKeysApiRoutes.organizations;
   private request: SwitchKeysRequest = new SwitchKeysRequest();
-  
+
   /** Instance of `SwitchKeysOrganizationMember` for managing `member-related` operations. */
   members: SwitchKeysOrganizationMember = new SwitchKeysOrganizationMember();
-  /** Instance of `SwitchKeysProject` for managing `project-related` operations. */
-  projects: SwitchKeysProject = new SwitchKeysProject();
 
   /**
    * Creates a new organization.
@@ -33,15 +31,7 @@ class SwitchKeysOrganizations {
       SwitchKeysRequestMethod.POST,
       data
     );
-
-    const organizationResponse = new OrganizationResponse();
-    let orgData: IOrganizationResponse = organizationResponse.init();
-
-    if (response) {
-      orgData = organizationResponse.parse(response);
-    }
-
-    return orgData;
+    return this.handleResponse(response);
   }
 
   /**
@@ -52,15 +42,7 @@ class SwitchKeysOrganizations {
   async getById(orgId: number): Promise<IOrganizationResponse> {
     const url = this.organizationRoutes.getById(orgId);
     const response = await this.request.call(url, SwitchKeysRequestMethod.GET);
-
-    const organizationResponse = new OrganizationResponse();
-    let orgData: IOrganizationResponse = organizationResponse.init();
-
-    if (response) {
-      orgData = organizationResponse.parse(response);
-    }
-
-    return orgData;
+    return this.handleResponse(response);
   }
 
   /**
@@ -71,19 +53,8 @@ class SwitchKeysOrganizations {
    */
   async update(orgId: number, data: IOrganizationRequest) {
     const url = this.organizationRoutes.getById(orgId);
-    const response = await this.request.call(
-      url,
-      SwitchKeysRequestMethod.PUT,
-      data
-    );
-
-    const organizationResponse = new OrganizationResponse();
-    let orgData: IOrganizationResponse = organizationResponse.init();
-
-    if (response) {
-      orgData = organizationResponse.parse(response);
-    }
-    return orgData;
+    const response = await this.request.call(url, SwitchKeysRequestMethod.PUT, data);
+    return this.handleResponse(response);
   }
 
   /**
@@ -97,20 +68,8 @@ class SwitchKeysOrganizations {
     const _data = {
       member_id: data.memberId,
     };
-
-    const response = await this.request.call(
-      url,
-      SwitchKeysRequestMethod.PUT,
-      _data
-    );
-
-    const organizationResponse = new OrganizationResponse();
-    let orgData: IOrganizationResponse = organizationResponse.init();
-
-    if (response) {
-      orgData = organizationResponse.parse(response);
-    }
-    return orgData;
+    const response = await this.request.call(url, SwitchKeysRequestMethod.PUT, _data);
+    return this.handleResponse(response);
   }
 
   /**
@@ -124,20 +83,8 @@ class SwitchKeysOrganizations {
     const _data = {
       member_id: data.memberId,
     };
-
-    const response = await this.request.call(
-      url,
-      SwitchKeysRequestMethod.PUT,
-      _data
-    );
-
-    const organizationResponse = new OrganizationResponse();
-    let orgData: IOrganizationResponse = organizationResponse.init();
-
-    if (response) {
-      orgData = organizationResponse.parse(response);
-    }
-    return orgData;
+    const response = await this.request.call(url, SwitchKeysRequestMethod.PUT, _data);
+    return this.handleResponse(response);
   }
 
   /**
@@ -147,6 +94,18 @@ class SwitchKeysOrganizations {
   async delete(orgId: number): Promise<string | Error> {
     const url = this.organizationRoutes.getById(orgId);
     return await this.request.call(url, SwitchKeysRequestMethod.DELETE);
+  }
+
+  /**
+   * Parses and handles the response from the API.
+   * @param response - The response from the API.
+   * @returns The parsed organization response.
+   */
+  private handleResponse(response: any): IOrganizationResponse {
+    const organizationResponse = new OrganizationResponse();
+    return response
+      ? organizationResponse.parse(response)
+      : organizationResponse.init();
   }
 }
 

@@ -20,19 +20,21 @@ class SwitchKeysProject {
   private request: SwitchKeysRequest = new SwitchKeysRequest();
 
   /**
-   * Instance of `SwitchKeysEnvironment` for managing environment-related operations.
-   */
-  environments: SwitchKeysEnvironment = new SwitchKeysEnvironment();
-
-  /**
    * Creates a new project.
    * @param data - Project data.
    * @returns A promise that resolves to the created project.
    */
   async create(data: IProjectRequest): Promise<IProjectResponse> {
-    const requestData = { name: data.name, organization_id: data.organizationId };
+    const requestData = {
+      name: data.name,
+      organization_id: data.organizationId,
+    };
     const url = this.projectRoutes.create;
-    const response = await this.request.call(url, SwitchKeysRequestMethod.POST, requestData);
+    const response = await this.request.call(
+      url,
+      SwitchKeysRequestMethod.POST,
+      requestData
+    );
     return this.handleResponse(response);
   }
 
@@ -42,10 +44,20 @@ class SwitchKeysProject {
    * @param data - Updated project data.
    * @returns A promise that resolves to the updated project.
    */
-  async update(projectId: number, data: IProjectRequest): Promise<IProjectResponse> {
-    const requestData = { name: data.name, organization_id: data.organizationId };
+  async update(
+    projectId: number,
+    data: IProjectRequest
+  ): Promise<IProjectResponse> {
+    const requestData = {
+      name: data.name,
+      organization_id: data.organizationId,
+    };
     const url = this.projectRoutes.getById(projectId);
-    const response = await this.request.call(url, SwitchKeysRequestMethod.PUT, requestData);
+    const response = await this.request.call(
+      url,
+      SwitchKeysRequestMethod.PUT,
+      requestData
+    );
     return this.handleResponse(response);
   }
 

@@ -18,15 +18,7 @@ class SwitchKeysOrganizationMember {
   async getById(memberId: number): Promise<ISwitchKeysMemberResponse> {
     const url = this.memberRoutes.getById(memberId);
     const response = await this.request.call(url, SwitchKeysRequestMethod.GET);
-
-    const member = new SwitchKeysMemberResponse();
-    let memberData: ISwitchKeysMemberResponse = member.init();
-
-    if (response) {
-      memberData = member.parse(response);
-    }
-
-    return memberData;
+    return this.handleResponse(response);
   }
 
   /**
@@ -37,15 +29,17 @@ class SwitchKeysOrganizationMember {
   async getByEmail(memberEmail: string): Promise<ISwitchKeysMemberResponse> {
     const url = this.memberRoutes.getByEmail(memberEmail);
     const response = await this.request.call(url, SwitchKeysRequestMethod.GET);
+    return this.handleResponse(response);
+  }
 
+  /**
+   * Parses and handles the response from the API.
+   * @param response - The response from the API.
+   * @returns The parsed member response.
+   */
+  private handleResponse(response: any): ISwitchKeysMemberResponse {
     const member = new SwitchKeysMemberResponse();
-    let memberData: ISwitchKeysMemberResponse = member.init();
-
-    if (response) {
-      memberData = member.parse(response);
-    }
-
-    return memberData;
+    return response ? member.parse(response) : member.init();
   }
 }
 

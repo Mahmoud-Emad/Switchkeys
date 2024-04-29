@@ -80,7 +80,7 @@ class SwitchKeysRoutes {
       case EndPoints.environmentUserAddFeatures:
         return "${baseUrl}environments/key/${args![0]}/user/add-features/";
       case EndPoints.environmentUserGetFeature:
-        return "${baseUrl}environments/key/${args![0]}/user/get-feature/?feature_name=${args[1]}&username=${args[2]}"; // index 1 = featrue name, index 2 = username.
+        return "${baseUrl}environments/key/${args![0]}/user/get-feature/?feature_name=${args[1]}&username=${args[2]}"; // index 1 = feature name, index 2 = username.
       case EndPoints.environmentsSet:
         return "${baseUrl}environments/key/${args![0]}/user/set/?user_id=${args[1]}";
       case EndPoints.environmentsId:

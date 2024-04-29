@@ -1,3 +1,4 @@
+from switchkeys.models.environments import UserFeature
 from switchkeys.models.users import ProjectEnvironmentUser, User
 from rest_framework.serializers import ModelSerializer, SerializerMethodField
 
@@ -53,6 +54,14 @@ class ProjectEnvironmentUserSerializer(ModelSerializer):
         return EnvironmentUserDeviceSerializer(obj.device).data
 
     def get_features(self, obj: ProjectEnvironmentUser):
-        from switchkeys.serializers.environments import UserFeatureSerialize
+        from switchkeys.serializers.environments import EnvironmentFeatureSerializer
+        features = UserFeature.objects.filter(user=obj)
+        serialized_features = []
 
-        return UserFeatureSerialize(obj.features, many=True).data
+        for feature in features:
+            feature.feature.value = feature.feature_value
+            serialized_features.append(
+                EnvironmentFeatureSerializer(feature.feature).data
+            )
+        
+        return serialized_features

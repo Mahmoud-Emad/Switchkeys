@@ -1,8 +1,8 @@
 from enum import Enum
 from typing import List
 from switchkeys.models.users import DeviceType, ProjectEnvironmentUser, UserDevice
+from switchkeys.models.environments import EnvironmentFeature
 from switchkeys.models.management import (
-    EnvironmentFeature,
     ProjectEnvironment,
     OrganizationProject,
 )

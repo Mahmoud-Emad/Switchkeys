@@ -1,8 +1,9 @@
 from enum import Enum
 from typing import List
-from switchkeys.models.users import DeviceType, ProjectEnvironmentUser, UserDevice
+from switchkeys.models.users import DeviceType, ProjectEnvironmentUser, User, UserDevice
 from switchkeys.models.environments import EnvironmentFeature
 from switchkeys.models.management import (
+    Organization,
     ProjectEnvironment,
     OrganizationProject,
 )
@@ -94,3 +95,25 @@ def create_environments(project: OrganizationProject) -> List[ProjectEnvironment
     )
 
     return ProjectEnvironment.objects.filter(project=project)
+
+
+def validate_unique_environment_name(
+    environment_name: str, project: OrganizationProject
+) -> bool:
+    """
+    Check if the user has an environment with the same name.
+
+    ### Attributes
+        - environment_name (str): The environment name.
+        - project (OrganizationProject): The project to get all it's environments.
+
+    ### Returns
+        - True, if the name is exist on the user.
+        - False, if the name is not created before by the use.
+    """
+
+    environments = ProjectEnvironment.objects.filter(
+        project=project, name=environment_name
+    )
+
+    return environments.__len__() > 0

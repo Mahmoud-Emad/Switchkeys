@@ -20,6 +20,7 @@ class ProjectEnvironmentSerializer(ModelSerializer):
     """
 
     project = SerializerMethodField()
+    project_id = IntegerField(write_only=True) # Used to know which project
     users = SerializerMethodField()
     features = SerializerMethodField()
 
@@ -33,6 +34,7 @@ class ProjectEnvironmentSerializer(ModelSerializer):
             "environment_key",
             "features",
             "project",
+            "project_id",
             "users",
         )
 

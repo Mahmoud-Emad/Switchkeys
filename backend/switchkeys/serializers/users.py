@@ -54,14 +54,14 @@ class ProjectEnvironmentUserSerializer(ModelSerializer):
         return EnvironmentUserDeviceSerializer(obj.device).data
 
     def get_features(self, obj: ProjectEnvironmentUser):
-        from switchkeys.serializers.environments import EnvironmentFeatureSerializer
+        from switchkeys.serializers.environments import SwitchKeysFeatureSerializer
         features = UserFeature.objects.filter(user=obj)
         serialized_features = []
 
         for feature in features:
             feature.feature.value = feature.feature_value
             serialized_features.append(
-                EnvironmentFeatureSerializer(feature.feature).data
+                SwitchKeysFeatureSerializer(feature.feature).data
             )
         
         return serialized_features

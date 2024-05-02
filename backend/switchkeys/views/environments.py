@@ -1,5 +1,8 @@
+from uuid import UUID
 from rest_framework.generics import ListAPIView, GenericAPIView
 from rest_framework.request import Request
+from switchkeys.api.permissions import IsAdminUser, UserIsAuthenticated
+from switchkeys.utils.validators import is_valid_uuid
 from switchkeys.models.environments import (
     EnvironmentFeature,
     SwitchKeysFeature,
@@ -8,24 +11,25 @@ from switchkeys.models.environments import (
 from switchkeys.models.users import DeviceType
 from switchkeys.utils.wrappers import unique_field_error, value_not_accepted_error
 from switchkeys.services.projects import get_project_by_id
-from switchkeys.models.management import OrganizationProject
+from switchkeys.models.management import OrganizationProject, ProjectEnvironment
 from switchkeys.api.custom_response import CustomResponse
 from switchkeys.services.environments import (
     create_environment_user,
+    get_all_environment_features,
     get_all_environments,
     get_environment_by_id,
     get_environment_by_key,
+    get_environment_feature,
     get_environment_user_username,
+    is_feature_created,
     validate_unique_environment_name,
-)
-from switchkeys.api.permissions import (
-    HasEnvironmentKey,
-    IsAdminUser,
-    UserIsAuthenticated,
 )
 from switchkeys.serializers.environments import (
     AddEnvironmentUserSerializer,
+    EnvironmentFeatureSerialize,
     ProjectEnvironmentSerializer,
+    SwitchKeysFeatureSerializer,
+    UpdateEnvironmentFeatureSerializer,
 )
 
 
@@ -212,7 +216,7 @@ class AddEnvironmentUserAPIView(GenericAPIView):
 
     serializer_class = AddEnvironmentUserSerializer
 
-    def put(self, request: Request, environment_key: str) -> CustomResponse:
+    def put(self, request: Request, environment_key: UUID) -> CustomResponse:
         """
         Adds a user to the specified environment.
         """
@@ -266,7 +270,7 @@ class AddEnvironmentUserAPIView(GenericAPIView):
                     UserFeature.objects.create(
                         user=user,
                         feature=switchkey_feature,
-                        feature_value=feature.value
+                        feature_value=feature.value,
                     )
 
             environment.save()
@@ -276,4 +280,206 @@ class AddEnvironmentUserAPIView(GenericAPIView):
         return CustomResponse.bad_request(
             message="Please make sure that you entered a valid data.",
             error=serializer.errors,
+        )
+
+
+class BaseEnvironmentFeatureAPIView(GenericAPIView):
+
+    serializer_class = EnvironmentFeatureSerialize
+    permission_classes = []
+
+    def get_permissions(self):
+        if self.request.method == "GET":
+            self.permission_classes = []
+        else:
+            self.permission_classes = [UserIsAuthenticated]
+
+        return super(BaseEnvironmentFeatureAPIView, self).get_permissions()
+
+    def get_queryset(self):
+        """Get all ``environment features`` in the system."""
+        environment_key = self.kwargs.get("environment_key")
+        environment = get_environment_by_key(environment_key)
+        if environment is None:
+            return CustomResponse.not_found(
+                message="The project environment does not exist."
+            )
+
+        if not is_valid_uuid(environment_key):
+            return CustomResponse.bad_request(
+                message=f"{environment_key} is not valid UUID."
+            )
+
+        get_queryset = get_all_environment_features(environment)
+        return get_queryset
+
+    def get(self, request: Request, environment_key: UUID):
+        """Get all features exists on the environment"""
+        environment = self.get_queryset()
+        return CustomResponse.success(
+            message="Environment features found.",
+            data=self.serializer_class(environment, many=True).data,
+        )
+
+    def post(self, request: Request, environment_key: UUID) -> CustomResponse:
+        """
+        Create a new environment feature.
+
+        Args:
+            request (Request): The HTTP request object containing data for creating the feature.
+            environment_key (UUID): The UUID of the environment where the feature will be created.
+
+        Returns:
+            CustomResponse: Response indicating the result of the feature creation process.
+        """
+
+        # Validate environment key
+        environment_key = self.kwargs.get("environment_key")
+        if not is_valid_uuid(environment_key):
+            return CustomResponse.bad_request(
+                message=f"{environment_key} is not a valid UUID."
+            )
+
+        # Validate serializer data
+        serializer = self.get_serializer(data=request.data)
+        if not serializer.is_valid():
+            return CustomResponse.bad_request(
+                message="Please make sure that you entered valid data.",
+                error=serializer.errors,
+                data=request.data,
+            )
+
+        # Get the environment
+        environment = get_environment_by_key(environment_key)
+        if environment is None:
+            return CustomResponse.not_found(
+                message="The project environment does not exist."
+            )
+
+        # Extract feature name and value from serializer
+        feature_name = serializer.validated_data.get("name")
+        feature_value = serializer.validated_data.get("value")
+
+        # Check if the feature with the same name already exists in the environment
+        if is_feature_created(feature_name, environment):
+            return CustomResponse.bad_request(
+                message="The environment already has a feature with the same name.",
+                error=unique_field_error("name"),
+            )
+
+        # Create the new feature
+        feature = SwitchKeysFeature.objects.create(
+            name=feature_name,
+            value=feature_value,
+            initial_value=feature_value,
+        )
+
+        # Get and add the feature to the environment
+        env_feature = EnvironmentFeature.objects.get(environment=environment)
+        env_feature.features.add(feature)
+        environment.save()
+
+        # Assign the new feature to all users in the environment
+        for user in environment.users.all():
+            UserFeature.objects.create(
+                user=user, feature=feature, feature_value=feature_value
+            )
+
+        return CustomResponse.success(
+            data=SwitchKeysFeatureSerializer(feature).data,
+            message="Project environment has been created successfully.",
+        )
+
+
+class DeleteEnvironmentFeatureAPIView(GenericAPIView):
+    # Update the permission later.
+    permission_classes = []
+
+    def delete(self, request: Request, environment_key: UUID, feature_name: str):
+        """Delete an environment feature from the environment and from all environment users"""
+        # Validate environment key
+        environment_key = self.kwargs.get("environment_key")
+        if not is_valid_uuid(environment_key):
+            return CustomResponse.bad_request(
+                message=f"{environment_key} is not a valid UUID."
+            )
+
+        # Get the environment
+        environment = get_environment_by_key(environment_key)
+        if environment is None:
+            return CustomResponse.not_found(
+                message="The project environment does not exist."
+            )
+
+        # Check if the feature with the same name already exists in the environment
+        if not is_feature_created(feature_name, environment):
+            return CustomResponse.not_found(
+                message=f"Feature '{feature_name}' does not exist on the '{environment.name}' environment.",
+            )
+
+        env_feature = get_environment_feature(feature_name, environment)
+        feature = env_feature.features.get(name=feature_name)
+        feature.delete()
+
+        return CustomResponse.success(
+            message="The environment feature has been deleted successfully."
+        )
+
+
+class UpdateEnvironmentFeatureAPIView(GenericAPIView):
+    serializer_class = UpdateEnvironmentFeatureSerializer
+    # Update the permission later.
+    permission_classes = []
+
+    def put(self, request: Request, environment_key: UUID, feature_name: str):
+        """Update an environment feature"""
+        # Validate environment key
+        environment_key = self.kwargs.get("environment_key")
+        if not is_valid_uuid(environment_key):
+            return CustomResponse.bad_request(
+                message=f"{environment_key} is not a valid UUID."
+            )
+
+        # Get the environment
+        environment = get_environment_by_key(environment_key)
+        if environment is None:
+            return CustomResponse.not_found(
+                message="The project environment does not exist."
+            )
+
+        # Check if the feature with the same name already exists in the environment
+        if not is_feature_created(feature_name, environment):
+            return CustomResponse.not_found(
+                message=f"Feature '{feature_name}' does not exist on the '{environment.name}' environment.",
+            )
+
+        env_feature = get_environment_feature(feature_name, environment)
+        feature = env_feature.features.get(name=feature_name)
+
+        serializer = self.get_serializer(data=request.data)
+        if not serializer.is_valid():
+            return CustomResponse.bad_request(
+                message="Please make sure that you entered valid data.",
+                error=serializer.errors,
+                data=request.data,
+            )
+
+        # Extract feature name and value from serializer
+        new_feature_name = serializer.validated_data.get("name")
+        new_feature_value = serializer.validated_data.get("value")
+        
+        # Check if the feature with the same name already exists in the environment
+        if new_feature_name != feature_name and is_feature_created(new_feature_name, environment):
+            return CustomResponse.bad_request(
+                message="The environment already has a feature with the same name.",
+                error=unique_field_error("name"),
+            )
+
+        feature.name = new_feature_name
+        feature.value = new_feature_value
+        feature.save()
+
+        return CustomResponse.success(
+            message="The environment feature has been deleted successfully.",
+            data=SwitchKeysFeatureSerializer(feature).data
         )

@@ -1,9 +1,8 @@
 from enum import Enum
-from typing import List
-from switchkeys.models.users import DeviceType, ProjectEnvironmentUser, User, UserDevice
-from switchkeys.models.environments import EnvironmentFeature
+from typing import List, Optional
+from switchkeys.models.users import DeviceType, ProjectEnvironmentUser, UserDevice
+from switchkeys.models.environments import EnvironmentFeature, SwitchKeysFeature
 from switchkeys.models.management import (
-    Organization,
     ProjectEnvironment,
     OrganizationProject,
 )
@@ -116,4 +115,51 @@ def validate_unique_environment_name(
         project=project, name=environment_name
     )
 
-    return environments.__len__() > 0
+    return environments.exists()
+
+def is_feature_created(name: str, environment: ProjectEnvironment) -> bool:
+    """
+    Check if a feature with the given name is created in the specified environment.
+
+    Args:
+        name (str): The name of the feature to check.
+        environment (ProjectEnvironment): The environment to search for the feature.
+
+    Returns:
+        bool: True if the feature is created in the environment, False otherwise.
+
+    Example:
+        >>> is_feature_created("debug", environment)
+        True
+    """
+
+    all_features = SwitchKeysFeature.objects.filter(name=name).values_list("id", flat=True)
+    env_features = EnvironmentFeature.objects.filter(environment=environment, features__id__in=all_features)
+    
+    return env_features.exists()
+
+def get_environment_feature(name: str, environment: ProjectEnvironment) -> Optional[EnvironmentFeature]:
+    """
+    Retrieve an environment feature by name and environment.
+
+    Args:
+        name (str): The name of the feature to retrieve.
+        environment (ProjectEnvironment): The environment where the feature belongs.
+
+    Returns:
+        EnvironmentFeature: The environment feature with the specified name, if found, else None.
+
+    Raises:
+        EnvironmentFeature.DoesNotExist: If the environment feature does not exist.
+
+    Example:
+        >>> feature = get_environment_feature("debug", environment)
+    """
+
+    # Retrieve all features with the given name
+    all_features = SwitchKeysFeature.objects.filter(name=name)
+    
+    # Filter environment features by environment and matching feature IDs
+    env_features = EnvironmentFeature.objects.get(environment=environment, features__in=all_features)
+
+    return env_features

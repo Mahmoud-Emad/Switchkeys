@@ -9,14 +9,21 @@ from rest_framework.serializers import (
 from switchkeys.models.users import ProjectEnvironmentUser
 from switchkeys.serializers.users import ProjectEnvironmentUserSerializer
 from switchkeys.models.management import ProjectEnvironment
-from switchkeys.models.environments import EnvironmentFeature, SwitchKeysFeature, UserFeature
+from switchkeys.models.environments import (
+    EnvironmentFeature,
+    SwitchKeysFeature,
+    UserFeature,
+)
+
 
 class EnvironmentUserDeviceSerializer(Serializer):
     """
     Serializer for environment user device information.
     """
+
     version = CharField()
     device_type = CharField()
+
 
 class ProjectEnvironmentSerializer(ModelSerializer):
     """
@@ -24,7 +31,7 @@ class ProjectEnvironmentSerializer(ModelSerializer):
     """
 
     project = SerializerMethodField()
-    project_id = IntegerField(write_only=True) # Used to know which project
+    project_id = IntegerField(write_only=True)  # Used to know which project
     users = SerializerMethodField()
     features = SerializerMethodField()
 
@@ -69,13 +76,15 @@ class ProjectEnvironmentSerializer(ModelSerializer):
             serialized_features.extend(
                 SwitchKeysFeatureSerializer(feature.features.all(), many=True).data
             )
-        
+
         return serialized_features
+
 
 class SwitchKeysFeatureSerializer(ModelSerializer):
     """
     Serializer for environment features.
     """
+
     class Meta:
         fields = "__all__"
         model = SwitchKeysFeature
@@ -104,11 +113,13 @@ class AddEnvironmentUserSerializer(Serializer):
         """
         # If the user object is not an instance, retrieve it by username
         if not isinstance(user, ProjectEnvironmentUser):
-            user = ProjectEnvironmentUser.objects.get(username=user.get('username'))
+            user = ProjectEnvironmentUser.objects.get(username=user.get("username"))
 
         # Fetch user features and their corresponding feature values
         user_features = UserFeature.objects.filter(user=user)
-        user_features_data = {feature.feature.id: feature.feature_value for feature in user_features}
+        user_features_data = {
+            feature.feature.id: feature.feature_value for feature in user_features
+        }
 
         # Fetch SwitchKeysFeature objects based on user features
         features = SwitchKeysFeature.objects.filter(id__in=user_features_data.keys())
@@ -118,3 +129,50 @@ class AddEnvironmentUserSerializer(Serializer):
             feature.value = user_features_data.get(feature.id)
 
         return SwitchKeysFeatureSerializer(features, many=True).data
+
+
+class EnvironmentFeatureSerialize(ModelSerializer):
+    """
+    Serializer for Organization project environment features.
+    """
+
+    name = CharField(write_only=True)
+    value = CharField(write_only=True)
+    features = SerializerMethodField()
+
+    class Meta:
+        model = EnvironmentFeature
+        fields = [
+            "id",
+            "created",
+            "modified",
+            "features",
+            "name",
+            "value",
+        ]
+
+        read_only_fields = (
+            "id",
+            "created",
+            "modified",
+            "features",
+        )
+
+        write_only_fields = (
+            "name",
+            "value",
+        )
+
+    def get_features(self, obj: ProjectEnvironment):
+        """
+        Retrieve serialized features associated with the environment.
+        """
+        return SwitchKeysFeatureSerializer(obj.features.all(), many=True).data
+
+class UpdateEnvironmentFeatureSerializer(Serializer):
+    """
+    Serializer for updating an environment feature.
+    """
+
+    name = CharField(write_only=True)
+    value = CharField(write_only=True)

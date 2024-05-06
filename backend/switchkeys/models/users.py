@@ -6,7 +6,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Anonym
 from typing import Any, Union
 
 from switchkeys.utils.generates import generate_random_color
-from switchkeys.models.abstracts import TimeStamp
+from switchkeys.models.abstracts import TimeStampedModel
 
 
 class UserType(models.TextChoices):
@@ -46,7 +46,7 @@ class SwitchKeysBaseUserManger(BaseUserManager):
         return user
 
 
-class User(AbstractBaseUser, TimeStamp):
+class User(AbstractBaseUser, TimeStampedModel):
     """main user model"""
 
     first_name = models.CharField(max_length=45)
@@ -86,13 +86,11 @@ class User(AbstractBaseUser, TimeStamp):
         return f"{self.email}"
 
 
-class ProjectEnvironmentUser(TimeStamp):
+class ProjectEnvironmentUser(TimeStampedModel):
     username = models.CharField(unique=True, max_length=30)
     device = models.ForeignKey(
         "UserDevice", on_delete=models.SET_NULL, null=True, related_name="user_device"
     )
-
-    features = models.ManyToManyField("EnvironmentFeature", blank=True)
 
     def __str__(self) -> str:
         return f"{self.username}"
@@ -102,7 +100,7 @@ class ProjectEnvironmentUser(TimeStamp):
         verbose_name_plural = "Project User"
 
 
-class UserDevice(TimeStamp):
+class UserDevice(TimeStampedModel):
     device_type = models.CharField(
         max_length=20, choices=DeviceType.choices, default=DeviceType.ANDROID
     )

@@ -3,7 +3,7 @@
 from django.db import models
 
 
-class TimeStamp(models.Model):
+class TimeStampedModel(models.Model):
     """Database model for created and updated timestamps"""
 
     created = models.DateTimeField(auto_now_add=True, db_index=True)

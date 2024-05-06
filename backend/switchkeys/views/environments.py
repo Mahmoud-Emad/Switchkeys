@@ -1,3 +1,20 @@
+"""
+This module contains API views for managing project environments and related features.
+
+Endpoints:
+- `ProjectEnvironmentKeyApiView`: Retrieves an environment by its key.
+- `BaseProjectEnvironmentApiView`: Lists and creates project environments.
+- `ProjectEnvironmentApiView`: Retrieves, updates, and deletes project environments.
+- `AddEnvironmentUserAPIView`: Adds a user to an environment.
+- `EnvironmentUserFeaturesApiView`: Retrieves user features from an environment.
+- `DeleteEnvironmentUserFeature`: Deletes a user feature on an environment.
+- `SetEnvironmentUserFeaturesApiView`: Sets user feature on an environment.
+- `RemoveEnvironmentUserAPIView`: Removes a user from an environment.
+- `BaseEnvironmentFeatureAPIView`: Lists and creates environment features.
+- `DeleteEnvironmentFeatureAPIView`: Deletes an environment feature.
+- `UpdateEnvironmentFeatureAPIView`: Updates an environment feature.
+"""
+
 from uuid import UUID
 from rest_framework.generics import ListAPIView, GenericAPIView
 from rest_framework.request import Request
@@ -35,6 +52,9 @@ from switchkeys.serializers.environments import (
 )
 
 class ProjectEnvironmentKeyApiView(ListAPIView):
+    """
+    API endpoint for retrieving an environment by its key.
+    """
     serializer_class = ProjectEnvironmentSerializer
 
     def get_queryset(self):
@@ -234,7 +254,6 @@ class ProjectEnvironmentApiView(GenericAPIView):
 
         environment.delete()
         return CustomResponse.success(
-            data={},
             message="Project has been updated successfully.",
             status_code=204,
         )
@@ -326,8 +345,7 @@ class EnvironmentUserFeaturesApiView(GenericAPIView):
     API endpoint for getting user features from an environment.
     """
     serializer_class = UserFeatureSerializers
-
-    def get(self, request: Request, environment_key: UUID, username: str) -> CustomResponse:
+    def get_queryset(self):
         """
         Get user features from the specified environment.
 
@@ -339,6 +357,9 @@ class EnvironmentUserFeaturesApiView(GenericAPIView):
         Returns:
             CustomResponse: Response object containing the result of the operation.
         """
+        environment_key = self.kwargs.get('environment_key')
+        username = self.kwargs.get('username')
+
 
         # Validate environment key
         environment_key = self.kwargs.get("environment_key")
@@ -369,9 +390,86 @@ class EnvironmentUserFeaturesApiView(GenericAPIView):
             )
 
         user_features = UserFeature.objects.filter(user=user)
+        return user_features
+
+    def get(self, request: Request, environment_key: UUID, username: str) -> CustomResponse:
+        """
+        Get user features from the specified environment.
+
+        Args:
+            request (Request): HTTP request object.
+            environment_key (UUID): The key of the environment to remove the user from.
+            username (str): the enviroment user username.
+
+        Returns:
+            CustomResponse: Response object containing the result of the operation.
+        """
+
+        user_features = self.get_queryset()
         return CustomResponse.success(
             message="User features found.",
             data=self.serializer_class(user_features, many=True).data
+        )
+
+class DeleteEnvironmentUserFeature(GenericAPIView):
+    """
+    API endpoint for deleting user feature on an environment.
+    """
+    def delete(self, request: Request, environment_key: UUID, username: str, feature_name: str):
+        """
+        Delete user feature on the specified environment.
+
+        Args:
+            request (Request): HTTP request object.
+            environment_key (UUID): The key of the environment to remove the user from.
+            username (str): the enviroment user username.
+            feature_name (str): the feature name to be deleted.
+
+        Returns:
+            CustomResponse: Response object containing the result of the operation.
+        """
+
+        # Validate environment key
+        environment_key = self.kwargs.get("environment_key")
+        if not is_valid_uuid(environment_key):
+            return CustomResponse.bad_request(
+                message=f"{environment_key} is not a valid UUID."
+            )
+
+        # Get the environment by key
+        environment = get_environment_by_key(environment_key)
+        if environment is None:
+            # Return 404 if the environment does not exist
+            return CustomResponse.not_found(
+                message="The project environment does not exist."
+            )
+
+        # Get the user from the environment by username
+        user = get_environment_user_username(username)
+        if user is None:
+            # Return 404 if the user does not exist
+            return CustomResponse.not_found(
+                message="User not found."
+            )
+
+        # Validate if the user exist on the environment
+        if user not in environment.users.all():
+            return CustomResponse.bad_request(
+                message=f"User `{user.username}` is not on the `{environment.name}` environment, try to add the user first to the environment."
+            )
+
+        # Get and validate the feature, check if the feature exist on the user
+        user_features = UserFeature.objects.filter(user=user).filter(feature__name=feature_name)
+        if len(user_features) == 0:
+            return CustomResponse.not_found(
+                message="Feature not found.",
+            )
+
+        user_feature = UserFeature.objects.filter(user=user).get(feature__name=feature_name)
+        user_feature.delete()
+        return CustomResponse.success(
+            status_code=204,
+            message="Feature deleted."
         )
 
 class SetEnvironmentUserFeaturesApiView(GenericAPIView):
@@ -416,6 +514,7 @@ class SetEnvironmentUserFeaturesApiView(GenericAPIView):
                 message="User not found."
             )
 
+        # Validate if the user exist on the environment
         if user not in environment.users.all():
             return CustomResponse.bad_request(
                 message=f"User `{user.username}` is not on the `{environment.name}` environment, try to add the user first to the environment."
@@ -661,6 +760,7 @@ class DeleteEnvironmentFeatureAPIView(GenericAPIView):
         feature.delete()
 
         return CustomResponse.success(
+            status_code=204,
             message="The environment feature has been deleted successfully."
         )
 

@@ -11,6 +11,7 @@ from switchkeys.views.environments import (
     UpdateEnvironmentFeatureAPIView,
     EnvironmentUserFeaturesApiView,
     SetEnvironmentUserFeaturesApiView,
+    DeleteEnvironmentUserFeature,
 )
 
 urlpatterns = [
@@ -39,6 +40,10 @@ urlpatterns = [
     path(
         "key/<str:environment_key>/users/<str:username>/features/set/",
         SetEnvironmentUserFeaturesApiView.as_view(),
+    ),
+    path(
+        "key/<str:environment_key>/users/<str:username>/features/delete/<feature_name>/",
+        DeleteEnvironmentUserFeature.as_view(),
     ),
 
     # path(

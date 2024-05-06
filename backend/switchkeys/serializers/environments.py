@@ -130,6 +130,14 @@ class AddEnvironmentUserSerializer(Serializer):
 
         return SwitchKeysFeatureSerializer(features, many=True).data
 
+class RemoveEnvironmentUserSerializer(Serializer):
+    """
+    Serializer to remove user from an environment.
+    """
+
+    username = CharField()
+
+
 
 class EnvironmentFeatureSerialize(ModelSerializer):
     """
@@ -169,10 +177,33 @@ class EnvironmentFeatureSerialize(ModelSerializer):
         """
         return SwitchKeysFeatureSerializer(obj.features.all(), many=True).data
 
-class UpdateEnvironmentFeatureSerializer(Serializer):
+class EnvironmentFeatureSerializer(Serializer):
     """
-    Serializer for updating an environment feature.
+    Serializer for an environment feature.
     """
 
     name = CharField(write_only=True)
     value = CharField(write_only=True)
+
+class UserFeatureSerializers(ModelSerializer):
+    """
+    Serializer to get user features.
+    """
+    name = SerializerMethodField()
+    value = SerializerMethodField()
+
+    class Meta:
+        model = UserFeature
+        fields = [
+            "id",
+            "name",
+            "value",
+            "created",
+            "modified",
+        ]
+
+    def get_name(self, obj: UserFeature):
+        return obj.feature.name
+
+    def get_value(self, obj: UserFeature):
+        return obj.feature_value

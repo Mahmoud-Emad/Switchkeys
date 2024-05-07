@@ -40,7 +40,7 @@ await switchKeys.auth.register(
 
 ### Logging in an Existing User
 
-To log in an existing user, use the `login` method provided by the `SwitchKeyAuth` class. Provide the user's email and password as parameters:
+To log in as an existing user, use the `login` method provided by the `SwitchKeyAuth` class. Provide the user's email and password as parameters:
 
 ```dart
 import 'package:switchkeys/src/core/base.dart';
@@ -144,19 +144,23 @@ var feature = SwitchKeyUserEnvironmentFeatureRequest(
   value: "dark",
 );
 
-// Set user features in an environment
-final userFeature = await switchKeys.environments.users.addFeature(
-  username: user.username,
-  feature: feature,
-  environment: environment,
-);
-
 // Get the value of a specific feature of a user.
 final getUserFeature = await switchKeys.environments.users.getFeature(
   featureName: "debug",
   username: "Adham",
   environment: environment,
 );
+
+print(getUserFeature.name);
+
+// Get all of user features.
+final getAllUserFeature = await switchKeys.environments.users.getAllFeatures(
+  featureName: "debug",
+  username: "Adham",
+  environment: environment,
+);
+
+print(getAllUserFeature);
 
 print("Name: ${feature.name}");
 print("Value: ${feature.value}");

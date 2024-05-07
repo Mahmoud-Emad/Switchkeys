@@ -68,19 +68,21 @@ class ProjectEnvironmentKeyApiView(ListAPIView):
 
         environment = get_environment_by_key(environment_key)
 
+
         if environment is None:
             return CustomResponse.not_found(
                 message="The project environment does not exist."
             )
 
-        return CustomResponse.success(
-            message="Environment found.",
-            data=ProjectEnvironmentSerializer(environment).data,
-        )
+        return environment
 
     def get(self, request, environment_key):
         """Get an environment exists on a project"""
-        return self.get_queryset()
+        environment = self.get_queryset()
+        return CustomResponse.success(
+            message="Environment found.",
+            data=self.serializer_class(environment).data,
+        )
 
 class BaseProjectEnvironmentApiView(ListAPIView):
     """
@@ -283,7 +285,6 @@ class AddEnvironmentUserAPIView(GenericAPIView):
             )
 
         serializer = self.get_serializer(data=request.data)
-
         if serializer.is_valid():
             username = serializer.validated_data.get("username")
             user = get_environment_user_username(username)

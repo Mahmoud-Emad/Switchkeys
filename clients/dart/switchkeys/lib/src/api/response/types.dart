@@ -16,7 +16,6 @@ class SwitchKeysEnvironmentsUserResponse {
 
 class SwitchKeysEnvironmentResponse {
   final int id;
-  final String name;
   final String created;
   final String modified;
   final SwitchKeysProjectResponse project;
@@ -25,7 +24,6 @@ class SwitchKeysEnvironmentResponse {
 
   SwitchKeysEnvironmentResponse({
     required this.id,
-    required this.name,
     required this.created,
     required this.modified,
     required this.project,
@@ -39,7 +37,6 @@ class SwitchKeysProjectResponse {
   final String name;
   final String created;
   final String modified;
-  final SwitchKeysEnvironmentNameKeyResponse environments;
   final SwitchKeysOrganizationResponse? organization;
 
   SwitchKeysProjectResponse({
@@ -47,7 +44,6 @@ class SwitchKeysProjectResponse {
     required this.name,
     required this.created,
     required this.modified,
-    required this.environments,
     this.organization,
   });
 }
@@ -172,5 +168,21 @@ class SwitchKeysEnvironmentNameKeyResponse {
     required this.development,
     required this.staging,
     required this.production,
+  });
+}
+
+class SwitchKeyUserFeature {
+  final int id;
+  final String name;
+  final String value;
+  final String created;
+  final String modified;
+
+  SwitchKeyUserFeature({
+    required this.id,
+    required this.name,
+    required this.value,
+    required this.created,
+    required this.modified,
   });
 }

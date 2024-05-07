@@ -1,4 +1,3 @@
-import 'package:switchkeys/src/api/request/types.dart';
 import 'package:switchkeys/src/api/response/types.dart';
 import 'package:switchkeys/src/core/base.dart';
 
@@ -73,33 +72,7 @@ void switchKeysManagement() async {
   // Import and take an instance from the `SwitchKeys` module
   SwitchKeys switchKeys = SwitchKeys();
 
-  SwitchKeysEnvironmentResponse environment =
-      await switchKeys.environments.load(
+  await switchKeys.environments.load(
     environmentKey: "16e78bfa-fa85-4313-8bc2-1bd09db34642",
   );
-
-  // Add users to the loaded environment
-  final user1 = SwitchKeysEnvironmentsUser(
-    username: "Adham",
-    device: SwitchKeyDevice(
-      deviceType: SwitchKeyDeviceType.Android,
-      version: "v1.1-0x54s",
-    ),
-  );
-
-  final user2 = SwitchKeysEnvironmentsUser(
-    username: "Maged",
-    device: SwitchKeyDevice(
-      deviceType: SwitchKeyDeviceType.IPhone,
-      version: "IO15.12.151-0x52qq3a",
-    ),
-  );
-
-  List<SwitchKeysEnvironmentsUserResponse> users =
-      await switchKeys.environments.users.addUsers(
-    users: [user1, user2],
-    environment: environment,
-  );
-
-  print("users: $users");
 }

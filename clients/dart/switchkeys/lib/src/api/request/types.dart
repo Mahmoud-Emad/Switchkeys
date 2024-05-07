@@ -37,11 +37,11 @@ class SwitchKeyDevice {
   });
 }
 
-class SwitchKeyUserEnvironmentFeatures {
+class SwitchKeyUserEnvironmentFeatureRequest {
   String name;
   String value;
 
-  SwitchKeyUserEnvironmentFeatures({
+  SwitchKeyUserEnvironmentFeatureRequest({
     required this.name,
     required this.value,
   });
@@ -53,10 +53,48 @@ class SwitchKeyUserEnvironmentFeatures {
       'value': value,
     };
   }
+}
+
+class SwitchKeyUserEnvironmentFeatures {
+  int id;
+  String name;
+  String created;
+  String modified;
+  String value;
+  String initialValue;
+  bool isDefault;
+
+  SwitchKeyUserEnvironmentFeatures({
+    required this.id,
+    required this.name,
+    required this.created,
+    required this.modified,
+    required this.value,
+    required this.initialValue,
+    required this.isDefault,
+  });
+
+  // Method to convert SwitchKeyUserEnvironmentFeatures to a JSON-compatible map
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'created': created,
+      'modified': modified,
+      'value': value,
+      'initial_value': initialValue,
+      'is_default': isDefault,
+    };
+  }
 
   // Factory method to create SwitchKeyUserEnvironmentFeatures from JSON map
   factory SwitchKeyUserEnvironmentFeatures.fromJson(Map<String, dynamic> json) {
     return SwitchKeyUserEnvironmentFeatures(
+      id: json['id'],
+      initialValue: json['initial_value'],
+      isDefault: json['is_default'],
+      created: json['created'],
+      modified: json['modified'],
       name: json['name'],
       value: json['value'],
     );

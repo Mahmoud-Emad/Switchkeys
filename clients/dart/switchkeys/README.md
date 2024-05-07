@@ -40,7 +40,7 @@ await switchKeys.auth.register(
 
 ### Logging in an Existing User
 
-To log in an existing user, use the `login` method provided by the `SwitchKeyAuth` class. Provide the user's email and password as parameters:
+To log in as an existing user, use the `login` method provided by the `SwitchKeyAuth` class. Provide the user's email and password as parameters:
 
 ```dart
 import 'package:switchkeys/src/core/base.dart';
@@ -128,19 +128,39 @@ import 'package:switchkeys/src/core/base.dart';
 // Get an instance of SwitchKeysEnvironmentsUsers
 SwitchKeys switchKeys = SwitchKeys();
 
-// Set user features in an environment
-await switchKeys.environments.users.addFeature(
-  username: "user1",
-  feature: SwitchKeyUserEnvironmentFeatures(name: "Feature1", value: "Value1"),
-  environmentKey: "0246204d-c567-4089-add2-a1155657ecac", // Environment key
+final user = SwitchKeysEnvironmentsUser(
+  username: "Mahmoud",
+  device: userDevice,
 );
 
-// Get the value of a specific feature for a user.
-feature = await switchKeys.environments.users.getFeature(
+final addedUser = await switchKeys.environments.users.addUser(
+  user: user,
+  environment: environment,
+);
+
+// Add a feature to the user.
+var feature = SwitchKeyUserEnvironmentFeatureRequest(
+  name: "Theme",
+  value: "dark",
+);
+
+// Get the value of a specific feature of a user.
+final getUserFeature = await switchKeys.environments.users.getFeature(
   featureName: "debug",
   username: "Adham",
   environment: environment,
 );
+
+print(getUserFeature.name);
+
+// Get all of user features.
+final getAllUserFeature = await switchKeys.environments.users.getAllFeatures(
+  featureName: "debug",
+  username: "Adham",
+  environment: environment,
+);
+
+print(getAllUserFeature);
 
 print("Name: ${feature.name}");
 print("Value: ${feature.value}");

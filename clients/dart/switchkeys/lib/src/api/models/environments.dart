@@ -312,63 +312,64 @@ class SwitchKeysEnvironmentUsers {
     }
   }
 
-  Future<List<SwitchKeysEnvironmentsUserResponse>> addUsers({
-    required List<SwitchKeysEnvironmentsUser> users,
-    required SwitchKeysEnvironmentResponse environment,
-  }) async {
-    final apiUrl = SwitchKeysRoutes.getRoute(
-      EndPoints.environmentsKeyAddUsers,
-      [environment.environmentKey.toString()],
-    );
+  // TODO: Later
+  // Future<List<SwitchKeysEnvironmentsUserResponse>> addUsers({
+  //   required List<SwitchKeysEnvironmentsUser> users,
+  //   required SwitchKeysEnvironmentResponse environment,
+  // }) async {
+  //   final apiUrl = SwitchKeysRoutes.getRoute(
+  //     EndPoints.environmentsKeyAddUsers,
+  //     [environment.environmentKey.toString()],
+  //   );
 
-    final List<Map<String, dynamic>> payload = users.map((user) {
-      String deviceType =
-          (user.device?.deviceType == SwitchKeyDeviceType.Android)
-              ? 'Android'
-              : 'IPhone';
-      return {
-        "username": user.username,
-        "device": {
-          "device_type": deviceType,
-          "version": user.device?.version,
-        },
-      };
-    }).toList();
+  //   final List<Map<String, dynamic>> payload = users.map((user) {
+  //     String deviceType =
+  //         (user.device?.deviceType == SwitchKeyDeviceType.Android)
+  //             ? 'Android'
+  //             : 'IPhone';
+  //     return {
+  //       "username": user.username,
+  //       "device": {
+  //         "device_type": deviceType,
+  //         "version": user.device?.version,
+  //       },
+  //     };
+  //   }).toList();
 
-    Map<String, dynamic> body = {"users": payload};
+  //   Map<String, dynamic> body = {"users": payload};
 
-    final headers = {
-      "Content-Type": "application/json",
-    };
+  //   final headers = {
+  //     "Content-Type": "application/json",
+  //   };
 
-    try {
-      final response = await http.put(
-        Uri.parse(apiUrl),
-        headers: headers,
-        body: jsonEncode(body),
-      );
+  //   try {
+  //     final response = await http.put(
+  //       Uri.parse(apiUrl),
+  //       headers: headers,
+  //       body: jsonEncode(body),
+  //     );
 
-      if (_isResponseSuccessful(response)) {
-        final Map<String, dynamic> data = jsonDecode(response.body);
-        final List<SwitchKeysEnvironmentsUserResponse> parsedUsers =
-            parseEnvironmentUsers(
-          data["results"],
-        );
+  //     if (_isResponseSuccessful(response)) {
+  //       final Map<String, dynamic> data = jsonDecode(response.body);
+  //       final List<SwitchKeysEnvironmentsUserResponse> parsedUsers =
+  //           parseEnvironmentUsers(
+  //         data["results"],
+  //       );
 
-        for (final user in parsedUsers) {
-          if (!environment.users.any((u) => u.id == user.id)) {
-            environment.users.add(user);
-          }
-        }
+  //       for (final user in parsedUsers) {
+  //         if (!environment.users.any((u) => u.id == user.id)) {
+  //           environment.users.add(user);
+  //         }
+  //       }
 
-        return environment.users;
-      } else {
-        throw ResponseError(_handleErrorResponseMessage(response));
-      }
-    } catch (e) {
-      throw ResponseError(e.toString());
-    }
-  }
+  //       return environment.users;
+  //     } else {
+  //       throw ResponseError(_handleErrorResponseMessage(response));
+  //     }
+  //   } catch (e) {
+  //     throw ResponseError(e.toString());
+  //   }
+  // }
 
   Future<SwitchKeysEnvironmentsUserResponse> removeUser({
     required SwitchKeysEnvironmentsUser user,
@@ -414,29 +415,26 @@ class SwitchKeysEnvironmentUsers {
     }
   }
 
-  Future<List<SwitchKeyUserEnvironmentFeatures>> addFeature({
+  Future<SwitchKeyUserFeature> addFeature({
     required String username,
-    required SwitchKeyUserEnvironmentFeatures feature,
+    required SwitchKeyUserEnvironmentFeatureRequest feature,
     required SwitchKeysEnvironmentResponse environment,
   }) async {
     String apiUrl = SwitchKeysRoutes.getRoute(
       EndPoints.environmentUserAddFeature,
       [
         environment.environmentKey.toString(),
+        username,
       ],
     );
 
-    Map<String, dynamic> body = {
-      "username": username,
-      "feature": feature.toJson(),
-    };
-
+    Map<String, dynamic> body = feature.toJson();
     Map<String, String> headers = {
       "Content-Type": "application/json",
     };
 
     try {
-      http.Response response = await http.post(
+      http.Response response = await http.put(
         Uri.parse(apiUrl),
         headers: headers,
         body: jsonEncode(body),
@@ -444,7 +442,7 @@ class SwitchKeysEnvironmentUsers {
 
       if (_isResponseSuccessful(response)) {
         Map<String, dynamic> data = jsonDecode(response.body);
-        return parseFeatures(data["results"]);
+        return parseUserFeature(data["results"]);
       } else {
         throw ResponseError(_handleErrorResponseMessage(response));
       }
@@ -453,53 +451,58 @@ class SwitchKeysEnvironmentUsers {
     }
   }
 
-  Future<List<SwitchKeyUserEnvironmentFeatures>> bulkCreateFeature({
-    required String username,
-    required List<SwitchKeyUserEnvironmentFeatures> features,
-    required SwitchKeysEnvironmentResponse environment,
-  }) async {
-    String apiUrl = SwitchKeysRoutes.getRoute(
-      EndPoints.environmentUserAddFeatures,
-      [
-        environment.environmentKey.toString(),
-      ],
-    );
+  // TODO: later
 
-    Map<String, dynamic> body = {
-      "username": username,
-      "features": features,
-    };
+  // Future<List<SwitchKeyUserEnvironmentFeatures>> bulkCreateFeature({
+  //   required String username,
+  //   required List<SwitchKeyUserEnvironmentFeatureRequest> features,
+  //   required SwitchKeysEnvironmentResponse environment,
+  // }) async {
+  //   String apiUrl = SwitchKeysRoutes.getRoute(
+  //     EndPoints.environmentUserAddFeatures,
+  //     [
+  //       environment.environmentKey.toString(),
+  //     ],
+  //   );
 
-    Map<String, String> headers = {
-      "Content-Type": "application/json",
-    };
+  //   Map<String, dynamic> body = {
+  //     "username": username,
+  //     "features": features,
+  //   };
 
-    try {
-      http.Response response = await http.post(
-        Uri.parse(apiUrl),
-        headers: headers,
-        body: jsonEncode(body),
-      );
+  //   Map<String, String> headers = {
+  //     "Content-Type": "application/json",
+  //   };
 
-      if (_isResponseSuccessful(response)) {
-        Map<String, dynamic> data = jsonDecode(response.body);
-        return parseFeatures(data["results"]);
-      } else {
-        throw ResponseError(_handleErrorResponseMessage(response));
-      }
-    } catch (e) {
-      throw ResponseError(e.toString());
-    }
-  }
+  //   try {
+  //     http.Response response = await http.post(
+  //       Uri.parse(apiUrl),
+  //       headers: headers,
+  //       body: jsonEncode(body),
+  //     );
 
-  Future<SwitchKeyUserEnvironmentFeatures> getFeature({
+  //     if (_isResponseSuccessful(response)) {
+  //       Map<String, dynamic> data = jsonDecode(response.body);
+  //       return parseFeatures(data["results"]);
+  //     } else {
+  //       throw ResponseError(_handleErrorResponseMessage(response));
+  //     }
+  //   } catch (e) {
+  //     throw ResponseError(e.toString());
+  //   }
+  // }
+
+  Future<SwitchKeyUserFeature> getFeature({
     required String username,
     required String featureName,
     required SwitchKeysEnvironmentResponse environment,
   }) async {
     String apiUrl = SwitchKeysRoutes.getRoute(
-      EndPoints.environmentUserGetFeature,
-      [environment.environmentKey.toString(), featureName, username],
+      EndPoints.environmentUserGetFeatures,
+      [
+        environment.environmentKey.toString(),
+        username,
+      ],
     );
 
     Map<String, String> headers = {
@@ -514,7 +517,24 @@ class SwitchKeysEnvironmentUsers {
 
       if (_isResponseSuccessful(response)) {
         Map<String, dynamic> data = jsonDecode(response.body);
-        return parseFeature(data["results"]);
+        final features = data["results"];
+        SwitchKeyUserFeature userFeature = SwitchKeyUserFeature(
+          created: "",
+          id: 0,
+          modified: "",
+          name: "",
+          value: "",
+        );
+
+        for (var feature in features) {
+          if (feature['name'] == featureName) {
+            userFeature = parseUserFeature(feature);
+          }
+        }
+
+        return userFeature.id != 0
+            ? userFeature
+            : throw ResponseError("The requested user feature is not found.");
       } else {
         throw ResponseError(_handleErrorResponseMessage(response));
       }
@@ -523,10 +543,40 @@ class SwitchKeysEnvironmentUsers {
     }
   }
 
-  // featureIsEnabled({
-  //   required String username,
-  //   required String featureName,
-  // }) async {}
+  Future<List<SwitchKeyUserFeature>> getAllFeatures({
+    required String username,
+    required String featureName,
+    required SwitchKeysEnvironmentResponse environment,
+  }) async {
+    String apiUrl = SwitchKeysRoutes.getRoute(
+      EndPoints.environmentUserGetFeatures,
+      [
+        environment.environmentKey.toString(),
+        username,
+      ],
+    );
+
+    Map<String, String> headers = {
+      "Content-Type": "application/json",
+    };
+
+    try {
+      http.Response response = await http.get(
+        Uri.parse(apiUrl),
+        headers: headers,
+      );
+
+      if (_isResponseSuccessful(response)) {
+        Map<String, dynamic> data = jsonDecode(response.body);
+        final features = data["results"];
+        return parseUserFeatures(features);
+      } else {
+        throw ResponseError(_handleErrorResponseMessage(response));
+      }
+    } catch (e) {
+      throw ResponseError(e.toString());
+    }
+  }
 
   String _handleErrorResponseMessage(http.Response response) {
     Map<String, dynamic> data = jsonDecode(response.body);

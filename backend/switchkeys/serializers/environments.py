@@ -39,7 +39,7 @@ class ProjectEnvironmentSerializer(ModelSerializer):
         model = ProjectEnvironment
         fields = (
             "id",
-            "name",
+            # "name",
             "created",
             "modified",
             "environment_key",
@@ -94,7 +94,7 @@ class AddEnvironmentUserSerializer(Serializer):
     """
     Serializer to add user to an environment.
     """
-
+    id = SerializerMethodField()
     device = EnvironmentUserDeviceSerializer()
     username = CharField()
     features = SerializerMethodField()
@@ -102,10 +102,20 @@ class AddEnvironmentUserSerializer(Serializer):
     class Meta:
         model = ProjectEnvironmentUser
         fields = (
+            "id",
             "username",
             "device",
             "features",
         )
+
+    def get_id(self, user: ProjectEnvironmentUser):
+        """
+        Retrieve serialized user id associated with the environment.
+        """
+        # If the user object is not an instance, retrieve it by username
+        if not isinstance(user, ProjectEnvironmentUser):
+            user = ProjectEnvironmentUser.objects.get(username=user.get("username"))
+        return user.id
 
     def get_features(self, user: ProjectEnvironmentUser):
         """

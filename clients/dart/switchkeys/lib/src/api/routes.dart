@@ -23,11 +23,9 @@ enum EndPoints {
   environmentsSet,
   environmentsId,
   environmentsKeyAddUser,
-  environmentsKeyAddUsers,
   environmentsKeyRemoveUser,
   environmentUserAddFeature,
-  environmentUserAddFeatures,
-  environmentUserGetFeature,
+  environmentUserGetFeatures,
 
   projectsId,
   groupsId,
@@ -71,16 +69,15 @@ class SwitchKeysRoutes {
         return "${baseUrl}environments/key/${args![0]}/";
       case EndPoints.environmentsKeyAddUser:
         return "${baseUrl}environments/key/${args![0]}/add-user/";
-      case EndPoints.environmentsKeyAddUsers:
-        return "${baseUrl}environments/key/${args![0]}/add-users/";
       case EndPoints.environmentsKeyRemoveUser:
         return "${baseUrl}environments/key/${args![0]}/remove-user/";
       case EndPoints.environmentUserAddFeature:
-        return "${baseUrl}environments/key/${args![0]}/user/add-feature/";
-      case EndPoints.environmentUserAddFeatures:
-        return "${baseUrl}environments/key/${args![0]}/user/add-features/";
-      case EndPoints.environmentUserGetFeature:
-        return "${baseUrl}environments/key/${args![0]}/user/get-feature/?feature_name=${args[1]}&username=${args[2]}"; // index 1 = featrue name, index 2 = username.
+        // index 0 -> The environment key
+        // index 1 -> The username
+        return "${baseUrl}environments/key/${args![0]}/users/${args[1]}/features/set/";
+      case EndPoints.environmentUserGetFeatures:
+        // index 1 = featrue name, index 2 = username.
+        return "${baseUrl}environments/key/${args![0]}/users/${args[1]}/features/";
       case EndPoints.environmentsSet:
         return "${baseUrl}environments/key/${args![0]}/user/set/?user_id=${args[1]}";
       case EndPoints.environmentsId:

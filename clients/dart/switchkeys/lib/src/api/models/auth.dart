@@ -44,7 +44,6 @@ class SwitchKeyAuth {
         throw ResponseError("Login failed: $message ${data0['error'] ?? ''}");
       }
     } catch (e) {
-      print(body);
       // Exception occurred, handle error
       throw ResponseError(e.toString());
     }

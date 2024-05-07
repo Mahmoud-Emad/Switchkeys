@@ -535,7 +535,6 @@ class SwitchKeysEnvironmentUsers {
         return userFeature.id != 0
             ? userFeature
             : throw ResponseError("The requested user feature is not found.");
-        ;
       } else {
         throw ResponseError(_handleErrorResponseMessage(response));
       }

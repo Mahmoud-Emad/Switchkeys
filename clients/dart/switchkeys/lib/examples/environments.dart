@@ -28,6 +28,8 @@ void environmentsMain() async {
     environment: environment,
   );
 
+  print(addedUser.device);
+
   // Add a feature to the user.
   var feature = SwitchKeyUserEnvironmentFeatureRequest(
     name: "Theme",
@@ -39,6 +41,8 @@ void environmentsMain() async {
     feature: feature,
     environment: environment,
   );
+
+  print(userFeature.name);
 
   // Get the value of a specific feature of a user.
   final getUserFeature = await switchKeys.environments.users.getFeature(

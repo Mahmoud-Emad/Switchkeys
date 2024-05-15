@@ -30,13 +30,13 @@ SwitchKeysOrganizationResponse parseOrganization(
 SwitchKeysUserResponse parseUser(Map<String, dynamic> userData) {
   return SwitchKeysUserResponse(
     id: userData['id'],
-    backgroundColor: userData['background_color'],
-    email: userData['email'],
     firstName: userData['first_name'],
     lastName: userData['last_name'],
     fullName: userData['full_name'],
-    isActive: userData['is_active'],
+    email: userData['email'],
     joiningAt: userData['joining_at'],
+    backgroundColor: userData['background_color'],
+    isActive: userData['is_active'],
   );
 }
 
@@ -60,12 +60,12 @@ List<SwitchKeysUserResponse> parseUsers(List<dynamic> usersData) {
 
 SwitchKeysProjectResponse parseProject(Map<String, dynamic> projectData) {
   return SwitchKeysProjectResponse(
-      id: projectData['id'],
-      name: projectData['name'],
-      organization: parseOrganization(projectData['organization']),
-      created: projectData['created'],
-      modified: projectData['modified'],
-      environments: parseEnvironmentsNameKey(projectData['environments']));
+    id: projectData['id'],
+    name: projectData['name'],
+    created: projectData['created'],
+    modified: projectData['modified'],
+    organization: parseOrganization(projectData['organization']),
+  );
 }
 
 List<SwitchKeysProjectResponse> parseProjects(
@@ -79,7 +79,6 @@ List<SwitchKeysProjectResponse> parseProjects(
         modified: projectsData[i]['modified'],
         id: projectsData[i]['id'],
         name: projectsData[i]['name'],
-        environments: parseEnvironmentsNameKey(projectsData[i]['environments']),
       ),
     );
   }
@@ -92,12 +91,11 @@ SwitchKeysEnvironmentResponse parseEnvironment(
 ) {
   return SwitchKeysEnvironmentResponse(
     id: environmentData['id'],
-    name: environmentData['name'],
     environmentKey: environmentData['environment_key'],
-    project: parseProject(environmentData['project']),
-    users: parseEnvironmentUsers(environmentData['users']),
     created: environmentData['created'],
     modified: environmentData['modified'],
+    users: parseEnvironmentUsers(environmentData['users']),
+    project: parseProject(environmentData['project']),
   );
 }
 
@@ -120,8 +118,13 @@ List<SwitchKeyUserEnvironmentFeatures> parseFeatures(
   for (var i = 0; i < featuresData.length; i++) {
     features.add(
       SwitchKeyUserEnvironmentFeatures(
+        id: featuresData[i]['id'],
         name: featuresData[i]['name'],
         value: featuresData[i]['value'],
+        initialValue: featuresData[i]['initial_value'],
+        isDefault: featuresData[i]['is_default'],
+        created: featuresData[i]['created'],
+        modified: featuresData[i]['modified'],
       ),
     );
   }
@@ -132,8 +135,13 @@ SwitchKeyUserEnvironmentFeatures parseFeature(
   Map<String, dynamic> featuresData,
 ) {
   var feature = SwitchKeyUserEnvironmentFeatures(
+    id: featuresData['id'],
     name: featuresData['name'],
     value: featuresData['value'],
+    initialValue: featuresData['initial_value'],
+    isDefault: featuresData['is_default'],
+    created: featuresData['created'],
+    modified: featuresData['modified'],
   );
 
   return feature;
@@ -222,4 +230,37 @@ List<SwitchKeysEnvironmentsUserResponse> parseEnvironmentUsers(
     );
   }
   return users;
+}
+
+SwitchKeyUserFeature parseUserFeature(
+  Map<String, dynamic> featuresData,
+) {
+  var feature = SwitchKeyUserFeature(
+    id: featuresData['id'],
+    name: featuresData['name'],
+    value: featuresData['value'],
+    created: featuresData['created'],
+    modified: featuresData['modified'],
+  );
+
+  return feature;
+}
+
+List<SwitchKeyUserFeature> parseUserFeatures(
+  List<dynamic> featuresData,
+) {
+  List<SwitchKeyUserFeature> features = [];
+
+  for (var i = 0; i < featuresData.length; i++) {
+    features.add(
+      SwitchKeyUserFeature(
+        id: featuresData[i]['id'],
+        name: featuresData[i]['name'],
+        value: featuresData[i]['value'],
+        created: featuresData[i]['created'],
+        modified: featuresData[i]['modified'],
+      ),
+    );
+  }
+  return features;
 }

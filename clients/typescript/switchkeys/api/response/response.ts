@@ -1,12 +1,15 @@
+import { UUID } from "crypto";
+import { DeviceTypeSelection } from "../../utils/types";
 import {
+  ISwitchKeysDefaultEnvironmentsResponse,
+  ISwitchKeysEnvironmentFeaturesResponse,
+  ISwitchKeysEnvironmentResponse,
+  ISwitchKeysEnvironmentUserResponse,
   ISwitchKeysMemberResponse,
-  IOrganizationResponse,
-  IProjectResponse,
-  IEnvironmentResponse,
-  IEnvironmentUserResponse,
-  IDefaultEnvironmentsResponse,
-  IEnvironmentFeaturesResponse,
-} from "../../utils/types";
+  ISwitchKeysOrganizationResponse,
+  ISwitchKeysProjectResponse,
+  ISwitchKeysUserDeviceType,
+} from "./types";
 
 /**
  * Class for parsing member response data.
@@ -35,7 +38,6 @@ class SwitchKeysMemberResponse implements ISwitchKeysMemberResponse {
       firstName: "",
       lastName: "",
       joiningAt: "",
-      isActive: undefined,
     };
   }
 
@@ -51,7 +53,6 @@ class SwitchKeysMemberResponse implements ISwitchKeysMemberResponse {
       lastName: data["last_name"] || "",
       email: data["email"] || "",
       joiningAt: data["joining_at"] || "",
-      isActive: data["is_active"] || false,
     };
   }
 }
@@ -59,7 +60,7 @@ class SwitchKeysMemberResponse implements ISwitchKeysMemberResponse {
 /**
  * Class for parsing organization response data.
  */
-class OrganizationResponse implements IOrganizationResponse {
+class OrganizationResponse implements ISwitchKeysOrganizationResponse {
   id: number = 0;
   owner: ISwitchKeysMemberResponse = new SwitchKeysMemberResponse();
   name: string = "";
@@ -76,7 +77,7 @@ class OrganizationResponse implements IOrganizationResponse {
    * Initializes default organization response data.
    * @returns Default organization response data.
    */
-  init(): IOrganizationResponse {
+  init(): ISwitchKeysOrganizationResponse {
     return {
       id: 0,
       created: "",
@@ -89,7 +90,6 @@ class OrganizationResponse implements IOrganizationResponse {
         firstName: "",
         lastName: "",
         joiningAt: "",
-        isActive: false,
       },
     };
   }
@@ -99,7 +99,7 @@ class OrganizationResponse implements IOrganizationResponse {
    * @param data Raw data to parse.
    * @returns Parsed organization response data.
    */
-  parse(data: any): IOrganizationResponse {
+  parse(data: any): ISwitchKeysOrganizationResponse {
     return {
       id: data["id"] || 0,
       created: data["created"] || "",
@@ -116,12 +116,12 @@ class OrganizationResponse implements IOrganizationResponse {
 /**
  * Class for parsing project response data.
  */
-class ProjectResponse implements IProjectResponse {
+class ProjectResponse implements ISwitchKeysProjectResponse {
   id: number = 0;
   name: string = "";
-  organization: IOrganizationResponse = new OrganizationResponse();
+  organization: ISwitchKeysOrganizationResponse = new OrganizationResponse();
   organizationId: number = 0;
-  environments: IDefaultEnvironmentsResponse = {
+  environments: ISwitchKeysDefaultEnvironmentsResponse = {
     development: { name: "", environmentKey: "" },
     staging: { name: "", environmentKey: "" },
     production: { name: "", environmentKey: "" },
@@ -138,7 +138,7 @@ class ProjectResponse implements IProjectResponse {
    * Initializes default project response data.
    * @returns Default project response data.
    */
-  init(): IProjectResponse {
+  init(): ISwitchKeysProjectResponse {
     return {
       id: 0,
       created: "",
@@ -159,7 +159,31 @@ class ProjectResponse implements IProjectResponse {
    * @param data Raw data to parse.
    * @returns Parsed project response data.
    */
-  parse(data: any): IProjectResponse {
+  parse(data: any): ISwitchKeysProjectResponse {
+    const development = data?.environments.filter(
+      (e: { name: string; environment_key: UUID }) => e.name === "development"
+    )[0];
+    const staging = data?.environments.filter(
+      (e: { name: string; environment_key: UUID }) => e.name === "staging"
+    )[0];
+    const production = data?.environments.filter(
+      (e: { name: string; environment_key: UUID }) => e.name === "production"
+    )[0];
+    const environments: ISwitchKeysDefaultEnvironmentsResponse = {
+      development: {
+        environmentKey: development.environment_key,
+        name: development.name,
+      },
+      production: {
+        environmentKey: production.environment_key,
+        name: production.name,
+      },
+      staging: {
+        environmentKey: staging.environment_key,
+        name: staging.name,
+      },
+    };
+
     return {
       id: data["id"] || 0,
       name: data["name"] || "",
@@ -167,21 +191,7 @@ class ProjectResponse implements IProjectResponse {
       modified: data["modified"] || "",
       organizationId: data["organization_id"] || 0,
       organization: new OrganizationResponse().parse(data["organization"]),
-      environments: {
-        development: {
-          name: data?.environments?.development?.name || "",
-          environmentKey:
-            data?.environments?.development?.environment_key || "",
-        },
-        staging: {
-          name: data?.environments?.staging?.name || "",
-          environmentKey: data?.environments?.staging?.environment_key || "",
-        },
-        production: {
-          name: data?.environments?.production?.name || "",
-          environmentKey: data?.environments?.production?.environment_key || "",
-        },
-      },
+      environments: environments,
     };
   }
 
@@ -190,7 +200,7 @@ class ProjectResponse implements IProjectResponse {
    * @param data Raw data to parse.
    * @returns Parsed projects response data.
    */
-  parseAll(data: any): IProjectResponse[] {
+  parseAll(data: any): ISwitchKeysProjectResponse[] {
     return Array.isArray(data)
       ? data.map((projectData: any) => this.parse(projectData))
       : [];
@@ -200,16 +210,16 @@ class ProjectResponse implements IProjectResponse {
 /**
  * Class for parsing environment response data.
  */
-class EnvironmentResponse implements IEnvironmentResponse {
+class EnvironmentResponse implements ISwitchKeysEnvironmentResponse {
   id: number = 0;
   name: string = "";
   created: string = "";
   modified: string = "";
   projectId: number = 0;
-  project: IProjectResponse = new ProjectResponse();
+  project: ISwitchKeysProjectResponse = new ProjectResponse();
   environmentKey: string = "";
-  users: IEnvironmentUserResponse[] = [];
-  features: IEnvironmentFeaturesResponse[] = [];
+  users: ISwitchKeysEnvironmentUserResponse[] = [];
+  features: ISwitchKeysEnvironmentFeaturesResponse[] = [];
 
   /**
    * Initializes default environment response data.
@@ -220,7 +230,7 @@ class EnvironmentResponse implements IEnvironmentResponse {
    * Initializes default environment response data.
    * @returns Default environment response data.
    */
-  init(): IEnvironmentResponse {
+  init(): ISwitchKeysEnvironmentResponse {
     return {
       id: 0,
       name: "",
@@ -239,7 +249,7 @@ class EnvironmentResponse implements IEnvironmentResponse {
    * @param data Raw data to parse.
    * @returns Parsed environment response data.
    */
-  parse(data: any): IEnvironmentResponse {
+  parse(data: any): ISwitchKeysEnvironmentResponse {
     return {
       id: data["id"] || 0,
       name: data["name"] || "",
@@ -257,14 +267,114 @@ class EnvironmentResponse implements IEnvironmentResponse {
         },
         features: userData["features"] || [],
       })),
-      features: data['features'] || []
+      features: data["features"] || [],
+    };
+  }
+}
+
+/**
+ * Class for parsing environment feature response data.
+ */
+class EnvironmentFeaturesResponse
+  implements ISwitchKeysEnvironmentFeaturesResponse
+{
+  id: number = 0;
+  name: string = "";
+  value: string = "";
+  initialValue: string = "";
+  created: string = "";
+  modified: string = "";
+
+  constructor() {}
+
+  /**
+   * Initializes default environment feature response data.
+   * @returns Default environment feature response data.
+   */
+  init(): ISwitchKeysEnvironmentFeaturesResponse {
+    return {
+      id: 0,
+      created: "",
+      modified: "",
+      name: "",
+      value: "",
+      initialValue: "",
+    };
+  }
+
+  /**
+   * Parses raw data into environment feature response data.
+   * @param data Raw data to parse.
+   * @returns Parsed environment feature response data.
+   */
+  parse(data: any): ISwitchKeysEnvironmentFeaturesResponse {
+    return {
+      id: data["id"] || 0,
+      created: data["created"] || "",
+      modified: data["modified"] || "",
+      name: data["name"] || "",
+      value: data["value"] || "",
+      initialValue: data["initial_value"] || "",
+    };
+  }
+}
+
+/**
+ * Class for parsing environment user response data.
+ */
+class EnvironmentUserResponse implements ISwitchKeysEnvironmentUserResponse {
+  id: number = 0;
+  username: string = "";
+  device: ISwitchKeysUserDeviceType = {
+    deviceType: DeviceTypeSelection.ANDROID,
+    version: "",
+  };
+  features: ISwitchKeysEnvironmentFeaturesResponse[] = [];
+
+  /**
+   * Initializes default environment user response data.
+   */
+  constructor() {}
+
+  /**
+   * Initializes default environment user response data.
+   * @returns Default environment user response data.
+   */
+  init(): ISwitchKeysEnvironmentUserResponse {
+    return {
+      id: 0,
+      username: "",
+      device: {
+        deviceType: DeviceTypeSelection.ANDROID,
+        version: "",
+      },
+      features: [],
+    };
+  }
+
+  /**
+   * Parses raw data into environment user response data.
+   * @param data Raw data to parse.
+   * @returns Parsed environment user response data.
+   */
+  parse(data: any): ISwitchKeysEnvironmentUserResponse {
+    return {
+      id: data["id"] || 0,
+      username: data["username"] || "",
+      features: data["features"] || [],
+      device: {
+        version: data["device"]["version"],
+        deviceType: data["device"]["device_type"],
+      },
     };
   }
 }
 
 export {
-  SwitchKeysMemberResponse,
   OrganizationResponse,
+  SwitchKeysMemberResponse,
   ProjectResponse,
   EnvironmentResponse,
+  EnvironmentFeaturesResponse,
+  EnvironmentUserResponse,
 };

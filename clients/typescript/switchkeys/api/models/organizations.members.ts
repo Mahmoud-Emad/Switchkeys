@@ -1,7 +1,7 @@
-import { ISwitchKeysMemberResponse } from "../../utils/types";
 import { SwitchKeysRequest, SwitchKeysRequestMethod } from "../request/request";
 import { SwitchKeysApiRoutes } from "../request/routes";
 import { SwitchKeysMemberResponse } from "../response/response";
+import { ISwitchKeysMemberResponse } from "../response/types";
 
 /**
  * Class responsible for handling member-related operations.

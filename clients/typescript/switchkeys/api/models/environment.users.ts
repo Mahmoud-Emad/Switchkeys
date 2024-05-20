@@ -1,16 +1,13 @@
-import { IEnvironmentFeaturesResponse } from './../../utils/types';
-import {
-  SwitchKeysFeatureDoesNotExistError,
-  SwitchKeysRecordNotFoundError,
-  SwitchKeysValidationError,
-} from "../../core/exceptions";
-import {
-  IEnvironmentFeaturesResponse,
-  IEnvironmentUserResponse,
-} from "../../utils/types";
+import { SwitchKeysFeatureDoesNotExistError } from "../../core/exceptions";
+import {} from "../../utils/types";
 import { SwitchKeysRequest, SwitchKeysRequestMethod } from "../request/request";
 import { SwitchKeysApiRoutes } from "../request/routes";
 import SwitchKeysEnvironment from "./projects.environments";
+import { EnvironmentFeaturesResponse } from "../response/response";
+import {
+  ISwitchKeysEnvironmentFeaturesResponse,
+  ISwitchKeysEnvironmentUserResponse,
+} from "../response/types";
 
 /**
  * Class for managing environment user operations.
@@ -23,57 +20,53 @@ class SwitchKeysEnvironmentUser {
    * @returns A promise resolving to the environment user response, if found.
    * @throws SwitchKeysValidationError if neither username nor ID is provided.
    */
-
-  async get(
-    environmentKey: string,
-    options: { username?: string; id?: number }
-  ): Promise<SwitchKeysEnvironmentUserActions> {
-    if (!options.username && !options.id) {
-      throw new SwitchKeysValidationError(
-        "You have to send the user username or even the user ID."
-      );
-    }
-
-    const environment = new SwitchKeysEnvironment();
-
-    const users = await environment.getUsers(environmentKey);
-
-    for (const user of users) {
-      if (
-        (options.username && user.username === options.username) ||
-        (options.id && user.id === options.id)
-      ) {
-        return new SwitchKeysEnvironmentUserActions({
-          id: user.id,
-          username: user.username,
-          device: user.device,
-          features: user.features,
-          environment,
-          environmentKey,
-        });
-      }
-    }
-
-    throw new SwitchKeysRecordNotFoundError(
-      `The user with ${
-        options.username
-          ? `username '${options.username}'`
-          : `id '${options.id}'`
-      } is not found.`
-    );
-  }
+  // async get(
+  //   environmentKey: string,
+  //   options: { username?: string; id?: number }
+  // ): Promise<SwitchKeysEnvironmentUserServices> {
+  //   if (!options.username && !options.id) {
+  //     throw new SwitchKeysValidationError(
+  //       "You have to send the user username or even the user ID."
+  //     );
+  //   }
+  //   const environment = new SwitchKeysEnvironment();
+  //   const users = await environment.getUsers(environmentKey);
+  //   for (const user of users) {
+  //     if (
+  //       (options.username && user.username === options.username) ||
+  //       (options.id && user.id === options.id)
+  //     ) {
+  //       return new SwitchKeysEnvironmentUserServices({
+  //         id: user.id,
+  //         username: user.username,
+  //         device: user.device,
+  //         features: user.features,
+  //         environment,
+  //         environmentKey,
+  //       });
+  //     }
+  //   }
+  //   throw new SwitchKeysRecordNotFoundError(
+  //     `The user with ${
+  //       options.username
+  //         ? `username '${options.username}'`
+  //         : `id '${options.id}'`
+  //     } is not found.`
+  //   );
+  // }
 }
 
-class SwitchKeysEnvironmentUserActions {
-  private user: IEnvironmentUserResponse;
+class SwitchKeysEnvironmentUserServices {
+  private user: ISwitchKeysEnvironmentUserResponse;
   private environmentKey: string;
   private environment: SwitchKeysEnvironment;
 
-  private environmentRoutes = SwitchKeysApiRoutes.environments;
+  // private environmentRoutes = SwitchKeysApiRoutes.environments;
+  private environmentUserRoutes = SwitchKeysApiRoutes.environmentUsers;
   private request: SwitchKeysRequest = new SwitchKeysRequest();
 
   constructor(
-    options: IEnvironmentUserResponse & {
+    options: ISwitchKeysEnvironmentUserResponse & {
       environment: SwitchKeysEnvironment;
       environmentKey: string;
     }
@@ -98,22 +91,21 @@ class SwitchKeysEnvironmentUserActions {
   }
 
   // TODO: Make action classes for all class managements.
-  // get project(){
-  // return this.environment.getProject(this.environment)
-  // }
 
-  async setFeature(feature: { name: string; value: any }) {
-    const url = this.environmentRoutes.addFeature(this.environmentKey);
+  async addFeature(feature: { name: string; value: any }) {
+    const url = this.environmentUserRoutes.addFeature(
+      this.environmentKey,
+      this.user.username
+    );
     const response = await this.request.call(
       url,
-      SwitchKeysRequestMethod.POST,
+      SwitchKeysRequestMethod.PUT,
       feature
     );
     return this.handleResponse(response);
-    // console.log("Selected User: ", this.user);
   }
 
-  getFeature(featureName: string): IEnvironmentFeaturesResponse {
+  getFeature(featureName: string): ISwitchKeysEnvironmentFeaturesResponse {
     if (this.hasFeature(featureName)) {
       const feature = this.user.features.filter(
         (feature) => feature.name === featureName
@@ -134,7 +126,9 @@ class SwitchKeysEnvironmentUserActions {
    * @param response - The response from the API.
    * @returns The parsed project response.
    */
-  private handleResponse(response: any): IEnvironmentFeaturesResponse {
+  private handleResponse(
+    response: any
+  ): ISwitchKeysEnvironmentFeaturesResponse {
     const userFeature = new EnvironmentFeaturesResponse();
     return response ? userFeature.parse(response) : userFeature.init();
   }

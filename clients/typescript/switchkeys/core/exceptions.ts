@@ -77,5 +77,5 @@ export {
   SwitchKeysRecordNotFoundError,
   SwitchKeysUnauthorizedError,
   SwitchKeysValidationError,
-  SwitchKeysFeatureDoesNotExistError
+  SwitchKeysFeatureDoesNotExistError,
 };

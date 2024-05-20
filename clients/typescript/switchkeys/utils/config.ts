@@ -1,7 +1,8 @@
 import * as fs from "fs";
 import { SwitchKeysLogger } from "./logger";
-import { ISwitchKeysAuthTokens } from "./types";
 import { ConfigIniParser } from "config-ini-parser";
+import { ISwitchKeysAuthTokensResponse } from "../api/response/types";
+import { SwitchKeysValidationError } from "../core/exceptions";
 
 /**
  * Manages loading and writing tokens from/to a configuration file.
@@ -16,8 +17,7 @@ class SwitchKeysConfig {
    */
   public check(configFile: string = "config.ini"): boolean {
     if (!fs.existsSync(configFile)) {
-      this.logger.error(`Config file '${configFile}' does not exist.`);
-      return false;
+      throw new SwitchKeysValidationError(`Config file '${configFile}' does not exist.`);
     }
 
     try {
@@ -26,8 +26,7 @@ class SwitchKeysConfig {
       const config = parser.parse(content);
 
       if (!config.isHaveSection('TOKENS')) {
-        this.logger.error("No [TOKENS] section found in the config file.");
-        return false;
+        throw new SwitchKeysValidationError("No [TOKENS] section found in the config file.");
       }
 
       const accessToken = config.get("TOKENS", "accessToken");
@@ -37,14 +36,12 @@ class SwitchKeysConfig {
         this.logger.info("Config file contains access and refresh tokens.");
         return true;
       } else {
-        this.logger.error(
+        throw new SwitchKeysValidationError(
           "Access token or refresh token not found in the config file."
         );
-        return false;
       }
     } catch (error) {
-      this.logger.error(`Error reading config file: ${error}`);
-      return false;
+      throw new SwitchKeysValidationError(`Error reading config file: ${error}`);
     }
   }
 
@@ -53,7 +50,7 @@ class SwitchKeysConfig {
    * @param configFile Path to the configuration file. Default is `config.ini`.
    * @returns A `SwitchKeysTokensResponse` object containing the access and refresh tokens.
    */
-  public load(configFile: string = "config.ini"): ISwitchKeysAuthTokens {
+  public load(configFile: string = "config.ini"): ISwitchKeysAuthTokensResponse {
     try {
       const parser = new ConfigIniParser(); // Create a new instance of ConfigIniParser
       const content = fs.readFileSync(configFile, "utf-8");
@@ -78,22 +75,24 @@ class SwitchKeysConfig {
         return {}
       }
     } catch (error) {
-      this.logger.error(`Error reading config file: ${error}`);
-      return {}
+      throw new SwitchKeysValidationError(`Error reading config file: ${error}`);
     }
   }
 
   /**
    * Writes access and refresh tokens to the specified configuration file.
-   * @param tokens `ISwitchKeysAuthTokens` object containing the access and refresh tokens.
+   * @param tokens `ISwitchKeysAuthTokensResponse` object containing the access and refresh tokens.
    * @param configFile Path to the configuration file. Default is `config.ini`.
+   * @param remove a boolean parameter to remove the tokens from the config file.
    */
   public write(
-    tokens: ISwitchKeysAuthTokens,
-    configFile: string = "config.ini"
+    tokens: ISwitchKeysAuthTokensResponse,
+    configFile: string = "config.ini",
+    remove: boolean =false
   ): void {
+    const parser = new ConfigIniParser();
+
     if (tokens.accessToken && tokens.refreshToken) {
-      const parser = new ConfigIniParser(); // Create a new instance of ConfigIniParser
       parser.addSection('TOKENS')
       parser.set('TOKENS', 'accessToken', tokens.accessToken)
       parser.set('TOKENS', 'refreshToken', tokens.refreshToken)
@@ -102,10 +101,16 @@ class SwitchKeysConfig {
         const content = parser.stringify()
         fs.writeFileSync(configFile, content);
       } catch (error) {
-        this.logger.error(`Error writing tokens to: ${configFile} due: ${error}`);
+        throw new SwitchKeysValidationError(`Error writing tokens to: ${configFile} due: ${error}`);
       }
     } else {
-      this.logger.error("The tokens cannot be set to null values. Both the `accessToken` and `refreshToken` fields are currently null.")
+      if(!remove){
+        throw new SwitchKeysValidationError("The tokens cannot be set to null values. Both the `accessToken` and `refreshToken` fields are currently null.");
+      } else {
+        parser.removeSection('TOKENS');
+        const content = parser.stringify()
+        fs.writeFileSync(configFile, content);
+      }
     }
   }
 }

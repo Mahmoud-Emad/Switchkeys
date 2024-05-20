@@ -1,51 +1,112 @@
 // Import the SwitchKeys class from the client library.
-// import SwitchKeys from "switchkeys";
 import SwitchKeys from "../switchkeys/core/base";
+import { DeviceTypeSelection } from "../switchkeys/utils/types";
 
-export async function environmenthExample() {
+/**
+ * `environmentExample` demonstrates the usage of environment services.
+ * This example guides users and developers on how to interact with the
+ * SwitchKeys environment, including loading an environment, adding users,
+ * and managing features.
+ */
+export async function environmentExample() {
+  // Create an instance of the SwitchKeys client.
   const switchkeys = new SwitchKeys();
 
-  const environmentKey = "16e78bfa-fa85-4313-8bc2-1bd09db34642";
-
-  // Load the whole environment
-  // const environment = await switchkeys.environments.load(environmentKey)
-  // console.log(environment)
-
-  // Load the environment project
-  // const project = await switchkeys.environments.getProject(environmentKey)
-  // console.log(project)
-
-  // Load the environment organization
-  // const organization = await switchkeys.environments.getOrganization(environmentKey)
-  // console.log(organization)
-
-  // Load the environment users
-  // const users = await switchkeys.environments.getUsers(environmentKey)
-  // console.log(users[1].features)
-
-  // Load the environment users
-  // const users = await switchkeys.environments.getUsers(environmentKey)
-  // console.log(users[1].features)
-
-  // Load the environment features
-  // const features = await switchkeys.environments.getFeatures(environmentKey)
-  // console.log(features[0].name)
-
-  // Get user details, e.g. the user features or user device.
-  // const user = await switchkeys.environments.users.get(environmentKey, {
-  //   username: 'Adham'
-  // })
-
-  // console.log(user.device.version)
-
-  const user = await switchkeys.environments.users.get(environmentKey, {
-    username: "Maged",
+  // --------------------------------------------------------------------------------------------------------------------
+  // Logging in to SwitchKeys
+  // --------------------------------------------------------------------------------------------------------------------
+  // First, log in to SwitchKeys with valid credentials.
+  await switchkeys.auth.login({
+    email: "admin@gmail.com",
+    password: "0000",
   });
 
-  if (user.hasFeature("debug")){
-    user.getFeature('debug')
+  console.log("Logged in successfully.");
+
+  // --------------------------------------------------------------------------------------------------------------------
+  // Creating a New Organization
+  // --------------------------------------------------------------------------------------------------------------------
+  // Second, create a new organization.
+  const organization = await switchkeys.organizations.create({
+    name: "SwitchKeys",
+  });
+
+  // --------------------------------------------------------------------------------------------------------------------
+  // Creating a New Project within the Organization
+  // --------------------------------------------------------------------------------------------------------------------
+  // After creating the organization, create a project within it.
+  const project = await organization.createProject({
+    name: "StoryMith",
+  });
+
+  // --------------------------------------------------------------------------------------------------------------------
+  // Loading an Environment from the Created Project
+  // --------------------------------------------------------------------------------------------------------------------
+  // Every created project comes with three different types of environments ['development', 'staging', 'production'].
+  // Every environment has its name and key.
+  const environmentKey = project.environments.development.environmentKey;
+
+  // Load the environment using the environment key.
+  const environment = await switchkeys.environments.load(environmentKey);
+  console.log("Loaded Environment:", environment);
+
+  const debugFeatureName = "debug";
+
+  // --------------------------------------------------------------------------------------------------------------------
+  // Adding a User to the Environment
+  // --------------------------------------------------------------------------------------------------------------------
+  // Add a user to the environment.
+  const username1 = "user1";
+  await environment.addUser({
+    device: {
+      deviceType: DeviceTypeSelection.ANDROID,
+      version: "v15s.521.s",
+    },
+    username: username1,
+  });
+
+  console.log(`Added user: ${username1}`, {
+    user1Features: environment.getUser(username1)?.features,
+  });
+
+  // --------------------------------------------------------------------------------------------------------------------
+  // Managing Features in the Environment
+  // --------------------------------------------------------------------------------------------------------------------
+  // Check if the environment has the "debug" feature.
+  if (environment.hasFeature(debugFeatureName)) {
+    const debugFeature = environment.getFeature(debugFeatureName);
+
+    if (debugFeature) {
+      // Toggle the "debug" feature value.
+      const newValue = debugFeature.value === "true" ? "false" : "true";
+      const updatedFeature = await environment.updateFeature({
+        name: debugFeatureName,
+        newName: debugFeatureName,
+        newValue: newValue,
+      });
+
+      console.log("Updated Feature:", updatedFeature);
+    }
+  } else {
+    // Add the "debug" feature if it does not exist.
+    const newFeature = await environment.addFeature({
+      name: debugFeatureName,
+      value: "false",
+    });
+
+    console.log("Added Feature:", newFeature);
   }
 
-  user.setFeature({name: 'theme', value: 'green'})
-  console.log(user.features)
+  // Verify that the new feature is added to user1.
+  console.log("User1 Features after adding 'debug':", {
+    user1Features: environment.getUser(username1)?.features,
+  });
+
+  // --------------------------------------------------------------------------------------------------------------------
+  // Deleting the Created Organization
+  // --------------------------------------------------------------------------------------------------------------------
+  // This will also delete all associated projects and environments.
+  await switchkeys.organizations.delete(organization.id);
+
+  console.log("Deleted organization and all its associated projects and environments.");
 }

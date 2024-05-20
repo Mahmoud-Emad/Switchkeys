@@ -94,6 +94,7 @@ class AddEnvironmentUserSerializer(Serializer):
     """
     Serializer to add user to an environment.
     """
+
     id = SerializerMethodField()
     device = EnvironmentUserDeviceSerializer()
     username = CharField()
@@ -140,13 +141,13 @@ class AddEnvironmentUserSerializer(Serializer):
 
         return SwitchKeysFeatureSerializer(features, many=True).data
 
+
 class RemoveEnvironmentUserSerializer(Serializer):
     """
     Serializer to remove user from an environment.
     """
 
     username = CharField()
-
 
 
 class EnvironmentFeatureSerialize(ModelSerializer):
@@ -187,6 +188,7 @@ class EnvironmentFeatureSerialize(ModelSerializer):
         """
         return SwitchKeysFeatureSerializer(obj.features.all(), many=True).data
 
+
 class EnvironmentFeatureSerializer(Serializer):
     """
     Serializer for an environment feature.
@@ -195,10 +197,12 @@ class EnvironmentFeatureSerializer(Serializer):
     name = CharField(write_only=True)
     value = CharField(write_only=True)
 
+
 class UserFeatureSerializers(ModelSerializer):
     """
     Serializer to get user features.
     """
+
     name = SerializerMethodField()
     value = SerializerMethodField()
 

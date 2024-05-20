@@ -1,11 +1,84 @@
-import {
-  IOrganizationMemberRequest,
-  IOrganizationRequest,
-  IOrganizationResponse,
-} from "../../utils/types";
+// ------------------------------------------------------------------------------------------------------------------------------------------
+//
+// [DEVELOPERS] Attention please: Before adding any helper method, ask yourself these three important questions:
+//
+// ------------------------------------------------------------------------------------------------------------------------------------------
+//
+// ###################################
+//  1. What does this method do?
+//  2. What is the actual need for it?
+//  3. Where should it be located?
+// ###################################
+//
+// ------------------------------------------------------------------------------------------------------------------------------------------
+//
+// Overview of `SwitchKeysOrganizations`:
+// The `SwitchKeysOrganizations` class is designed to manage a specific organization, or even list all of them.
+//
+// Example Usage:
+//
+// If you have a valid organization, you first need to login and then use the organization id to get the organization.
+//
+// ```typescript
+// await switchkeys.auth.login({
+//   email: "email@example.com",
+//   password: "password"
+// });
+//
+// // Now, you can get the organization directly
+// const organization = await switchkeys.organizations.get({organizationID});
+// ```
+//
+// By default, the `get` method returns an instance of the `SwitchKeysOrganizationsServices` class,
+// which provides various methods to interact with the organization.
+//
+// Example Usage:
+//
+// Get the organization project:
+// ```typescript
+// const project = organization.project;
+// console.log({ project });
+// ```
+//
+// Creating a new project:
+// ```typescript
+// const project = await organization.createProject({
+//   name: { projectName },
+// });
+// console.log("Created project:", project);
+// ```
+//
+// ------------------------------------------------------------------------------------------------------------------------------------------
+//
+// Before implementing anything, please:
+// 1. Read the documentation first.
+// 2. Review the existing code to understand the context.
+// 3. Proceed with adding or modifying the code.
+//
+// Happy coding! xD
+// @Mahmoud-Emad
+// ------------------------------------------------------------------------------------------------------------------------------------------
+
+
+import { SwitchKeysRecordNotFoundError } from "../../core/exceptions";
+
 import { SwitchKeysRequest, SwitchKeysRequestMethod } from "../request/request";
 import { SwitchKeysApiRoutes } from "../request/routes";
-import { OrganizationResponse } from "../response/response";
+import {
+  ISwitchKeysOrganizationData,
+  ISwitchKeysOrganizationMemberData,
+  ISwitchKeysProjectData,
+} from "../request/types";
+import {
+  OrganizationResponse,
+  ProjectResponse,
+  SwitchKeysMemberResponse,
+} from "../response/response";
+import {
+  ISwitchKeysMemberResponse,
+  ISwitchKeysOrganizationResponse,
+  ISwitchKeysProjectResponse,
+} from "../response/types";
 import SwitchKeysOrganizationMember from "./organizations.members";
 import SwitchKeysProject from "./organizations.projects";
 
@@ -14,6 +87,7 @@ import SwitchKeysProject from "./organizations.projects";
  */
 class SwitchKeysOrganizations {
   private organizationRoutes = SwitchKeysApiRoutes.organizations;
+  private projectRoutes = SwitchKeysApiRoutes.projects;
   private request: SwitchKeysRequest = new SwitchKeysRequest();
 
   /** Instance of `SwitchKeysOrganizationMember` for managing `member-related` operations. */
@@ -21,16 +95,19 @@ class SwitchKeysOrganizations {
 
   /**
    * Creates a new organization.
-   * @param data The organization data.
+   * @param options `ISwitchKeysOrganizationData` - The organization data.
    * @returns The response containing the organization details.
    */
-  async create(data: IOrganizationRequest): Promise<IOrganizationResponse> {
+  async create(
+    options: ISwitchKeysOrganizationData
+  ): Promise<SwitchKeysOrganizationsServices> {
     const url = this.organizationRoutes.create;
     const response = await this.request.call(
       url,
       SwitchKeysRequestMethod.POST,
-      data
+      options
     );
+
     return this.handleResponse(response);
   }
 
@@ -39,51 +116,9 @@ class SwitchKeysOrganizations {
    * @param orgId The ID of the organization.
    * @returns The response containing the organization details.
    */
-  async getById(orgId: number): Promise<IOrganizationResponse> {
+  async get(orgId: number): Promise<SwitchKeysOrganizationsServices> {
     const url = this.organizationRoutes.getById(orgId);
     const response = await this.request.call(url, SwitchKeysRequestMethod.GET);
-    return this.handleResponse(response);
-  }
-
-  /**
-   * Updates an organization.
-   * @param orgId The ID of the organization to update.
-   * @param data The organization data.
-   * @returns The response containing the updated organization details.
-   */
-  async update(orgId: number, data: IOrganizationRequest) {
-    const url = this.organizationRoutes.getById(orgId);
-    const response = await this.request.call(url, SwitchKeysRequestMethod.PUT, data);
-    return this.handleResponse(response);
-  }
-
-  /**
-   * Adds a member to an organization.
-   * @param orgId The ID of the organization.
-   * @param data The member data.
-   * @returns The response containing the updated organization details.
-   */
-  async addMember(orgId: number, data: IOrganizationMemberRequest) {
-    const url = this.organizationRoutes.addMember(orgId);
-    const _data = {
-      member_id: data.memberId,
-    };
-    const response = await this.request.call(url, SwitchKeysRequestMethod.PUT, _data);
-    return this.handleResponse(response);
-  }
-
-  /**
-   * Removes a member from an organization.
-   * @param orgId The ID of the organization.
-   * @param data The member data.
-   * @returns The response containing the updated organization details.
-   */
-  async removeMember(orgId: number, data: IOrganizationMemberRequest) {
-    const url = this.organizationRoutes.removeMember(orgId);
-    const _data = {
-      member_id: data.memberId,
-    };
-    const response = await this.request.call(url, SwitchKeysRequestMethod.PUT, _data);
     return this.handleResponse(response);
   }
 
@@ -101,12 +136,172 @@ class SwitchKeysOrganizations {
    * @param response - The response from the API.
    * @returns The parsed organization response.
    */
-  private handleResponse(response: any): IOrganizationResponse {
+  private handleResponse(response: any): SwitchKeysOrganizationsServices {
     const organizationResponse = new OrganizationResponse();
-    return response
+    const organization = response
       ? organizationResponse.parse(response)
       : organizationResponse.init();
+
+    if (!organization.id) {
+      throw new SwitchKeysRecordNotFoundError("Organization not found.");
+    }
+
+    return new SwitchKeysOrganizationsServices(organization);
   }
 }
 
+class SwitchKeysOrganizationsServices {
+  private organization: ISwitchKeysOrganizationResponse;
+  private organizationRoutes = SwitchKeysApiRoutes.organizations;
+  private projectRoutes = SwitchKeysApiRoutes.projects;
+  private request: SwitchKeysRequest = new SwitchKeysRequest();
+
+  projects: SwitchKeysProject;
+  constructor(organization: ISwitchKeysOrganizationResponse) {
+    this.organization = organization;
+    this.projects = new SwitchKeysProject()
+  }
+
+  /**
+   * @return The organization name.
+   */
+  get name(): string {
+    return this.organization.name;
+  }
+
+  /**
+   * @return The organization created at datetime.
+   */
+  get created(): string {
+    return this.organization.created;
+  }
+
+  /**
+   * @return The organization modified at datetime.
+   */
+  get modified(): string {
+    return this.organization.modified;
+  }
+
+  /**
+   * @return The organization ID.
+   */
+  get id(): number {
+    return this.organization.id;
+  }
+
+  /**
+   * @return The organization owner.
+   */
+  get owner(): ISwitchKeysMemberResponse {
+    return this.organization.owner;
+  }
+
+  /**
+   * @return The organization modified at datetime.
+   */
+  getMembers(): ISwitchKeysMemberResponse[] {
+    return this.organization.members;
+  }
+
+  /**
+   * Creates a new project.
+   * @param options - Project data.
+   * @returns A promise that resolves to the created project.
+   */
+  async createProject(
+    options: ISwitchKeysProjectData
+  ): Promise<ISwitchKeysProjectResponse> {
+    const requestData = {
+      name: options.name,
+      organization_id: this.organization.id,
+    };
+
+    const url = this.projectRoutes.create;
+
+    const response = await this.request.call(
+      url,
+      SwitchKeysRequestMethod.POST,
+      requestData
+    );
+
+    const projectResponse = new ProjectResponse();
+    const project = response
+      ? projectResponse.parse(response)
+      : projectResponse.init();
+    return project;
+  }
+
+  /**
+   * Updates an organization.
+   * @param options `ISwitchKeysOrganizationData` - The organization data.
+   * @returns The response containing the updated organization details.
+   */
+  async update(
+    options: ISwitchKeysOrganizationData
+  ): Promise<ISwitchKeysOrganizationResponse> {
+    const url = this.organizationRoutes.getById(this.organization.id);
+    const organization = await this.request.call(
+      url,
+      SwitchKeysRequestMethod.PUT,
+      options
+    );
+
+    this.organization = organization;
+    return this.organization;
+  }
+
+  /**
+   * Adds a member to an organization.
+   * @param options `ISwitchKeysOrganizationMemberData` - The member data.
+   * @returns The response containing the updated organization details.
+   */
+  async addMember(
+    options: ISwitchKeysOrganizationMemberData
+  ): Promise<ISwitchKeysMemberResponse> {
+    const url = this.organizationRoutes.addMember(this.organization.id);
+    const payload = {
+      member_id: options.memberId,
+    };
+
+    const response = await this.request.call(
+      url,
+      SwitchKeysRequestMethod.PUT,
+      payload
+    );
+
+    const memberResponse = new SwitchKeysMemberResponse();
+    const member = response
+      ? memberResponse.parse(response)
+      : memberResponse.init();
+
+    if (member.id) {
+      this.organization.members.push(member);
+    }
+
+    return member;
+  }
+
+  /**
+   * Removes a member from an organization.
+   * @param options The member data.
+   * @returns The response containing the updated organization details.
+   */
+  async removeMember(
+    data: ISwitchKeysOrganizationMemberData
+  ): Promise<ISwitchKeysMemberResponse[]> {
+    const url = this.organizationRoutes.removeMember(this.organization.id);
+    const payload = {
+      member_id: data.memberId,
+    };
+
+    const response = await this.request.call(
+      url,
+      SwitchKeysRequestMethod.PUT,
+      payload
+    );
+
+    return this.organization.members;
+  }
+}
 export default SwitchKeysOrganizations;

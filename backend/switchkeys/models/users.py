@@ -91,13 +91,14 @@ class ProjectEnvironmentUser(TimeStampedModel):
     device = models.ForeignKey(
         "UserDevice", on_delete=models.SET_NULL, null=True, related_name="user_device"
     )
+    is_active = models.BooleanField(default=True)
 
     def __str__(self) -> str:
         return f"{self.username}"
 
     class Meta:
-        verbose_name = "Project User"
-        verbose_name_plural = "Project User"
+        verbose_name = "Environment User"
+        verbose_name_plural = "Environment Users"
 
 
 class UserDevice(TimeStampedModel):

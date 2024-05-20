@@ -93,10 +93,11 @@ class SwitchKeysOrganizationRoutes {
 
   /**
    * Gets the URL for adding a member on organization by its ID.
+   * @param organizationId number - The organization ID
    * @returns The URL for getting an organization adding member.
    */
-  addMember(id: number): string {
-    return `${this.BASE_URL}/api/organizations/${id}/add-member/`;
+  addMember(organizationId: number): string {
+    return `${this.BASE_URL}/api/organizations/${organizationId}/add-member/`;
   }
 
   /**
@@ -109,7 +110,7 @@ class SwitchKeysOrganizationRoutes {
 }
 
 /**
- * Represents authentication routes for making API requests.
+ * Represents project routes for making API requests.
  */
 class SwitchKeysProjectRoutes {
   private BASE_URL: string;
@@ -145,16 +146,111 @@ class SwitchKeysProjectRoutes {
     return `${this.BASE_URL}/api/organizations/${id}/projects/`;
   }
 }
+/**
+ * Represents environment routes for making API requests.
+ */
+class SwitchKeysEnvironmentRoutes {
+  private BASE_URL: string;
+
+  /**
+   * Constructs a new `SwitchKeysEnvironmentRoutes` instance.
+   */
+  constructor() {
+    this.BASE_URL = process.env.BASE_URL || "";
+  }
+
+  /**
+   * Gets the URL for creating a environment.
+   * @returns The URL for creating a environment.
+   */
+  get create(): string {
+    return `${this.BASE_URL}/api/environments/`;
+  }
+
+  /**
+   * Gets the URL for loading an environment by its key.
+   * @returns The URL for loading an environment by its key.
+   */
+  load(environmentKey: string): string {
+    return `${this.BASE_URL}/api/environments/key/${environmentKey}/`;
+  }
+
+  /**
+   * Gets the URL for deleting an environment by its key.
+   * @returns The URL for deleting an environment by its key.
+   */
+  delete(environmentKey: string): string {
+    return `${this.BASE_URL}/api/environments/key/${environmentKey}/`;
+  }
+
+  /**
+   * Gets the URL for adding a feature on environment by the environment key.
+   * @returns The URL for adding a feature on environment by the environment key.
+   */
+  addFeature(environmentKey: string): string {
+    return `${this.BASE_URL}/api/environments/key/${environmentKey}/features/`;
+  }
+
+  /**
+   * Gets the URL for updating a feature on environment by the environment key.
+   * @returns The URL for updating a feature on environment by the environment key.
+   */
+  updateFeature(environmentKey: string, featrueName: string): string {
+    return `${this.BASE_URL}/api/environments/key/${environmentKey}/features/update/${featrueName}/`;
+  }
+
+  /**
+   * Gets the URL for adding a user on environment by the environment key.
+   * @returns The URL for adding a user on environment by the environment key.
+   */
+  addUser(environmentKey: string): string {
+    return `${this.BASE_URL}/api/environments/key/${environmentKey}/add-user/`;
+  }
+
+  /**
+   * Gets the URL for removing a user from an environment by the environment key.
+   * @returns The URL for removing a user from an environment by the environment key.
+   */
+  removeUser(environmentKey: string): string {
+    return `${this.BASE_URL}/api/environments/key/${environmentKey}/remove-user/`;
+  }
+}
+
+/**
+ * Represents environment user routes for making API requests.
+ */
+class SwitchKeysEnvironmentUsersRoutes {
+  private BASE_URL: string;
+
+  /**
+   * Constructs a new `SwitchKeysEnvironmentUsersRoutes` instance.
+   */
+  constructor() {
+    this.BASE_URL = process.env.BASE_URL || "";
+  }
+
+  /**
+   * Gets the URL for adding a feature for a user on environment by the environment key.
+   * @returns The URL for adding a feature for a user on environment by the environment key.
+   */
+  addFeature(environmentKey: string, username: string): string {
+    return `${this.BASE_URL}/api/environments/key/${environmentKey}/users/${username}/features/set/`;
+  }
+}
 
 /**
  * Represents API routes for making requests.
  */
 class SwitchKeysApiRoutes {
   static auth: SwitchKeysAuthRoutes = new SwitchKeysAuthRoutes();
-  static members: SwitchKeysUserRoutes = new SwitchKeysUserRoutes();
-  static projects: SwitchKeysProjectRoutes = new SwitchKeysProjectRoutes();
   static organizations: SwitchKeysOrganizationRoutes =
     new SwitchKeysOrganizationRoutes();
+  static members: SwitchKeysUserRoutes = new SwitchKeysUserRoutes();
+  static projects: SwitchKeysProjectRoutes = new SwitchKeysProjectRoutes();
+  static environments: SwitchKeysEnvironmentRoutes =
+    new SwitchKeysEnvironmentRoutes();
+  static environmentUsers: SwitchKeysEnvironmentUsersRoutes =
+    new SwitchKeysEnvironmentUsersRoutes();
 }
 
 export { SwitchKeysApiRoutes };

@@ -1,56 +1,58 @@
 // Import the SwitchKeys class from the client library.
-// import SwitchKeys from "switchkeys-ts-client";
-import SwitchKeys from "../switchkeys/core/base";
+import SwitchKeys from "../src/core/base";
 
 /**
- * Main function demonstrating the usage of the SwitchKeys client.
+ * `organizationExample` demonstrates the usage of organization services.
+ * This example guides users and developers on how to interact with the
+ * SwitchKeys organizations, including getting, creating, deleting an environment, and more.
  */
 export async function organizationExample() {
   // Create an instance of the SwitchKeys client.
   const switchkeys = new SwitchKeys();
 
-  // Uncomment and replace the ID placeholder with the actual member ID to retrieve member data by ID.
-  /*
-  const memberId = 9; // Replace with the actual member ID
-  const memberByID = await switchkeys.organizations.members.getById(memberId);
-  console.log(`Member data retrieved by ID. First name: ${memberByID.firstName}`);
-  */
+  // First, log in to SwitchKeys with valid credentials.
+  await switchkeys.auth.login({
+    email: "admin@gmail.com",
+    password: "0000",
+  });
 
-  // Uncomment and replace the email placeholder with the actual member email to retrieve member data by email.
-  /*
-  const memberEmail = "john@example.com"; // Replace with the actual member email
-  const memberByEmail = await switchkeys.organizations.members.getByEmail(memberEmail);
-  console.log(`Member data retrieved by email. First name: ${memberByEmail.firstName}`);
-  */
+  // --------------------------------------------------------------------------------------------------------------------
+  // Creating a new organization
+  // --------------------------------------------------------------------------------------------------------------------
+  // Create a new organization named "SwitchKeys".
+  const organization = await switchkeys.organizations.create({
+    name: "SwitchKeys",
+  });
 
-  // Uncomment and replace the memberId placeholder with the actual member ID to update member data.
-  // Use the login method before updating the user tokens.
-  /*
-  await switchkeys.auth.login({ email: "admin@gmail.com", password: "0000" });
-  const memberId = 9; // Replace with the actual member ID
-  const member = await switchkeys.organizations.members.getById(memberId);
-  console.log(`Member data retrieved by ID. First name: ${member.firstName}`);
-  */
+  console.log("Created Organization:", organization);
 
-  // Uncomment and replace the data placeholder with actual organization data to create a new organization.
-  /*
-  const organization = await switchkeys.organizations.create({ name: "Test" });
-  console.log(`Organization ID: ${organization.id}`);
-  */
+  // --------------------------------------------------------------------------------------------------------------------
+  // Creating a new project within the organization
+  // --------------------------------------------------------------------------------------------------------------------
+  // Now you can create a project within the created organization.
+  const project = await organization.createProject({
+    name: "StoryMith",
+  });
 
-  // Uncomment and replace the organization ID placeholder with the actual ID to get organization data by ID.
-  /*
-  const organization = await switchkeys.organizations.getById(5);
-  console.log(`Organization name: ${organization.name}`);
-  */
+  console.log("Created Project:", project);
 
-  // Uncomment and replace the organization ID placeholder with the actual ID to delete an organization.
-  /*
-  await switchkeys.organizations.delete(5); // Returns null or error
-  */
+  // --------------------------------------------------------------------------------------------------------------------
+  // Loading an environment from the created project
+  // --------------------------------------------------------------------------------------------------------------------
+  // Load any of the project's environments.
+  // Each created project will have three different environments: 'development', 'staging', 'production'.
+  const environmentKey = project.environments.staging.environmentKey;
+  const environment = await switchkeys.environments.load(environmentKey);
 
- let organization = await switchkeys.organizations.getById(6);
- console.log(`Organization name: ${organization.name}`);
-//  organization = await switchkeys.organizations.update(6, { name: "Test 2" });
-//  console.log(`Organization name: ${organization.name}`);
+  // Interact with the environment, e.g., list all users in the staging environment.
+  const environmentUsers = environment.users;
+  console.log({ environmentUsers });
+
+  // --------------------------------------------------------------------------------------------------------------------
+  // Deleting the created organization
+  // --------------------------------------------------------------------------------------------------------------------
+  // This will also delete all associated projects and environments.
+  await switchkeys.organizations.delete(organization.id);
+
+  console.log("Organization and all its associated projects and environments have been deleted.");
 }

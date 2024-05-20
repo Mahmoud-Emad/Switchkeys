@@ -16,6 +16,8 @@ from switchkeys.views.environments import (
 
 urlpatterns = [
     path("", BaseProjectEnvironmentApiView.as_view()),
+    path("<str:environment_id>/", ProjectEnvironmentApiView.as_view()),
+    path("key/<str:environment_key>/", ProjectEnvironmentKeyApiView.as_view()),
     path("key/<str:environment_key>/add-user/", AddEnvironmentUserAPIView.as_view()),
     path(
         "key/<str:environment_key>/remove-user/", RemoveEnvironmentUserAPIView.as_view()
@@ -31,8 +33,6 @@ urlpatterns = [
         "key/<str:environment_key>/features/update/<str:feature_name>/",
         UpdateEnvironmentFeatureAPIView.as_view(),
     ),
-    path("<str:environment_id>/", ProjectEnvironmentApiView.as_view()),
-    path("key/<str:environment_key>/", ProjectEnvironmentKeyApiView.as_view()),
     path(
         "key/<str:environment_key>/users/<str:username>/features/",
         EnvironmentUserFeaturesApiView.as_view(),
@@ -45,7 +45,6 @@ urlpatterns = [
         "key/<str:environment_key>/users/<str:username>/features/delete/<feature_name>/",
         DeleteEnvironmentUserFeature.as_view(),
     ),
-
     # path(
     #     "key/<str:environment_key>/users/<str:username>/features/add/",
     #     AddEnvironmentUserFeatureApiView.as_view(),

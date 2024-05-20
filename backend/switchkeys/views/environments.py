@@ -2,7 +2,7 @@
 This module contains API views for managing project environments and related features.
 
 Endpoints:
-- `ProjectEnvironmentKeyApiView`: Retrieves an environment by its key.
+- `ProjectEnvironmentKeyApiView`: Retrieves an environment by its key, also can delete it.
 - `BaseProjectEnvironmentApiView`: Lists and creates project environments.
 - `ProjectEnvironmentApiView`: Retrieves, updates, and deletes project environments.
 - `AddEnvironmentUserAPIView`: Adds a user to an environment.
@@ -51,15 +51,17 @@ from switchkeys.serializers.environments import (
     UserFeatureSerializers,
 )
 
+
 class ProjectEnvironmentKeyApiView(ListAPIView):
     """
     API endpoint for retrieving an environment by its key.
     """
+
     serializer_class = ProjectEnvironmentSerializer
 
     def get_queryset(self):
         """Get the queryset of projects for the specified organization"""
-        environment_key = self.kwargs.get('environment_key')
+        environment_key = self.kwargs.get("environment_key")
 
         if not is_valid_uuid(environment_key):
             return CustomResponse.bad_request(
@@ -68,7 +70,6 @@ class ProjectEnvironmentKeyApiView(ListAPIView):
 
         environment = get_environment_by_key(environment_key)
 
-
         if environment is None:
             return CustomResponse.not_found(
                 message="The project environment does not exist."
@@ -76,13 +77,42 @@ class ProjectEnvironmentKeyApiView(ListAPIView):
 
         return environment
 
-    def get(self, request, environment_key):
+    def get(self, request: Request, environment_key: UUID):
         """Get an environment exists on a project"""
         environment = self.get_queryset()
         return CustomResponse.success(
             message="Environment found.",
             data=self.serializer_class(environment).data,
         )
+
+    def delete(self, request: Request, environment_key: UUID):
+        """Delete an environment by it's key."""
+        environment_key = self.kwargs.get("environment_key")
+
+        if not is_valid_uuid(environment_key):
+            return CustomResponse.bad_request(
+                message=f"{environment_key} is not valid UUID."
+            )
+
+        environment = get_environment_by_key(environment_key)
+
+        if environment is None:
+            return CustomResponse.not_found(
+                message="The project environment does not exist."
+            )
+
+        project: OrganizationProject = environment.project
+        if request.user.id != project.organization.owner.id:
+            return CustomResponse.unauthorized(
+                message="You do not have permission to access this resource because you are not the creator of the organization that owns this project."
+            )
+
+        environment.delete()
+        return CustomResponse.success(
+            message="Project has been updated successfully.",
+            status_code=204,
+        )
+
 
 class BaseProjectEnvironmentApiView(ListAPIView):
     """
@@ -313,9 +343,9 @@ class AddEnvironmentUserAPIView(GenericAPIView):
                 )
 
             environment.users.add(user)
-            environment_features = EnvironmentFeature.objects.get(
+            environment_features = EnvironmentFeature.objects.get_or_create(
                 environment=environment
-            )
+            )[0]
 
             for feature in environment_features.features.all():
                 switchkey_feature = SwitchKeysFeature.objects.get(id=feature.id)
@@ -340,11 +370,14 @@ class AddEnvironmentUserAPIView(GenericAPIView):
             error=serializer.errors,
         )
 
+
 class EnvironmentUserFeaturesApiView(GenericAPIView):
     """
     API endpoint for getting user features from an environment.
     """
+
     serializer_class = UserFeatureSerializers
+
     def get_queryset(self):
         """
         Get user features from the specified environment.
@@ -357,9 +390,8 @@ class EnvironmentUserFeaturesApiView(GenericAPIView):
         Returns:
             CustomResponse: Response object containing the result of the operation.
         """
-        environment_key = self.kwargs.get('environment_key')
-        username = self.kwargs.get('username')
-
+        environment_key = self.kwargs.get("environment_key")
+        username = self.kwargs.get("username")
 
         # Validate environment key
         environment_key = self.kwargs.get("environment_key")
@@ -380,9 +412,7 @@ class EnvironmentUserFeaturesApiView(GenericAPIView):
         user = get_environment_user_username(username)
         if user is None:
             # Return 404 if the user does not exist
-            return CustomResponse.not_found(
-                message="User not found."
-            )
+            return CustomResponse.not_found(message="User not found.")
 
         if user not in environment.users.all():
             return CustomResponse.bad_request(
@@ -392,7 +422,9 @@ class EnvironmentUserFeaturesApiView(GenericAPIView):
         user_features = UserFeature.objects.filter(user=user)
         return user_features
 
-    def get(self, request: Request, environment_key: UUID, username: str) -> CustomResponse:
+    def get(
+        self, request: Request, environment_key: UUID, username: str
+    ) -> CustomResponse:
         """
         Get user features from the specified environment.
 
@@ -408,14 +440,18 @@ class EnvironmentUserFeaturesApiView(GenericAPIView):
         user_features = self.get_queryset()
         return CustomResponse.success(
             message="User features found.",
-            data=self.serializer_class(user_features, many=True).data
+            data=self.serializer_class(user_features, many=True).data,
         )
+
 
 class DeleteEnvironmentUserFeature(GenericAPIView):
     """
     API endpoint for deleting user feature on an environment.
     """
-    def delete(self, request: Request, environment_key: UUID, username: str, feature_name: str):
+
+    def delete(
+        self, request: Request, environment_key: UUID, username: str, feature_name: str
+    ):
         """
         Delete user feature on the specified environment.
 
@@ -448,9 +484,7 @@ class DeleteEnvironmentUserFeature(GenericAPIView):
         user = get_environment_user_username(username)
         if user is None:
             # Return 404 if the user does not exist
-            return CustomResponse.not_found(
-                message="User not found."
-            )
+            return CustomResponse.not_found(message="User not found.")
 
         # Validate if the user exist on the environment
         if user not in environment.users.all():
@@ -459,26 +493,31 @@ class DeleteEnvironmentUserFeature(GenericAPIView):
             )
 
         # Get and validate the feature, check if the feature exist on the user
-        user_features = UserFeature.objects.filter(user=user).filter(feature__name=feature_name)
+        user_features = UserFeature.objects.filter(user=user).filter(
+            feature__name=feature_name
+        )
         if len(user_features) == 0:
             return CustomResponse.not_found(
                 message="Feature not found.",
             )
 
-        user_feature = UserFeature.objects.filter(user=user).get(feature__name=feature_name)
-        user_feature.delete()
-        return CustomResponse.success(
-            status_code=204,
-            message="Feature deleted."
+        user_feature = UserFeature.objects.filter(user=user).get(
+            feature__name=feature_name
         )
+        user_feature.delete()
+        return CustomResponse.success(status_code=204, message="Feature deleted.")
+
 
 class SetEnvironmentUserFeaturesApiView(GenericAPIView):
     """
     API endpoint for setting user feature on an environment.
     """
+
     serializer_class = EnvironmentFeatureSerializer
 
-    def put(self, request: Request, environment_key: UUID, username: str) -> CustomResponse:
+    def put(
+        self, request: Request, environment_key: UUID, username: str
+    ) -> CustomResponse:
         """
         Set user feature on the specified environment.
 
@@ -510,9 +549,7 @@ class SetEnvironmentUserFeaturesApiView(GenericAPIView):
         user = get_environment_user_username(username)
         if user is None:
             # Return 404 if the user does not exist
-            return CustomResponse.not_found(
-                message="User not found."
-            )
+            return CustomResponse.not_found(message="User not found.")
 
         # Validate if the user exist on the environment
         if user not in environment.users.all():
@@ -524,35 +561,37 @@ class SetEnvironmentUserFeaturesApiView(GenericAPIView):
         if not serializer.is_valid():
             return CustomResponse.bad_request(
                 message="Please make sure that you entered a valid data.",
-                error=serializer.errors
+                error=serializer.errors,
             )
-        
-        feature_name = serializer.validated_data.get('name')
-        feature_value = serializer.validated_data.get('value')
 
-        user_features = UserFeature.objects.filter(user=user).filter(feature__name=feature_name)
+        feature_name = serializer.validated_data.get("name")
+        feature_value = serializer.validated_data.get("value")
+
+        user_features = UserFeature.objects.filter(user=user).filter(
+            feature__name=feature_name
+        )
 
         if len(user_features) == 0:
             # Create new user feature
             feature = SwitchKeysFeature.objects.create(
-                name = feature_name,
-                value = feature_value,
-                initial_value = feature_value,
+                name=feature_name,
+                value=feature_value,
+                initial_value=feature_value,
             )
 
-            UserFeature.objects.create(
-                user=user,
-                feature = feature
-            )
+            UserFeature.objects.create(user=user, feature=feature)
 
-        user_feature = UserFeature.objects.filter(user=user).get(feature__name=feature_name)
+        user_feature = UserFeature.objects.filter(user=user).get(
+            feature__name=feature_name
+        )
         user_feature.feature_value = feature_value
         user_feature.save()
 
         return CustomResponse.success(
             message="User features found.",
-            data=UserFeatureSerializers(user_feature).data
+            data=UserFeatureSerializers(user_feature).data,
         )
+
 
 class RemoveEnvironmentUserAPIView(GenericAPIView):
     """
@@ -597,9 +636,7 @@ class RemoveEnvironmentUserAPIView(GenericAPIView):
             user = get_environment_user_username(username)
             if user is None:
                 # Return 404 if the user does not exist
-                return CustomResponse.not_found(
-                    message="User not found."
-                )
+                return CustomResponse.not_found(message="User not found.")
 
             # Delete user features associated with the user
             user_features = UserFeature.objects.filter(user=user).all()
@@ -610,7 +647,7 @@ class RemoveEnvironmentUserAPIView(GenericAPIView):
             environment.save()
 
             data = serializer.data
-            data['featrues'] = user_features
+            data["featrues"] = user_features
 
             return CustomResponse.success(
                 message="User removed successfully.", data=data
@@ -620,6 +657,7 @@ class RemoveEnvironmentUserAPIView(GenericAPIView):
             message="Please make sure that you entered valid data.",
             error=serializer.errors,
         )
+
 
 class BaseEnvironmentFeatureAPIView(GenericAPIView):
 
@@ -761,7 +799,7 @@ class DeleteEnvironmentFeatureAPIView(GenericAPIView):
 
         return CustomResponse.success(
             status_code=204,
-            message="The environment feature has been deleted successfully."
+            message="The environment feature has been deleted successfully.",
         )
 
 
@@ -806,9 +844,11 @@ class UpdateEnvironmentFeatureAPIView(GenericAPIView):
         # Extract feature name and value from serializer
         new_feature_name = serializer.validated_data.get("name")
         new_feature_value = serializer.validated_data.get("value")
-        
+
         # Check if the feature with the same name already exists in the environment
-        if new_feature_name != feature_name and is_feature_created(new_feature_name, environment):
+        if new_feature_name != feature_name and is_feature_created(
+            new_feature_name, environment
+        ):
             return CustomResponse.bad_request(
                 message="The environment already has a feature with the same name.",
                 error=unique_field_error("name"),
@@ -820,81 +860,5 @@ class UpdateEnvironmentFeatureAPIView(GenericAPIView):
 
         return CustomResponse.success(
             message="The environment feature has been deleted successfully.",
-            data=SwitchKeysFeatureSerializer(feature).data
+            data=EnvironmentFeatureSerialize(feature).data,
         )
-
-# Later, We don't know if we need this endpoint or not.
-
-# class AddEnvironmentUserFeatureApiView(GenericAPIView):
-#     serializer_class = EnvironmentFeatureSerializer
-#     # Update the permission later.
-#     permission_classes = [
-#         # HasEnvironmentKey,
-#     ]
-
-#     def post(self, request: Request, environment_key: UUID, username: str) -> CustomResponse:
-#         if not is_valid_uuid(environment_key):
-#             return CustomResponse.bad_request(
-#                 message=f"{environment_key} is not a valid UUID."
-#             )
-
-#         serializer = self.get_serializer(data=request.data)
-#         if serializer.is_valid():
-#             environment = get_environment_by_key(environment_key)
-#             if not environment:
-#                 return CustomResponse.not_found(
-#                     message="The project environment does not exist."
-#                 )
-
-#             feature_name = serializer.validated_data.get("name")
-#             feature_value = serializer.validated_data.get("value")
-
-#             environment_user = get_environment_user_username(username)
-#             if not environment_user:
-#                 return CustomResponse.not_found(
-#                     message="The environment user does not exist."
-#                 )
-
-#             if environment_user not in environment.users.all():
-#                 return CustomResponse.bad_request(
-#                     message=f"User `{environment_user.username}` is not on the `{environment.name}` environment, try to add the user first to the environment."
-#                 )
-            
-#             print(environment_user)
-
-#             # # Remove any existing feature with the same name to avoid duplicates.
-#             # existing_feature = environment_user.features.filter(
-#             #     name=str(feature.get("name")).lower()
-#             # ).first()
-#             # if existing_feature:
-#             #     environment_user.features.remove(existing_feature)
-
-#             # # Check if the feature already exists in the environment.
-#             # environment_feature = EnvironmentFeature.objects.filter(
-#             #     environment=environment,
-#             #     name=str(feature.get("name")).lower(),
-#             #     value=feature.get("value"),
-#             # ).first()
-
-#             # if not environment_feature:
-#             #     environment_feature = EnvironmentFeature.objects.create(
-#             #         environment=environment,
-#             #         name=str(feature.get("name")).lower(),
-#             #         value=feature.get("value"),
-#             #     )
-
-#             # # Add the feature to the user.
-#             # environment_user.features.add(environment_feature)
-#             # environment_user.save()
-
-#             # data = UserFeatureSerializer(environment_user.features.all(), many=True).data
-
-#             return CustomResponse.success(
-#                 message="The user features have been updated.",
-#                 data=data,
-#             )
-
-#         return CustomResponse.bad_request(
-#             message="Please make sure that you entered valid data.",
-#             error=serializer.errors,
-#         )

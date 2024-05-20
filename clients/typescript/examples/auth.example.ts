@@ -1,31 +1,39 @@
 // Import the SwitchKeys class from the client library.
 // import SwitchKeys from "switchkeys";
-import SwitchKeys from "../switchkeys/core/base";
+
+import SwitchKeys from "../src/core/base";
 
 /**
- * Main function demonstrating the usage of the SwitchKeys client.
+ * `authExample` demonstrates the usage of authentication services.
+ * This example guides users and developers on how to interact with the
+ * SwitchKeys client for login and logout operations.
  */
 export async function authExample() {
   // Create an instance of the SwitchKeys client.
   const switchkeys = new SwitchKeys();
 
-  // Uncomment and replace placeholders with actual data to register a new member.
-  /*
-  const newMember = await switchkeys.auth.register({
-    email: "<member_email>",
-    firstName: "<member_first_name>",
-    lastName: "<member_last_name>",
-    password: "<password>",
+  // --------------------------------------------------------------------------------------------------------------------
+  // Logging in to SwitchKeys
+  // --------------------------------------------------------------------------------------------------------------------
+  // First, log in to SwitchKeys with valid credentials.
+  await switchkeys.auth.login({
+    email: "admin@gmail.com",
+    password: "0000",
   });
-  console.log(`New member registered. Access token: ${newMember.accessToken}`);
-  */
 
-  // Uncomment and replace placeholders with actual credentials to log in an existing member.
-  /*
-  const loggedInMember = await switchkeys.auth.login({
-    email: "<member_email>",
-    password: "<password>",
-  });
-  console.log(`Member logged in. Access token: ${loggedInMember.accessToken}`);
-  */
+  console.log("Logged in successfully.");
+
+  // --------------------------------------------------------------------------------------------------------------------
+  // Demonstrate other authenticated operations here
+  // --------------------------------------------------------------------------------------------------------------------
+  // For example, you can now perform operations that require authentication, such as accessing user data,
+  // loading environments, or managing projects and organizations.
+
+  // --------------------------------------------------------------------------------------------------------------------
+  // Logging out of SwitchKeys
+  // --------------------------------------------------------------------------------------------------------------------
+  // Finally, log out of SwitchKeys.
+  switchkeys.auth.logout();
+
+  console.log("Logged out successfully.");
 }

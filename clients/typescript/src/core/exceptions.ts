@@ -44,8 +44,38 @@ class SwitchKeysUnauthorizedError extends Error {
   }
 }
 
+/**
+ * Custom error class for representing validation errors in SwitchKeys.
+ */
+class SwitchKeysValidationError extends Error {
+  /**
+   * Constructs a new SwitchKeysValidationError with the specified error message.
+   * @param message The error message.
+   */
+  constructor(message: string) {
+    super(message);
+    logger.error(message);
+  }
+}
+
+/**
+ * Custom error class for representing feature not exist errors in SwitchKeys.
+ */
+class SwitchKeysFeatureDoesNotExistError extends Error {
+  /**
+   * Constructs a new `SwitchKeysFeatureDoesNotExistError` with the specified error message.
+   * @param message The error message.
+   */
+  constructor(message: string) {
+    super(message);
+    logger.error(message);
+  }
+}
+
 export {
   SwitchKeysConnectionError,
   SwitchKeysRecordNotFoundError,
   SwitchKeysUnauthorizedError,
+  SwitchKeysValidationError,
+  SwitchKeysFeatureDoesNotExistError,
 };

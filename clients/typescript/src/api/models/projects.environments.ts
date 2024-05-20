@@ -120,8 +120,8 @@ import {
  * Class representing a SwitchKeys Environment.
  */
 class SwitchKeysEnvironment {
-  protected environmentRoutes = SwitchKeysApiRoutes.environments;
-  protected request: SwitchKeysRequest = new SwitchKeysRequest();
+  private environmentRoutes = SwitchKeysApiRoutes.environments;
+  private request: SwitchKeysRequest = new SwitchKeysRequest();
 
   /**
    * Loads the environment details using the provided environment key.
@@ -167,7 +167,7 @@ class SwitchKeysEnvironment {
    * @param response - The response from the API.
    * @returns The parsed environment response.
    */
-  protected handleResponse(response: any): SwitchKeysEnvironmentServices {
+  private handleResponse(response: any): SwitchKeysEnvironmentServices {
     const environmentResponse = new EnvironmentResponse();
     const _response = response
       ? environmentResponse.parse(response)

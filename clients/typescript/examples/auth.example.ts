@@ -1,6 +1,7 @@
 // Import the SwitchKeys class from the client library.
 // import SwitchKeys from "switchkeys";
-import SwitchKeys from "../switchkeys";
+
+import SwitchKeys from "../src/core/base";
 
 /**
  * `authExample` demonstrates the usage of authentication services.

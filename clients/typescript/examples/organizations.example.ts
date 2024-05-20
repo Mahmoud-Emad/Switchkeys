@@ -1,5 +1,5 @@
 // Import the SwitchKeys class from the client library.
-import SwitchKeys from "../switchkeys/core/base";
+import SwitchKeys from "../src/core/base";
 
 /**
  * `organizationExample` demonstrates the usage of organization services.

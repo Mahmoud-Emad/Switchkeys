@@ -1,6 +1,6 @@
 // Import the SwitchKeys class from the client library.
-import SwitchKeys from "../switchkeys/core/base";
-import { DeviceTypeSelection } from "../switchkeys/utils/types";
+import SwitchKeys from "../src/core/base";
+import { DeviceTypeSelection } from "../src/utils/types";
 
 /**
  * `environmentExample` demonstrates the usage of environment services.

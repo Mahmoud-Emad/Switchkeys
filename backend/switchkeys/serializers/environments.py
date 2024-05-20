@@ -94,7 +94,6 @@ class AddEnvironmentUserSerializer(Serializer):
     """
     Serializer to add user to an environment.
     """
-
     id = SerializerMethodField()
     device = EnvironmentUserDeviceSerializer()
     username = CharField()

@@ -13,7 +13,7 @@
     "experimentalDecorators": true,
     "allowJs": true,
     "baseUrl": ".",
-    "skipLibCheck": true /* Skip type checking all .d.ts files. */
+    "skipLibCheck": true
   },
   "include": ["src/**/*"]
 }

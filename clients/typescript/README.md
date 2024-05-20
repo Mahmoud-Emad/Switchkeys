@@ -1,20 +1,23 @@
 # SwitchKeys TS Client
 
-The SwitchKeys TS Client is a TypeScript client library for interacting with the SwitchKeys system. It provides convenient methods for user authentication, user management, and other operations within the SwitchKeys ecosystem.
+The SwitchKeys TS Client is a TypeScript client library for interacting with the SwitchKeys system.
+It provides convenient methods for `User authentication`, `Organization Management`, `Project Management`, and other operations within the SwitchKeys system.
 
 ## Features
 
 - **User Authentication**: Register new users, log in to existing users, and manage user tokens.
-- **User Management**: Retrieve user information by ID or email, create new users, update existing users, and delete users.
 - **Organization Management**: Create, retrieve, update, and delete organizations. Add and remove members from organizations.
 - **Project Management**: Create, retrieve, update, and delete projects.
+- **Environment Management**: Create, retrieve, update, and delete environments.
 
 ## Installation
 
 You can install the SwitchKeys TS Client via npm:
 
 ```bash
-npm install switchkeys-ts-client
+npm install @switchkeys/ts-client
+# or
+yarn add @switchkeys/ts-client
 ```
 
 ## Usage
@@ -22,40 +25,29 @@ npm install switchkeys-ts-client
 Here's a basic example of how to use the SwitchKeys TS Client:
 
 ```typescript
-import SwitchKeys from "switchkeys-ts-client";
+// Import the SwitchKeys class from the client library.
+import SwitchKeys, { DeviceTypeSelection } from "@switchkeys/ts-client";
 
-async function main() {
+export async function main() {
+  // Create an instance of the SwitchKeys client.
   const switchkeys = new SwitchKeys();
 
-  // Register a new user
-  const newUser = await switchkeys.auth.register({
+  // --------------------------------------------------------------------------------------------------------------------
+  // Logging in to SwitchKeys
+  // --------------------------------------------------------------------------------------------------------------------
+  // First, log in to SwitchKeys with valid credentials.
+  await switchkeys.auth.login({
     email: "user@example.com",
-    firstName: "John",
-    lastName: "Doe",
-    password: "password",
+    password: "###",
   });
-  console.log(`New user registered. Access token: ${newUser.accessToken}`);
 
-  // Log in an existing user
-  const loggedInUser = await switchkeys.auth.login({
-    email: "user@example.com",
-    password: "password",
-  });
-  console.log(`User logged in. Access token: ${loggedInUser.accessToken}`);
-
-  // Retrieve user data by ID
-  const userByID = await switchkeys.users.getById(1);
-  console.log(`User data retrieved by ID. First name: ${userByID.firstName}`);
-
-  // Retrieve user data by email
-  const userByEmail = await switchkeys.users.getByEmail("user@example.com");
-  console.log(`User data retrieved by email. First name: ${userByEmail.firstName}`);
+  console.log("Logged in successfully.");
 }
 
 main();
 ```
 
-For more detailed usage instructions, refer to the [documentation](link-to-docs).
+For more detailed usage instructions, refer to the [examples folder](./examples/).
 
 ## Organization Management
 
@@ -68,78 +60,9 @@ const organization = await switchkeys.organizations.create({ name: "Test Organiz
 console.log(`Organization created. ID: ${organization.id}`);
 ```
 
-### Retrieving Organization Data
-
-```typescript
-const organizationById = await switchkeys.organizations.getById(1);
-console.log(`Organization data retrieved by ID. Name: ${organizationById.name}`);
-
-const organizationByName = await switchkeys.organizations.getByName("Test Organization");
-console.log(`Organization data retrieved by name. ID: ${organizationByName.id}`);
-```
-
-### Updating an Organization
-
-```typescript
-const updatedOrganization = await switchkeys.organizations.update(1, { name: "Updated Organization" });
-console.log(`Organization updated. New name: ${updatedOrganization.name}`);
-```
-
-### Adding and Removing Members
-
-```typescript
-await switchkeys.organizations.addMember(1, { memberId: 2 });
-console.log("Member added to organization.");
-
-await switchkeys.organizations.removeMember(1, { memberId: 2 });
-console.log("Member removed from organization.");
-```
-
-### Deleting an Organization
-
-```typescript
-await switchkeys.organizations.delete(1);
-console.log("Organization deleted.");
-```
-
-## Project Management
-
-The SwitchKeys TS Client also allows you to manage projects within organizations. Here are some examples of project-related operations:
-
-### Creating a Project
-
-```typescript
-const project = await switchkeys.projects.create({
-  name: "Test Project",
-  organizationId: 1,
-});
-console.log(`Project created. ID: ${project.id}`);
-```
-
-### Retrieving Project Data
-
-```typescript
-const projectById = await switchkeys.projects.getById(1);
-console.log(`Project data retrieved by ID. Name: ${projectById.name}`);
-```
-
-### Updating a Project
-
-```typescript
-const updatedProject = await switchkeys.projects.update(1, { name: "Updated Project" });
-console.log(`Project updated. New name: ${updatedProject.name}`);
-```
-
-### Deleting a Project
-
-```typescript
-await switchkeys.projects.delete(1);
-console.log("Project deleted.");
-```
-
 ## Configuration
 
-Before using the SwitchKeys TS Client, make sure to set up the necessary environment variables and configuration files. Refer to the [configuration documentation](link-to-config-docs) for details.
+Before using the SwitchKeys TS Client, make sure to set up the necessary environment variables and configuration files. Refer to the [configuration documentation](./docs/configuration.md) for details.
 
 ## Contributing
 

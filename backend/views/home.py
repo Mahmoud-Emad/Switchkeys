@@ -27,7 +27,7 @@ def display_urls(request):
     return JsonResponse(
         {
             "server": "backend",
-            "version": config("SWITCHKEYS_VERSION") or "v0.1.0",
+            "version": config("SWITCHKEYS_VERSION"),
             "urls": url_patterns,
         }
     )

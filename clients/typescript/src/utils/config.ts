@@ -1,5 +1,4 @@
 import * as fs from "fs";
-import { SwitchKeysLogger } from "./logger";
 import { ConfigIniParser } from "config-ini-parser";
 import { ISwitchKeysAuthTokensResponse } from "../api/response/types";
 import { SwitchKeysValidationError } from "../core/exceptions";
@@ -8,8 +7,6 @@ import { SwitchKeysValidationError } from "../core/exceptions";
  * Manages loading and writing tokens from/to a configuration file.
  */
 class SwitchKeysConfig {
-  private logger: SwitchKeysLogger = new SwitchKeysLogger();
-
   /**
    * Checks if the configuration file exists and contains the required values.
    * @param configFile Path to the configuration file. Default is `config.ini`.
@@ -33,7 +30,7 @@ class SwitchKeysConfig {
       const refreshToken = config.get("TOKENS", "refreshToken");
 
       if (accessToken && refreshToken) {
-        this.logger.info("Config file contains access and refresh tokens.");
+        console.info("Config file contains access and refresh tokens.");
         return true;
       } else {
         throw new SwitchKeysValidationError(
@@ -63,13 +60,13 @@ class SwitchKeysConfig {
         if (accessToken && refreshToken) {
           return { accessToken, refreshToken }
         } else {
-          this.logger.warning(
+          console.warn(
             "Tokens not found in the config file, maybe you have to login first."
           );
           return {}
         }
       } else {
-        this.logger.warning(
+        console.warn(
           "No [TOKENS] section found in the config file, maybe you have to login first."
         );
         return {}

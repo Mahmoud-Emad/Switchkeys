@@ -1,7 +1,3 @@
-import { SwitchKeysLogger } from "../utils/logger";
-
-const logger: SwitchKeysLogger = new SwitchKeysLogger();
-
 /**
  * Custom error class for representing connection errors in SwitchKeys.
  */
@@ -12,7 +8,6 @@ class SwitchKeysConnectionError extends Error {
    */
   constructor(message: string) {
     super(message);
-    logger.error(message);
   }
 }
 
@@ -26,7 +21,6 @@ class SwitchKeysRecordNotFoundError extends Error {
    */
   constructor(message: string) {
     super(message);
-    logger.error(message);
   }
 }
 
@@ -40,7 +34,6 @@ class SwitchKeysUnauthorizedError extends Error {
    */
   constructor(message: string) {
     super(message);
-    logger.error(message);
   }
 }
 
@@ -54,7 +47,6 @@ class SwitchKeysValidationError extends Error {
    */
   constructor(message: string) {
     super(message);
-    logger.error(message);
   }
 }
 
@@ -68,7 +60,6 @@ class SwitchKeysFeatureDoesNotExistError extends Error {
    */
   constructor(message: string) {
     super(message);
-    logger.error(message);
   }
 }
 

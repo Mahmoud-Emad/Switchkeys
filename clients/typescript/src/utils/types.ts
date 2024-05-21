@@ -1,9 +1,9 @@
 /** Enum representing different user types in the SwitchKeys system */
 export enum SwitchKeysUserType {
   /** Regular user type */
-  User = "user",
+  User = "User",
   /** Administrator user type */
-  Administrator = "administrator",
+  Administrator = "Administrator",
 }
 
 /** Enum representing user device type */

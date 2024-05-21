@@ -1,5 +1,4 @@
 import SwitchKeysConfig from "../../utils/config";
-import { SwitchKeysLogger } from "../../utils/logger";
 import { SwitchKeysRequest, SwitchKeysRequestMethod } from "../request/request";
 import { SwitchKeysApiRoutes } from "../request/routes";
 import {
@@ -22,7 +21,6 @@ class SwitchKeysAuth {
   private config = new SwitchKeysConfig();
   private authRoutes = SwitchKeysApiRoutes.auth;
   private request: SwitchKeysRequest = new SwitchKeysRequest();
-  private logger: SwitchKeysLogger = new SwitchKeysLogger();
   private configFile: string = "config.ini";
 
   /**
@@ -45,7 +43,8 @@ class SwitchKeysAuth {
     const response = await this.request.call(
       url,
       SwitchKeysRequestMethod.POST,
-      requestBody
+      requestBody,
+      true,
     );
 
     const switchKeysAuthResponse = new SwitchKeysAuthResponse();
@@ -57,7 +56,7 @@ class SwitchKeysAuth {
         this.tokens.accessToken = userData.accessToken;
         this.tokens.refreshToken = userData.refreshToken;
         this.config.write(this.tokens);
-        this.logger.info(`Tokens written to: ${this.configFile}.`);
+        console.info(`Tokens written to: ${this.configFile}.`);
       }
     }
 
@@ -91,7 +90,8 @@ class SwitchKeysAuth {
     const response = await this.request.call(
       url,
       SwitchKeysRequestMethod.POST,
-      data
+      data,
+      true,
     );
 
     const switchKeysAuthResponse = new SwitchKeysAuthResponse();

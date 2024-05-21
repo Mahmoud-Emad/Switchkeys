@@ -17,7 +17,7 @@ export async function environmentExample() {
   // --------------------------------------------------------------------------------------------------------------------
   // First, log in to SwitchKeys with valid credentials.
   await switchkeys.auth.login({
-    email: "admin@gmail.com",
+    email: "testing@switchkeys.com",
     password: "0000",
   });
 

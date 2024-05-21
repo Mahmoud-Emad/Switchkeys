@@ -1,9 +1,9 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
-import { SwitchKeysLogger } from "../../utils/logger";
 import {
   SwitchKeysConnectionError,
   SwitchKeysRecordNotFoundError,
   SwitchKeysUnauthorizedError,
+  SwitchKeysValidationError,
 } from "../../core/exceptions";
 import SwitchKeysConfig from "../../utils/config";
 
@@ -21,7 +21,6 @@ enum SwitchKeysRequestMethod {
  * Handles making HTTP requests to the API.
  */
 class SwitchKeysRequest {
-  private logger: SwitchKeysLogger = new SwitchKeysLogger();
   private config = new SwitchKeysConfig();
   private requestLock: Promise<any> = Promise.resolve();
 
@@ -32,7 +31,7 @@ class SwitchKeysRequest {
    * @param data Optional data to send with the request.
    * @returns The response data if the request is successful, or an error message if it fails.
    */
-  async call(url: string, method: SwitchKeysRequestMethod, data?: any) {
+  async call(url: string, method: SwitchKeysRequestMethod, data?: any, noToken=false) {
     return this.requestLock = this.requestLock.then(async () => {
       let accessToken;
       const requestConfig: AxiosRequestConfig = {
@@ -41,7 +40,7 @@ class SwitchKeysRequest {
         data,
       };
 
-      if (method !== 'GET') {
+      if (method !== 'GET' && !noToken) {
         accessToken = this.config.load().accessToken;
         requestConfig.headers = {
           Authorization: `Bearer ${accessToken}`,
@@ -99,7 +98,7 @@ class SwitchKeysRequest {
       }
     }
 
-    this.logger.error(message);
+    throw new SwitchKeysValidationError(message);
   }
 
   /**

@@ -54,6 +54,11 @@ class CustomResponse:
         """bad request response method"""
         if not message:
             message = "Make sure you entered a valid data."
+        if not error:
+            error = {
+                message: message,
+            }
+
         return Response(
             {
                 "results": data,

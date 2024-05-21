@@ -25,15 +25,10 @@ class BaseOrganizationApiView(ListAPIView):
     permission_classes = []
 
     def get_permissions(self):
-        if self.request.method == "GET":
-            self.permission_classes = [
-                UserIsAuthenticated,
-            ]
-        else:
+        if self.request.method != "GET":
             self.permission_classes = [
                 IsAdminUser,
             ]
-
         return super(BaseOrganizationApiView, self).get_permissions()
 
     def get_queryset(self) -> Response:
@@ -264,7 +259,7 @@ class OrganizationProjectsApiView(ListAPIView):
 
     def get_queryset(self):
         """Get the queryset of projects for the specified organization"""
-        organization_id = self.kwargs.get('organization_id')
+        organization_id = self.kwargs.get("organization_id")
         organization = get_organization_by_id(organization_id)
         if organization is None:
             return OrganizationProject.objects.none()
@@ -273,4 +268,6 @@ class OrganizationProjectsApiView(ListAPIView):
     def get(self, request, organization_id):
         """Get all projects exists on the organization"""
         projects = self.get_queryset()
-        return CustomResponse.success(data=self.serializer_class(projects, many=True).data)
+        return CustomResponse.success(
+            data=self.serializer_class(projects, many=True).data
+        )

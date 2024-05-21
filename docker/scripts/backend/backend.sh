@@ -9,6 +9,12 @@ if [ "$ENV" = "production" ]; then
     done
 
     echo "PostgreSQL started"
+    cd backend
+    poetry run python3 manage.py flush --no-input
+    echo "Running the migration"
+    poetry run python3 manage.py makemigrations
+    echo "Running the migrate"
+    poetry run python3 manage.py migrate
 else
     echo "Running in development mode."
     cd backend

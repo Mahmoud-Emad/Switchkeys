@@ -23,9 +23,11 @@ exec |
 	echo 'DJANGO_DEBUG'=$DJANGO_DEBUG >> ${ENV_DIR}
 	echo 'DJANGO_SUPERUSER_EMAIL'=$DJANGO_SUPERUSER_EMAIL >> ${ENV_DIR}
 	echo 'DJANGO_SUPERUSER_PASSWORD'=$DJANGO_SUPERUSER_PASSWORD >> ${ENV_DIR}
-
-	# Servers configurations
+	# Backend server domain
 	echo 'SERVER_DOMAIN_NAME'=$SERVER_DOMAIN_NAME >> ${ENV_DIR}
+	# Backend server version
+	echo 'SWITCHKEYS_VERSION'=$SWITCHKEYS_VERSION >> ${ENV_DIR}
+
 	# Database configurations
 	echo 'DATABASE_NAME'=$DATABASE_NAME >> ${ENV_DIR}
 	echo 'DATABASE_USER'=$DATABASE_USER >> ${ENV_DIR}

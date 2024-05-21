@@ -47,7 +47,7 @@ export async function main() {
 main();
 ```
 
-For more detailed usage instructions, refer to the [examples folder](./examples/).
+For more detailed usage instructions, refer to the [examples folder](.././examples/).
 
 ## Organization Management
 
@@ -70,4 +70,4 @@ Contributions are welcome! If you find a bug or have a feature request, please o
 
 ## License
 
-This project is licensed under the [MIT License](./LICENSE)
+This project is licensed under the [MIT License](.././LICENSE)

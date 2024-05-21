@@ -2,6 +2,7 @@
 // import SwitchKeys from "switchkeys";
 
 import SwitchKeys from "../src/core/base";
+import { SwitchKeysUserType } from "../src/utils/types";
 
 /**
  * `authExample` demonstrates the usage of authentication services.
@@ -16,12 +17,24 @@ export async function authExample() {
   // Logging in to SwitchKeys
   // --------------------------------------------------------------------------------------------------------------------
   // First, log in to SwitchKeys with valid credentials.
-  await switchkeys.auth.login({
-    email: "admin@gmail.com",
-    password: "0000",
-  });
+  // If you haven't created account yet, unlock the register method.
+  /**
+   await switchkeys.auth.register({
+      email: "testing@switchkeys.com",
+      password: "0000",
+      firstName: "Testing",
+      lastName: "Account",
+      memberType: SwitchKeysUserType.Administrator
+    });
+   */
 
+  await switchkeys.auth.login({
+    email: "testing@switchkeys.com",
+    password: "0000",
+  });    
   console.log("Logged in successfully.");
+
+
 
   // --------------------------------------------------------------------------------------------------------------------
   // Demonstrate other authenticated operations here

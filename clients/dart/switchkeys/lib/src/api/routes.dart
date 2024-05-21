@@ -1,3 +1,5 @@
+import 'package:dotenv/dotenv.dart';
+
 enum EndPoints {
   // Endpoints without parameters
   changePassword,
@@ -32,8 +34,9 @@ enum EndPoints {
   usersId,
 }
 
-class SwitchKeysRoutes {
-  static const String baseUrl = "http://127.0.0.1:8000/api/";
+abstract class SwitchKeysRoutes {
+  static final env = DotEnv()..load();
+  static final String baseUrl = env['BASE_URL'] ?? "";
 
   static String getRoute(EndPoints endpoint, [List<String>? args]) {
     switch (endpoint) {

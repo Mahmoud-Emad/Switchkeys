@@ -28,7 +28,6 @@ class SwitchKeyAuth {
       // Make POST request
       http.Response response = await http.post(Uri.parse(apiUrl),
           headers: headers, body: jsonEncode(body));
-
       if (response.statusCode == 200) {
         Map<String, dynamic> data = jsonDecode(response.body);
         SwitchKeysAuthResponse authLoginResponse = parseAuth(data["results"]);

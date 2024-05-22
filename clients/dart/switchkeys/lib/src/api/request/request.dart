@@ -67,8 +67,15 @@ class SwitchKeysRequest {
 
   static SwitchKeysResponse __readResponse(http.Response response) {
     try {
-      final Map<String, dynamic> responseContent = jsonDecode(response.body);
+      if (response.statusCode == 204) {
+        return SwitchKeysResponse(
+          statusCode: response.statusCode,
+          message: "Deleted!",
+          data: {},
+        );
+      }
 
+      final Map<String, dynamic> responseContent = jsonDecode(response.body);
       if (response.statusCode >= 400) {
         return SwitchKeysRequest.__readError(response);
       } else {

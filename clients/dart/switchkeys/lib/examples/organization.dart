@@ -28,22 +28,62 @@ Future<void> organizationsMain() async {
   print("Registered successfully: ${user.email}");
   */
 
-  // --------------------------------------------------------------------------------------------------------------------
+  // --------------------------------------------------------------------------
   // Creating a new organization
-  // --------------------------------------------------------------------------------------------------------------------
+  // --------------------------------------------------------------------------
   // Create a new organization named "SwitchKeys".
-  // var organization = await switchkeys.organizations.create(
-  //   name: "Sonono2",
-  // );
+  var organization = await switchkeys.organizations.create(
+    name: "SwitchKeys",
+  );
+  print("Created organization name: ${organization.name}");
 
-  // print(organization.name); // Print the organization object
+  // --------------------------------------------------------------------------
+  // Creating a new project on the created organization
+  // --------------------------------------------------------------------------
+  // Create a new project named "FlayAway" on the created organization.
+  var project = await organization.createProject(projectName: "FlayAway");
+  print("Created project name: ${project.name}");
 
-  // var project = await organization.createProject(projectName: "FlayAway");
+  // --------------------------------------------------------------------------
+  // List all organization projects
+  // --------------------------------------------------------------------------
+  // You can list all of the organization projects,
+  // including the new created "FlayAway" project.
+  var projects = await organization.getAllProjects();
+  print("Organization projects: $projects");
 
-  // print(project.name); // Print the project object.
-  // print(project.organization?.name); // Print the project organization.
+  // --------------------------------------------------------------------------
+  // Adding members to an organization
+  // --------------------------------------------------------------------------
+  // You can easily add a new member to the created organization
+  await organization.addMember(memberID: user.id);
+  print("Organization members: ${organization.members}");
+  // Also, remove member.
+  await organization.removeMember(memberID: user.id);
+  print("Organization members: ${organization.members}");
 
-  // // Adding a member into an organization.
-  // var member = await organization.addMember(memberID: user.id);
-  // print(member);
+  // --------------------------------------------------------------------------
+  // Updateing the organization
+  // --------------------------------------------------------------------------
+  await organization.update(newName: "FlagsBoard", newMembers: []);
+  print("Updated organization name: ${organization.name}");
+
+  // --------------------------------------------------------------------------
+  // Delete the created organization
+  // --------------------------------------------------------------------------
+  // You can also delete a different organization by providing its ID.
+  await switchkeys.organizations.delete(organizationID: organization.id);
+  print("Deleted organization: ${organization.name}");
+
+  // --------------------------------------------------------------------------
+  // Get the deleted organization: Error!
+  // --------------------------------------------------------------------------
+  try {
+    await switchkeys.organizations.getById(organizationID: organization.id);
+    // await switchkeys.organizations.getByName(
+    //   organizationName: organization.name,
+    // );
+  } catch (e) {
+    print(e);
+  }
 }

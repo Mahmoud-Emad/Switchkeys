@@ -9,7 +9,14 @@ import 'package:switchkeys/src/utils/parser.dart';
 /// This class provides methods for logging in and registering users,
 /// and manages the storage of authentication tokens.
 class SwitchKeyAuth {
+  // ignore: unused_field
   const SwitchKeyAuth();
+
+  /// Logging out the logged in user by removing the saved tokens.
+  logout() {
+    var config = SwitchKeysTokensConfig();
+    return config.removeTokens();
+  }
 
   /// Authenticates a user by logging them in with their email and password.
   ///

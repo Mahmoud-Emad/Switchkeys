@@ -1,54 +1,100 @@
+// import 'package:switchkeys/src/api/response/types.dart';
 import 'package:switchkeys/src/api/response/types.dart';
 import 'package:switchkeys/src/core/base.dart';
 
 /// Main function for project-related operations.
-void projectsMain() async {
+Future<void> projectsMain() async {
   // Get an instance of SwitchKeys
-  final SwitchKeys switchKeys = SwitchKeys();
+  final SwitchKeys switchkeys = SwitchKeys();
 
-  // Login the user. This step is required if the saved token is expired.
-  await switchKeys.auth.login(email: "", password: "");
+  print('\n------------------------------------------------------------------');
+  print('[+] Running the projects example.');
+  print('------------------------------------------------------------------\n');
 
+  // --------------------------------------------------------------------------
+  // Logging in to SwitchKeys
+  // --------------------------------------------------------------------------
+  // First, log in to SwitchKeys with valid credentials.
   try {
-    // Get the organization where the project will be created
-    final SwitchKeysOrganizationResponse organization =
-        await switchKeys.organizations.getByName(
-      organizationName: 'Cloud for students',
+    // If you haven't created account yet, unlock the register method.
+    var user = await switchkeys.auth.register(
+      firstName: "Testing",
+      lastName: "Account",
+      email: "testing@switchkeys.com",
+      password: "0000",
+      memberType: UserTypeEnum.administrator,
     );
-
-    print("Organization name: ${organization.name}");
-    print("Organization ID: ${organization.id}");
-
-    // Create a new project under the retrieved organization
-    // project = await switchKeys.projects
-    //     .create(name: "TFGrid", organizationID: organization.id);
-    // print("Project name: ${project.name}");
-
-    // Get an existing project by its ID
-    final SwitchKeysProjectResponse project = await switchKeys.projects.getById(
-      projectID: 2,
-    );
-
-    print("Project name: ${project.name}");
-
-    // Update the existing project with new data
-    // The `organizationID` can be changed to another organization or remain the same.
-    final updatedProject = await switchKeys.projects.update(
-      name: 'TFGrid Hub',
-      organizationID: organization.id,
-      projectID: project.id,
-    );
-
-    print("Updated project name: ${updatedProject.name}");
-
-    // Delete the project
-    final isDeleted = await switchKeys.projects.delete(
-      projectID: updatedProject.id,
-    );
-
-    print("Is the project deleted: $isDeleted");
+    print("[+] Registered successfully: ${user.email}");
   } catch (e) {
-    // Handle any errors that may occur during project operations.
-    print("Error occurred: $e");
+    var user = await switchkeys.auth.login(
+      email: "testing@switchkeys.com",
+      password: "0000",
+    );
+    print("[+] Logged in successfully: ${user.email}");
+
+    // ------------------------------------------------------------------------
+    // Creating a new organization
+    // ------------------------------------------------------------------------
+    // Create a new organization named "SwitchKeys".
+    var organization = await switchkeys.organizations.create(
+      name: "SwitchKeys",
+    );
+    print("[+] Created organization name: ${organization.name}");
+
+    // ------------------------------------------------------------------------
+    // Creating a new project on the created organization
+    // ------------------------------------------------------------------------
+    // Create a new project named "FlayAway" on the created organization.
+    var project = await switchkeys.projects.create(
+      name: "FlayAway",
+      organizationID: organization.id,
+    );
+    print("[+] Created project name: ${project.name}");
+
+    // ------------------------------------------------------------------------
+    // Updating the created project
+    // ------------------------------------------------------------------------
+    await project.update(
+      name: "StoryMith",
+      organizationID: organization.id,
+    );
+    print("[+] Updated project name: ${project.name}");
+
+    // ------------------------------------------------------------------------
+    // Load project environment.
+    // ------------------------------------------------------------------------
+    // Load the environment using the project's development environment key.
+    var environmentKey = project.environments.development.environmentKey;
+    var environment = await switchkeys.environments.load(
+      environmentKey: environmentKey,
+    );
+
+    print("[+] Loaded environment key: ${environment.environmentKey}");
+
+    // ------------------------------------------------------------------------
+    // Delete the created organization
+    // ------------------------------------------------------------------------
+    // You can also delete a different organization by providing its ID.
+    await switchkeys.organizations.delete(organizationID: organization.id);
+    print("[+] Deleted organization: ${organization.name}");
+
+    // ------------------------------------------------------------------------
+    // Get the deleted organization: Error!
+    // ------------------------------------------------------------------------
+    try {
+      await switchkeys.organizations.getById(organizationID: organization.id);
+      // await switchkeys.organizations.getByName(
+      //   organizationName: organization.name,
+      // );
+    } catch (e) {
+      print("[-] $e");
+    }
+  } finally {
+    // ------------------------------------------------------------------------
+    // Logging out of SwitchKeys
+    // ------------------------------------------------------------------------
+    // Finally, log out of SwitchKeys.
+    await switchkeys.auth.logout();
+    print("[+] Logged out successfully");
   }
 }

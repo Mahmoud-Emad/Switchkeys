@@ -1,157 +1,159 @@
-import 'dart:convert';
-
+import 'package:switchkeys/src/api/request/request.dart';
 import 'package:switchkeys/src/api/response/types.dart';
 import 'package:switchkeys/src/api/routes.dart';
-import 'package:switchkeys/src/core/exceptions.dart';
-import 'package:switchkeys/src/utils/config.dart';
-import 'package:http/http.dart' as http;
 import 'package:switchkeys/src/utils/parser.dart';
 
+/// Class handling project-related operations for SwitchKeys.
 class SwitchKeysProjects {
-  final _config = SwitchKeysTokensConfig();
   SwitchKeysProjects();
 
-  Future<SwitchKeysProjectResponse> create(
-      {required String name, required int organizationID}) async {
-    // API endpoint for creating organization
+  /// Parses the project data.
+  SwitchKeysProjectServices __parse(dynamic data) {
+    SwitchKeysProjectResponse project = parseProject(data);
+    return SwitchKeysProjectServices(project);
+  }
+
+  /// Creates a new project with the given name and organization ID.
+  ///
+  /// Returns a [SwitchKeysProjectServices] instance.
+  Future<SwitchKeysProjectServices> create({
+    required String name,
+    required int organizationID,
+  }) async {
     String apiUrl = SwitchKeysRoutes.getRoute(EndPoints.projects);
-    // Request body
-    Map<String, dynamic> body = {
+    Map<String, dynamic> payload = {
       "name": name,
       "organization_id": organizationID,
     };
 
-    // Get the tokens
-    var tokens = _config.readTokens();
-
-    // Headers
-    Map<String, String> headers = {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer ${tokens.accessToken}",
-    };
-
     try {
-      // Make POST request
-      http.Response response = await http.post(Uri.parse(apiUrl),
-          headers: headers, body: jsonEncode(body));
+      var response = await SwitchKeysRequest.call(
+        apiUrl,
+        SwitchKeysRequestMethod.post,
+        payload,
+        false,
+      );
 
-      if (response.statusCode < 400) {
-        Map<String, dynamic> data = jsonDecode(response.body);
-        SwitchKeysProjectResponse projectResponse =
-            parseProject(data["results"]);
-        return projectResponse;
-      } else {
-        Map<String, dynamic> data0 = jsonDecode(response.body);
-        String message = data0['message'] ?? data0['detail'];
-        throw ResponseError("Project creation failed due: $message");
+      if (response.errorMessage != null) {
+        throw response.error;
       }
+
+      var data = response.data;
+      return __parse(data);
     } catch (e) {
-      // Exception occurred, handle error
-      throw ResponseError(e.toString());
+      rethrow;
     }
   }
 
-  Future<SwitchKeysProjectResponse> getById({required int projectID}) async {
-    String apiUrl =
-        SwitchKeysRoutes.getRoute(EndPoints.projectsId, [projectID.toString()]);
-
-    // Headers
-    Map<String, String> headers = {
-      "Content-Type": "application/json",
-    };
+  /// Retrieves a project by its ID.
+  ///
+  /// Returns a [SwitchKeysProjectServices] instance.
+  Future<SwitchKeysProjectServices> getById({required int projectID}) async {
+    String apiUrl = SwitchKeysRoutes.getRoute(
+      EndPoints.projectsId,
+      [projectID.toString()],
+    );
 
     try {
-      // Make GET request
-      http.Response response =
-          await http.get(Uri.parse(apiUrl), headers: headers);
+      var response = await SwitchKeysRequest.call(
+        apiUrl,
+        SwitchKeysRequestMethod.get,
+        {},
+        false,
+      );
 
-      if (response.statusCode < 400) {
-        Map<String, dynamic> data = jsonDecode(response.body);
-        SwitchKeysProjectResponse projectResponse =
-            parseProject(data["results"]);
-        return projectResponse;
-      } else {
-        Map<String, dynamic> data0 = jsonDecode(response.body);
-        String message = data0['message'] ?? data0['detail'];
-        throw ResponseError("Cannot get the organization due: $message");
+      if (response.errorMessage != null) {
+        throw response.error;
       }
+
+      var data = response.data;
+      return __parse(data);
     } catch (e) {
-      // Exception occurred, handle error
-      throw ResponseError(e.toString());
+      rethrow;
     }
   }
 
-  Future<SwitchKeysProjectResponse> update(
-      {required String name,
-      required int organizationID,
-      required int projectID}) async {
-    // API endpoint for creating organization
-    String apiUrl =
-        SwitchKeysRoutes.getRoute(EndPoints.projectsId, [projectID.toString()]);
-    // Request body
-    Map<String, dynamic> body = {
+  /// Deletes a project by its ID.
+  Future<void> delete({required int projectID}) async {
+    String apiUrl = SwitchKeysRoutes.getRoute(
+      EndPoints.projectsId,
+      [projectID.toString()],
+    );
+
+    try {
+      var response = await SwitchKeysRequest.call(
+        apiUrl,
+        SwitchKeysRequestMethod.delete,
+        {},
+        false,
+      );
+
+      if (response.errorMessage != null) {
+        throw response.error;
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+}
+
+/// Services for interacting with a specific project.
+class SwitchKeysProjectServices {
+  final SwitchKeysProjectResponse __project;
+  const SwitchKeysProjectServices(this.__project);
+
+  /// The project ID.
+  int get id => __project.id;
+
+  /// The project name.
+  String get name => __project.name;
+
+  /// The project created at datetime as string.
+  String get created => __project.created;
+
+  /// The project modified at datetime as string.
+  String get modified => __project.modified;
+
+  /// The project environments.
+  SwitchKeysDefaultEnvironmentsResponse get environments =>
+      __project.environments;
+
+  /// The project organization.
+  SwitchKeysOrganizationResponse? get organization => __project.organization;
+
+  /// Updates the project details.
+  ///
+  /// Returns an updated [SwitchKeysProjectResponse] instance.
+  Future<SwitchKeysProjectResponse> update({
+    required String name,
+    required int organizationID,
+  }) async {
+    String apiUrl = SwitchKeysRoutes.getRoute(
+      EndPoints.projectsId,
+      [__project.id.toString()],
+    );
+
+    Map<String, dynamic> payload = {
       "name": name,
       "organization_id": organizationID,
     };
 
-    // Get the tokens
-    var tokens = _config.readTokens();
-
-    // Headers
-    Map<String, String> headers = {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer ${tokens.accessToken}",
-    };
-
     try {
-      // Make PUT request
-      http.Response response = await http.put(Uri.parse(apiUrl),
-          headers: headers, body: jsonEncode(body));
+      var response = await SwitchKeysRequest.call(
+        apiUrl,
+        SwitchKeysRequestMethod.put,
+        payload,
+        false,
+      );
 
-      if (response.statusCode < 400) {
-        Map<String, dynamic> data = jsonDecode(response.body);
-        SwitchKeysProjectResponse projectResponse =
-            parseProject(data["results"]);
-        return projectResponse;
-      } else {
-        Map<String, dynamic> data0 = jsonDecode(response.body);
-        String message = data0['message'] ?? data0['detail'];
-        throw ResponseError("Failed to update project due: $message");
+      if (response.errorMessage != null) {
+        throw response.error;
       }
+
+      var data = response.data;
+      return parseProject(data);
     } catch (e) {
-      // Exception occurred, handle error
-      throw ResponseError(e.toString());
-    }
-  }
-
-  Future<bool> delete({required int projectID}) async {
-    String apiUrl =
-        SwitchKeysRoutes.getRoute(EndPoints.projectsId, [projectID.toString()]);
-
-    // Get the tokens
-    var tokens = _config.readTokens();
-
-    // Headers
-    Map<String, String> headers = {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer ${tokens.accessToken}",
-    };
-
-    try {
-      // Make DELETE request
-      http.Response response =
-          await http.delete(Uri.parse(apiUrl), headers: headers);
-
-      if (response.statusCode < 400) {
-        return true;
-      } else {
-        Map<String, dynamic> data = jsonDecode(response.body);
-        String message = data['message'] ?? data['detail'];
-        throw ResponseError("Failed to delete the project due: $message");
-      }
-    } catch (e) {
-      // Exception occurred, handle error
-      throw ResponseError(e.toString());
+      rethrow;
     }
   }
 }

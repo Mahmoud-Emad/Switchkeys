@@ -32,11 +32,33 @@ class SwitchKeysEnvironmentResponse {
   });
 }
 
+class SwitchKeysDefaultEnvironmentResponse {
+  String name;
+  String environmentKey;
+  SwitchKeysDefaultEnvironmentResponse({
+    required this.name,
+    required this.environmentKey,
+  });
+}
+
+class SwitchKeysDefaultEnvironmentsResponse {
+  final SwitchKeysDefaultEnvironmentResponse development;
+  final SwitchKeysDefaultEnvironmentResponse staging;
+  final SwitchKeysDefaultEnvironmentResponse production;
+
+  SwitchKeysDefaultEnvironmentsResponse({
+    required this.development,
+    required this.staging,
+    required this.production,
+  });
+}
+
 class SwitchKeysProjectResponse {
   final int id;
   final String name;
   final String created;
   final String modified;
+  final SwitchKeysDefaultEnvironmentsResponse environments;
   final SwitchKeysOrganizationResponse? organization;
 
   SwitchKeysProjectResponse({
@@ -44,6 +66,7 @@ class SwitchKeysProjectResponse {
     required this.name,
     required this.created,
     required this.modified,
+    required this.environments,
     this.organization,
   });
 }
@@ -146,28 +169,6 @@ class SwitchKeysEnvironmentsUserFeatureResponse {
     required this.isDefault,
     required this.created,
     required this.modified,
-  });
-}
-
-class SwitchKeysEnvironmentNameKeyValueResponse {
-  String name;
-  String environmentKey;
-
-  SwitchKeysEnvironmentNameKeyValueResponse({
-    required this.name,
-    required this.environmentKey,
-  });
-}
-
-class SwitchKeysEnvironmentNameKeyResponse {
-  final SwitchKeysEnvironmentNameKeyValueResponse development;
-  final SwitchKeysEnvironmentNameKeyValueResponse staging;
-  final SwitchKeysEnvironmentNameKeyValueResponse production;
-
-  SwitchKeysEnvironmentNameKeyResponse({
-    required this.development,
-    required this.staging,
-    required this.production,
   });
 }
 

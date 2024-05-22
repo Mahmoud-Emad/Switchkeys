@@ -3,15 +3,11 @@ import 'package:ini/ini.dart';
 
 /// Manages writing and reading access and refresh tokens to/from a configuration file.
 class SwitchKeysTokensConfig {
-  late TokensType tokens =
-      TokensType(accessToken: '', refreshToken: ''); // Initialize tokens
-  final Config config =
-      Config(); // The configuration object to manage the config file.
-  final File file = File("config.ini"); // Reference to the config file.
-  final String sectionName =
-      "TOKENS"; // Name of the section in the config file.
+  late TokensType tokens = TokensType(accessToken: '', refreshToken: '');
+  final Config config = Config();
+  final File file = File("config.ini");
+  final String sectionName = "TOKENS";
 
-  /// Constructs a new SwitchKeysTokensConfig instance.
   SwitchKeysTokensConfig();
 
   /// Writes the access and refresh tokens to the config file.
@@ -20,8 +16,10 @@ class SwitchKeysTokensConfig {
   /// - It adds a section named 'TOKENS' to the config file and sets the access
   /// and refresh tokens under this section.
   /// - Returns a string representation of the config after writing.
-  TokensType writeTokens(
-      {required String accessToken, required String refreshToken}) {
+  TokensType writeTokens({
+    required String accessToken,
+    required String refreshToken,
+  }) {
     config.addSection(sectionName);
     config.set(sectionName, "accessToken", accessToken);
     config.set(sectionName, "refreshToken", refreshToken);
@@ -52,6 +50,18 @@ class SwitchKeysTokensConfig {
     }
 
     return tokens;
+  }
+
+  removeTokens() {
+    // var duration = const Duration(seconds: 5);
+    // sleep(duration);
+
+    config.removeSection(sectionName);
+    file.writeAsStringSync(config.toString());
+
+    if (!file.existsSync()) {
+      file.createSync();
+    }
   }
 }
 

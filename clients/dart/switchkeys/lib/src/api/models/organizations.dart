@@ -147,37 +147,6 @@ class SwitchKeysOrganizations {
     }
   }
 
-  Future<List<SwitchKeysProjectResponse>> getAllProjects(
-      {required int organizationID}) async {
-    String apiUrl = SwitchKeysRoutes.getRoute(
-        EndPoints.organizationsIdAllProjects, [organizationID.toString()]);
-
-    // Headers
-    Map<String, String> headers = {
-      "Content-Type": "application/json",
-    };
-
-    try {
-      // Make GET request
-      http.Response response =
-          await http.get(Uri.parse(apiUrl), headers: headers);
-
-      if (response.statusCode < 400) {
-        Map<String, dynamic> data = jsonDecode(response.body);
-        List<SwitchKeysProjectResponse> projectsResponse =
-            parseProjects(data["results"]);
-        return projectsResponse;
-      } else {
-        Map<String, dynamic> data0 = jsonDecode(response.body);
-        String message = data0['message'] ?? data0['detail'];
-        throw ResponseError("Cannot get the organization due: $message");
-      }
-    } catch (e) {
-      // Exception occurred, handle error
-      throw ResponseError(e.toString());
-    }
-  }
-
   Future<bool> delete({required int organizationID}) async {
     String apiUrl = SwitchKeysRoutes.getRoute(
         EndPoints.organizationsId, [organizationID.toString()]);
@@ -211,10 +180,8 @@ class SwitchKeysOrganizations {
 }
 
 class SwitchKeysOrganizationServices {
-  final SwitchKeysOrganizationResponse __organization;
-
-  // ignore: no_leading_underscores_for_local_identifiers
-  const SwitchKeysOrganizationServices(organization, this.__organization);
+  SwitchKeysOrganizationResponse __organization;
+  SwitchKeysOrganizationServices(organization, this.__organization);
 
   /// The organization name.
   String get name {
@@ -271,7 +238,8 @@ class SwitchKeysOrganizationServices {
     return projectResponse;
   }
 
-  Future<SwitchKeysUserResponse> addMember({required int memberID}) async {
+  Future<SwitchKeysOrganizationResponse> addMember(
+      {required int memberID}) async {
     String apiUrl = SwitchKeysRoutes.getRoute(
       EndPoints.organizationsIdAddMember,
       [
@@ -294,13 +262,19 @@ class SwitchKeysOrganizationServices {
       throw response.error;
     }
 
-    print("response.data ${response.data}");
     var data = response.data;
-    SwitchKeysUserResponse memberResponse = parseUser(data);
-    return memberResponse;
+    SwitchKeysOrganizationResponse orgResponse = parseOrganization(data);
+
+    if (orgResponse.id == 0) {
+      throw SwitchKeysRecordNotFoundError("Organization not found.");
+    }
+
+    __organization = orgResponse;
+    return orgResponse;
   }
 
-  Future<SwitchKeysUserResponse> removeMember({required int memberID}) async {
+  Future<SwitchKeysOrganizationResponse> removeMember(
+      {required int memberID}) async {
     String apiUrl = SwitchKeysRoutes.getRoute(
       EndPoints.organizationsIdRemoveMember,
       [
@@ -324,7 +298,37 @@ class SwitchKeysOrganizationServices {
     }
 
     var data = response.data;
-    SwitchKeysUserResponse memberResponse = parseUser(data);
-    return memberResponse;
+    SwitchKeysOrganizationResponse orgResponse = parseOrganization(data);
+
+    if (orgResponse.id == 0) {
+      throw SwitchKeysRecordNotFoundError("Organization not found.");
+    }
+
+    __organization = orgResponse;
+    return orgResponse;
+  }
+
+  Future<List<SwitchKeysProjectResponse>> getAllProjects() async {
+    String apiUrl = SwitchKeysRoutes.getRoute(
+      EndPoints.organizationsIdAllProjects,
+      [
+        __organization.id.toString(),
+      ],
+    );
+
+    var response = await SwitchKeysRequest.call(
+      apiUrl,
+      SwitchKeysRequestMethod.get,
+      {},
+      false,
+    );
+
+    if (response.errorMessage != null) {
+      throw response.error;
+    }
+
+    var data = response.data;
+    List<SwitchKeysProjectResponse> projectsResponse = parseProjects(data);
+    return projectsResponse;
   }
 }

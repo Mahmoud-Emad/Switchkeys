@@ -96,6 +96,11 @@ class SwitchKeysRequest {
     if (error is http.Response) {
       var body = jsonDecode(error.body);
       String message = body['message'] ?? body['detail'];
+
+      if (body['error'] != null) {
+        message += "\nError details: \n\t${body['error']}\n";
+      }
+
       return SwitchKeysResponse(
         statusCode: error.statusCode,
         error: ResponseError(message),
@@ -103,7 +108,6 @@ class SwitchKeysRequest {
       );
     }
 
-    print("error $error");
     String message = "An error occurred";
     return SwitchKeysResponse(
       statusCode: 500,

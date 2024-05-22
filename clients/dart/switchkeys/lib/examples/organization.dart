@@ -1,4 +1,4 @@
-import 'package:switchkeys/src/api/response/types.dart';
+// import 'package:switchkeys/src/api/response/types.dart';
 import 'package:switchkeys/src/core/base.dart';
 
 /// Main function for organization-related operations.
@@ -10,51 +10,40 @@ Future<void> organizationsMain() async {
   // Logging in to SwitchKeys
   // --------------------------------------------------------------------------------------------------------------------
   // First, log in to SwitchKeys with valid credentials.
-  await switchkeys.auth
-      .login(
-        email: "testing@switchkeys.com",
-        password: "0000",
-      )
-      .then(
-        (user) => print("Logged in successfully: ${user.email}"),
-      )
-      .catchError(
-        (e) => print("Error logging in: $e"),
-      );
+  var user = await switchkeys.auth.login(
+    email: "testing@switchkeys.com",
+    password: "0000",
+  );
+  print("Logged in successfully: ${user.email}");
+
   // If you haven't created account yet, unlock the register method.
   /**
-  await switchkeys.auth
-    .register(
-      firstName: "Testing",
-      lastName: "Account",
-      email: "testing@switchkeys.com",
-      password: "0000",
-      memberType: UserTypeEnum.administrator,
-    )
-    .then(
-      (user) => print("User registered successfully: ${user.email}"),
-    )
-    .catchError(
-      (e) => print("Error registering user: $e"),
-    );
+  var user = await switchkeys.auth.register(
+    firstName: "Testing",
+    lastName: "Account",
+    email: "testing@switchkeys.com",
+    password: "0000",
+    memberType: UserTypeEnum.administrator,
+  );
+  print("Registered successfully: ${user.email}");
   */
 
   // --------------------------------------------------------------------------------------------------------------------
   // Creating a new organization
   // --------------------------------------------------------------------------------------------------------------------
   // Create a new organization named "SwitchKeys".
-  var organization = await switchkeys.organizations.create(
-    name: "Sonono2",
-  );
+  // var organization = await switchkeys.organizations.create(
+  //   name: "Sonono2",
+  // );
 
-  print(organization.name); // Print the organization object
+  // print(organization.name); // Print the organization object
 
-  var project = await organization.createProject(projectName: "FlayAway");
+  // var project = await organization.createProject(projectName: "FlayAway");
 
-  print(project.name); // Print the project object.
-  print(project.organization?.name); // Print the project organization.
+  // print(project.name); // Print the project object.
+  // print(project.organization?.name); // Print the project organization.
 
-  // Adding a member into an organization.
-  var member = await organization.addMember(memberID: 1);
-  print(member);
+  // // Adding a member into an organization.
+  // var member = await organization.addMember(memberID: user.id);
+  // print(member);
 }

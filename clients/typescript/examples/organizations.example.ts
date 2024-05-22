@@ -11,7 +11,7 @@ export async function organizationExample() {
   const switchkeys = new SwitchKeys();
 
   // First, log in to SwitchKeys with valid credentials.
-  await switchkeys.auth.login({
+  const user = await switchkeys.auth.login({
     email: "testing@switchkeys.com",
     password: "0000",
   });
@@ -25,6 +25,23 @@ export async function organizationExample() {
   });
 
   console.log("Created Organization:", organization);
+
+  // --------------------------------------------------------------------------------------------------------------------
+  // Adding members to an organization
+  // --------------------------------------------------------------------------------------------------------------------
+  // You can easily add a new member to the created organization
+  await organization.addMember({
+    memberId: user.id
+  })
+
+  console.log("Organization members:", organization.getMembers());
+
+  // Also, remove member.
+  await organization.removeMember({
+    memberId: user.id
+  })
+
+  console.log("Organization members:", organization.getMembers());
 
   // --------------------------------------------------------------------------------------------------------------------
   // Creating a new project within the organization

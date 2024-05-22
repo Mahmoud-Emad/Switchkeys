@@ -59,7 +59,6 @@
 // @Mahmoud-Emad
 // ------------------------------------------------------------------------------------------------------------------------------------------
 
-
 import { SwitchKeysRecordNotFoundError } from "../../core/exceptions";
 
 import { SwitchKeysRequest, SwitchKeysRequestMethod } from "../request/request";
@@ -87,7 +86,6 @@ import SwitchKeysProject from "./organizations.projects";
  */
 class SwitchKeysOrganizations {
   private organizationRoutes = SwitchKeysApiRoutes.organizations;
-  private projectRoutes = SwitchKeysApiRoutes.projects;
   private request: SwitchKeysRequest = new SwitchKeysRequest();
 
   /** Instance of `SwitchKeysOrganizationMember` for managing `member-related` operations. */
@@ -159,7 +157,7 @@ class SwitchKeysOrganizationsServices {
   projects: SwitchKeysProject;
   constructor(organization: ISwitchKeysOrganizationResponse) {
     this.organization = organization;
-    this.projects = new SwitchKeysProject()
+    this.projects = new SwitchKeysProject();
   }
 
   /**
@@ -258,7 +256,7 @@ class SwitchKeysOrganizationsServices {
    */
   async addMember(
     options: ISwitchKeysOrganizationMemberData
-  ): Promise<ISwitchKeysMemberResponse> {
+  ): Promise<ISwitchKeysOrganizationResponse> {
     const url = this.organizationRoutes.addMember(this.organization.id);
     const payload = {
       member_id: options.memberId,
@@ -270,16 +268,17 @@ class SwitchKeysOrganizationsServices {
       payload
     );
 
-    const memberResponse = new SwitchKeysMemberResponse();
-    const member = response
-      ? memberResponse.parse(response)
-      : memberResponse.init();
+    const organizationResponse = new OrganizationResponse();
+    const organization = response
+      ? organizationResponse.parse(response)
+      : organizationResponse.init();
 
-    if (member.id) {
-      this.organization.members.push(member);
+    if (!organization.id) {
+      throw new SwitchKeysRecordNotFoundError("Organization not found.");
     }
 
-    return member;
+    this.organization = organization;
+    return organization;
   }
 
   /**
@@ -289,7 +288,7 @@ class SwitchKeysOrganizationsServices {
    */
   async removeMember(
     data: ISwitchKeysOrganizationMemberData
-  ): Promise<ISwitchKeysMemberResponse[]> {
+  ): Promise<ISwitchKeysOrganizationResponse> {
     const url = this.organizationRoutes.removeMember(this.organization.id);
     const payload = {
       member_id: data.memberId,
@@ -301,7 +300,17 @@ class SwitchKeysOrganizationsServices {
       payload
     );
 
-    return this.organization.members;
+    const organizationResponse = new OrganizationResponse();
+    const organization = response
+      ? organizationResponse.parse(response)
+      : organizationResponse.init();
+
+    if (!organization.id) {
+      throw new SwitchKeysRecordNotFoundError("Organization not found.");
+    }
+
+    this.organization = organization;
+    return organization;
   }
 }
 export default SwitchKeysOrganizations;

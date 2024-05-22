@@ -8,6 +8,18 @@ class Error implements Exception {
   }
 }
 
+/// Indicates connection error.
+class SwitchKeysConnectionError extends Error {
+  final String message;
+
+  SwitchKeysConnectionError(this.message);
+
+  @override
+  String toString() {
+    return message;
+  }
+}
+
 /// Indicates a broken response package.
 class ResponseError extends Error {
   final String message;

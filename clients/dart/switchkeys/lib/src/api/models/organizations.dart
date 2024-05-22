@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:switchkeys/src/api/request/request.dart';
 import 'package:switchkeys/src/api/response/types.dart';
 import 'package:switchkeys/src/api/routes.dart';
 import 'package:switchkeys/src/core/exceptions.dart';
@@ -11,44 +12,29 @@ class SwitchKeysOrganizations {
   final _config = SwitchKeysTokensConfig();
   SwitchKeysOrganizations();
 
-  Future<SwitchKeysOrganizationResponse> create(
-      {required String name, required List<int>? members}) async {
-    // API endpoint for creating organization
+  // Future<SwitchKeysOrganizationResponse> create({required String name}) async {
+  Future<SwitchKeysOrganizationServices> create({required String name}) async {
     String apiUrl = SwitchKeysRoutes.getRoute(EndPoints.organizations);
-    // Request body
-    Map<String, dynamic> body = {
-      "name": name,
-      "members": members ?? [],
-    };
+    Map<String, dynamic> payload = {"name": name};
 
-    // Get the tokens
-    var tokens = _config.readTokens();
+    var response = await SwitchKeysRequest.call(
+      apiUrl,
+      SwitchKeysRequestMethod.post,
+      payload,
+      false,
+    );
 
-    // Headers
-    Map<String, String> headers = {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer ${tokens.accessToken}",
-    };
-
-    try {
-      // Make POST request
-      http.Response response = await http.post(Uri.parse(apiUrl),
-          headers: headers, body: jsonEncode(body));
-
-      if (response.statusCode < 400) {
-        Map<String, dynamic> data = jsonDecode(response.body);
-        SwitchKeysOrganizationResponse organizationResponse =
-            parseOrganization(data["results"]);
-        return organizationResponse;
-      } else {
-        Map<String, dynamic> data0 = jsonDecode(response.body);
-        String message = data0['message'] ?? data0['detail'];
-        throw ResponseError("Organization creation failed due: $message");
-      }
-    } catch (e) {
-      // Exception occurred, handle error
-      throw ResponseError(e.toString());
+    if (response.errorMessage != null) {
+      throw response.error;
     }
+
+    var data = response.data;
+    return __parse(data);
+  }
+
+  SwitchKeysOrganizationServices __parse(dynamic data) {
+    SwitchKeysOrganizationResponse organization = parseOrganization(data);
+    return SwitchKeysOrganizationServices(organization, organization);
   }
 
   Future<SwitchKeysOrganizationResponse> update(
@@ -222,86 +208,123 @@ class SwitchKeysOrganizations {
       throw ResponseError(e.toString());
     }
   }
+}
 
-  Future<SwitchKeysOrganizationResponse> addMember(
-      {required int organizationID, required int memberID}) async {
-    String apiUrl = SwitchKeysRoutes.getRoute(
-        EndPoints.organizationsIdAddMember, [organizationID.toString()]);
+class SwitchKeysOrganizationServices {
+  final SwitchKeysOrganizationResponse __organization;
 
-    // Request body
-    Map<String, dynamic> body = {
-      "member_id": memberID,
-    };
+  // ignore: no_leading_underscores_for_local_identifiers
+  const SwitchKeysOrganizationServices(organization, this.__organization);
 
-    // Get the tokens
-    var tokens = _config.readTokens();
-
-    // Headers
-    Map<String, String> headers = {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer ${tokens.accessToken}",
-    };
-
-    try {
-      // Make PUT request
-      http.Response response = await http.put(Uri.parse(apiUrl),
-          headers: headers, body: jsonEncode(body));
-
-      if (response.statusCode < 400) {
-        Map<String, dynamic> data = jsonDecode(response.body);
-        SwitchKeysOrganizationResponse organizationResponse =
-            parseOrganization(data["results"]);
-        return organizationResponse;
-      } else {
-        Map<String, dynamic> data0 = jsonDecode(response.body);
-        String message = data0['message'] ?? data0['detail'];
-        throw ResponseError(
-            "Failed to add member to organization due: $message ${data0['error'] ?? ''}");
-      }
-    } catch (e) {
-      // Exception occurred, handle error
-      throw ResponseError(e.toString());
-    }
+  /// The organization name.
+  String get name {
+    return __organization.name;
   }
 
-  Future<SwitchKeysOrganizationResponse> removeMember(
-      {required int organizationID, required int memberID}) async {
-    String apiUrl = SwitchKeysRoutes.getRoute(
-        EndPoints.organizationsIdRemoveMember, [organizationID.toString()]);
+  /// The organization ID.
+  int get id {
+    return __organization.id;
+  }
 
-    // Request body
-    Map<String, dynamic> body = {
+  /// The organization members.
+  List<SwitchKeysUserResponse> get members {
+    return __organization.members;
+  }
+
+  /// The organization created at datetime.
+  String get created {
+    return __organization.created;
+  }
+
+  /// The organization modified at datetime.
+  String get modified {
+    return __organization.modified;
+  }
+
+  /// The organization modified at datetime.
+  SwitchKeysUserResponse get owner {
+    return __organization.owner;
+  }
+
+  Future<SwitchKeysProjectResponse> createProject({
+    required String projectName,
+  }) async {
+    String apiUrl = SwitchKeysRoutes.getRoute(EndPoints.projects);
+    Map<String, dynamic> payload = {
+      "name": projectName,
+      "organization_id": __organization.id,
+    };
+
+    var response = await SwitchKeysRequest.call(
+      apiUrl,
+      SwitchKeysRequestMethod.post,
+      payload,
+      false,
+    );
+
+    if (response.errorMessage != null) {
+      throw response.error;
+    }
+
+    var data = response.data;
+    SwitchKeysProjectResponse projectResponse = parseProject(data);
+    return projectResponse;
+  }
+
+  Future<SwitchKeysUserResponse> addMember({required int memberID}) async {
+    String apiUrl = SwitchKeysRoutes.getRoute(
+      EndPoints.organizationsIdAddMember,
+      [
+        __organization.id.toString(),
+      ],
+    );
+
+    Map<String, dynamic> payload = {
       "member_id": memberID,
     };
 
-    // Get the tokens
-    var tokens = _config.readTokens();
+    var response = await SwitchKeysRequest.call(
+      apiUrl,
+      SwitchKeysRequestMethod.put,
+      payload,
+      false,
+    );
 
-    // Headers
-    Map<String, String> headers = {
-      "Content-Type": "application/json",
-      "Authorization": "Bearer ${tokens.accessToken}",
+    if (response.errorMessage != null) {
+      throw response.error;
+    }
+
+    print("response.data ${response.data}");
+    var data = response.data;
+    SwitchKeysUserResponse memberResponse = parseUser(data);
+    return memberResponse;
+  }
+
+  Future<SwitchKeysUserResponse> removeMember({required int memberID}) async {
+    String apiUrl = SwitchKeysRoutes.getRoute(
+      EndPoints.organizationsIdRemoveMember,
+      [
+        __organization.id.toString(),
+      ],
+    );
+
+    Map<String, dynamic> payload = {
+      "member_id": memberID,
     };
 
-    try {
-      // Make PUT request
-      http.Response response = await http.put(Uri.parse(apiUrl),
-          headers: headers, body: jsonEncode(body));
+    var response = await SwitchKeysRequest.call(
+      apiUrl,
+      SwitchKeysRequestMethod.put,
+      payload,
+      false,
+    );
 
-      if (response.statusCode < 400) {
-        Map<String, dynamic> data = jsonDecode(response.body);
-        SwitchKeysOrganizationResponse organizationResponse =
-            parseOrganization(data["results"]);
-        return organizationResponse;
-      } else {
-        Map<String, dynamic> data0 = jsonDecode(response.body);
-        String message = data0['message'] ?? data0['detail'];
-        throw ResponseError(
-            "Failed to remove member from an organization due: $message ${data0['error'] ?? ''}");
-      }
-    } catch (e) {
-      // Exception occurred, handle error
-      throw ResponseError(e.toString());
+    if (response.errorMessage != null) {
+      throw response.error;
     }
+
+    var data = response.data;
+    SwitchKeysUserResponse memberResponse = parseUser(data);
+    return memberResponse;
   }
 }

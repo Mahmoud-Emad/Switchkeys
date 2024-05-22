@@ -14,7 +14,8 @@ import 'package:switchkeys/src/core/base.dart';
 void authExample() async {
   // Create an instance of the SwitchKeys client.
   SwitchKeys switchKeys = SwitchKeys();
-
+  // Now you can use the auth instance to make API calls
+  // Logging in an existing user
   // --------------------------------------------------------------------------------------------------------------------
   // Logging in to SwitchKeys
   // --------------------------------------------------------------------------------------------------------------------
@@ -37,6 +38,7 @@ void authExample() async {
     );
   */
 
+  // Registering a new user
   await switchKeys.auth
       .login(
         email: "testing@switchkeys.com",

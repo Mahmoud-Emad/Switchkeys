@@ -1,67 +1,114 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:switchkeys/src/api/response/response.dart';
+import 'package:switchkeys/src/core/exceptions.dart';
+import 'package:switchkeys/src/utils/config.dart';
+
+enum SwitchKeysRequestMethod { get, put, post, delete }
 
 class SwitchKeysRequest {
   static Future<SwitchKeysResponse> call(
     String url,
-    String method,
+    SwitchKeysRequestMethod method,
     Map<String, dynamic> data,
-    String? token,
+    bool? noToken,
   ) async {
     try {
-      Map<String, String> headers = {};
-      if (token != null) {
-        headers["Authorization"] = "Bearer $token";
-      }
+      var response = await SwitchKeysRequest.__request(
+        url,
+        method,
+        data,
+        noToken,
+      );
+      return SwitchKeysRequest.__readResponse(response);
+    } catch (error) {
+      return SwitchKeysRequest.__readError(error);
+    }
+  }
 
-      late http.Response response;
+  static Future<http.Response> __request(
+    String url,
+    SwitchKeysRequestMethod method,
+    Map<String, dynamic> data,
+    bool? noToken,
+  ) async {
+    Map<String, String> headers = {
+      "Content-Type": "application/json",
+    };
 
-      switch (method) {
-        case "GET":
-          response = await http.get(Uri.parse(url), headers: headers);
-          break;
-        case "POST":
-          response = await http.post(Uri.parse(url),
-              headers: headers, body: jsonEncode(data));
-          break;
-        case "PUT":
-          response = await http.put(Uri.parse(url),
-              headers: headers, body: jsonEncode(data));
-          break;
-        case "DELETE":
-          response = await http.delete(Uri.parse(url), headers: headers);
-          break;
-        default:
-          throw ArgumentError("Invalid method provided.");
-      }
+    if (method != SwitchKeysRequestMethod.get && !(noToken ?? false)) {
+      var config = SwitchKeysTokensConfig();
+      var accessToken = config.readTokens().accessToken;
+      headers["Authorization"] = "Bearer $accessToken";
+    }
 
-      final Map<String, dynamic> responseContent =
-          jsonDecode(response.body.toString());
+    late http.Response response;
 
-      if (response.statusCode >= 200 && response.statusCode < 400) {
+    switch (method) {
+      case SwitchKeysRequestMethod.get:
+        response = await http.get(Uri.parse(url), headers: headers);
+        break;
+      case SwitchKeysRequestMethod.post:
+        response = await http.post(Uri.parse(url),
+            headers: headers, body: jsonEncode(data));
+        break;
+      case SwitchKeysRequestMethod.put:
+        response = await http.put(Uri.parse(url),
+            headers: headers, body: jsonEncode(data));
+        break;
+      case SwitchKeysRequestMethod.delete:
+        response = await http.delete(Uri.parse(url), headers: headers);
+        break;
+    }
+
+    return response;
+  }
+
+  static SwitchKeysResponse __readResponse(http.Response response) {
+    try {
+      final Map<String, dynamic> responseContent = jsonDecode(response.body);
+
+      if (response.statusCode >= 400) {
+        return SwitchKeysRequest.__readError(response);
+      } else {
         return SwitchKeysResponse(
           statusCode: response.statusCode,
           message: responseContent["message"],
           data: responseContent["results"],
         );
-      } else if (response.statusCode >= 400) {
-        return SwitchKeysResponse(
-          statusCode: response.statusCode,
-          errorMessage: responseContent["detail"] ?? responseContent["message"],
-          error: responseContent["error"],
-        );
-      } else {
-        return SwitchKeysResponse(
-          statusCode: response.statusCode,
-          errorMessage: responseContent["detail"],
-        );
       }
     } catch (e) {
+      return SwitchKeysRequest.__readError(response);
+    }
+  }
+
+  static SwitchKeysResponse __readError(error) {
+    // Check if the error is of type SocketException
+    if (error is SocketException) {
       return SwitchKeysResponse(
         statusCode: 500,
-        errorMessage: e.toString(),
+        errorMessage: error.message,
+        error: SwitchKeysConnectionError(error.message),
       );
     }
+
+    if (error is http.Response) {
+      var body = jsonDecode(error.body);
+      String message = body['message'] ?? body['detail'];
+      return SwitchKeysResponse(
+        statusCode: error.statusCode,
+        error: ResponseError(message),
+        errorMessage: message,
+      );
+    }
+
+    print("error $error");
+    String message = "An error occurred";
+    return SwitchKeysResponse(
+      statusCode: 500,
+      error: Exception(message),
+      errorMessage: message,
+    );
   }
 }

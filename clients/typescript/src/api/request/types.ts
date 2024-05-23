@@ -28,6 +28,14 @@ interface ISwitchKeysAuthRegisterData {
 }
 
 /**
+ * Interface for the data required to get a user by email.
+ */
+interface ISwitchKeysGetUserByEmail {
+  /** User email address. */
+  email: string;
+}
+
+/**
  * Interface for the data required to log in a member.
  */
 interface ISwitchKeysAuthLoginData {
@@ -113,6 +121,7 @@ interface ISwitchKeysOrganizationMemberData {
 
 export {
   ISwitchKeysAuthRegisterData,
+  ISwitchKeysGetUserByEmail,
   ISwitchKeysAuthLoginData,
   ISwitchKeysUpdateMemberData,
   ISwitchKeysUpdateEnvironmentFeatureData,

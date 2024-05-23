@@ -3,7 +3,7 @@
 services:
   postgres_db:
     image: postgres:latest
-    container_name: postgres_db
+    container_name: switchkey-db
     ports:
       - "5432:5432"
     environment:

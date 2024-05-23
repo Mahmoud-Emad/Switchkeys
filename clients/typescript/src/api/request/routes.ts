@@ -239,10 +239,33 @@ class SwitchKeysEnvironmentUsersRoutes {
 }
 
 /**
+ * Represents user routes for making API requests.
+ */
+class SwitchKeysUsersRoutes {
+  private BASE_URL: string;
+
+  /**
+   * Constructs a new `SwitchKeysUsersRoutes` instance.
+   */
+  constructor() {
+    this.BASE_URL = process.env.BASE_URL || "";
+  }
+
+  /**
+   * Gets the URL for getting a user by the user-email.
+   * @returns The URL for getting a user by the user-email.
+   */
+  getByEmail(email: string): string {
+    return `${this.BASE_URL}/api/users/email/${email}`;
+  }
+}
+
+/**
  * Represents API routes for making requests.
  */
 class SwitchKeysApiRoutes {
   static auth: SwitchKeysAuthRoutes = new SwitchKeysAuthRoutes();
+  static users: SwitchKeysUsersRoutes = new SwitchKeysUsersRoutes();
   static organizations: SwitchKeysOrganizationRoutes =
     new SwitchKeysOrganizationRoutes();
   static members: SwitchKeysUserRoutes = new SwitchKeysUserRoutes();

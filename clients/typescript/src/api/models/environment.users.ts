@@ -56,7 +56,8 @@ class SwitchKeysEnvironmentUser {
   // }
 }
 
-class SwitchKeysEnvironmentUserServices {
+// Remove export later.
+export class SwitchKeysEnvironmentUserServices {
   private user: ISwitchKeysEnvironmentUserResponse;
   private environmentKey: string;
   private environment: SwitchKeysEnvironment;

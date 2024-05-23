@@ -3,7 +3,10 @@ name: Lint and Build
 on:
   push:
     branches: 
-      [development_1.1, development_1.1_*]
+      [development, development_*]
+  pull_request:
+    branches: 
+      [development, development_*]
 
 jobs:
   lint:

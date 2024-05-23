@@ -1,33 +1,29 @@
-# This workflow will do a clean install of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
-
-name: Full Clients Lint
+name: TS-Client lint
 
 on:
   push:
-    branches: [development, development_*]
+    branches: 
+      [development, development_*]
   pull_request:
-    branches: [development, development_*]
+    branches: 
+      [development, development_*]
 
 jobs:
-  lint:
+  build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [18.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-      - uses: actions/checkout@v2
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v2
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: "yarn"
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-      - name: Install
-        run: cd clients/typescript && yarn
-      - name: Lint
-        run: |
-          cd clients/typescript && yarn check-eslint
-          cd clients/typescript && yarn check-prettier
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18.18.0'
+
+    - name: Install dependencies
+      run: cd clients/typescript &&  yarn install
+
+    - name: Run ESLint
+      run:  cd clients/typescript && yarn lint
+

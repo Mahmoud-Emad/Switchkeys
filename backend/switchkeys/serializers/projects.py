@@ -19,6 +19,7 @@ class EnvironmentKeyAndNameSerializer(ModelSerializer):
             "environment_key",
         ]
 
+
 class OrganizationProjectSerializer(ModelSerializer):
     """
     ``Serializer`` for ``Organization project`` .

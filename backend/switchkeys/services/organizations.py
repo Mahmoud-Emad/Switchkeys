@@ -40,6 +40,7 @@ def get_organization_projects(organization_id: str) -> List[OrganizationProject]
     """Filter all projects and get only the projects that has the same organization ID."""
     return OrganizationProject.objects.filter(organization__id=organization_id)
 
+
 def filter_organization_by_owner(user: User) -> List[Organization]:
     """
     Filter organizations by owner user

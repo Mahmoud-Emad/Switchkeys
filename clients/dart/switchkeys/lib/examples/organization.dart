@@ -1,67 +1,100 @@
-// This Dart script demonstrates how to use the SwitchKeys organizations API.
-// It first creates an organization with the provided organization name and members,
-// handling any errors that may occur during the process.
-// Then, it gets an existing organization with the specified details,
-// Again, error handling is included to manage any errors that may occur during the creation/deletion/updating/getting processes.
-
 import 'package:switchkeys/src/api/response/types.dart';
 import 'package:switchkeys/src/core/base.dart';
 
 /// Main function for organization-related operations.
-void organizationsMain() async {
+Future<void> organizationsMain() async {
   // Get an instance of SwitchKeys
-  final SwitchKeys switchKeys = SwitchKeys();
+  final SwitchKeys switchkeys = SwitchKeys();
 
-  // Login the user. This step is required if the saved token is expired.
-  await switchKeys.auth.login(email: "", password: "");
+  print('\n------------------------------------------------------------------');
+  print('[+] Running the organizations example.');
+  print('------------------------------------------------------------------\n');
 
-  // Variable to hold organization information
-  SwitchKeysOrganizationResponse organization;
-
+  // --------------------------------------------------------------------------
+  // Logging in to SwitchKeys
+  // --------------------------------------------------------------------------
+  // First, log in to SwitchKeys with valid credentials.
   try {
-    // Create a new organization. Ensure the organization name is unique.
-    // organization =
-    //     await switchKeys.organizations.create(name: "Cloud for students", members: []);
-    // print("Organization ID: ${organization.id}");
-
-    // Get an organization based on its name since the name is unique for the user.
-    organization = await switchKeys.organizations.getByName(
-      organizationName: 'Cloud for students',
+    // If you haven't created account yet, unlock the register method.
+    var user = await switchkeys.auth.register(
+      firstName: "Testing",
+      lastName: "Account",
+      email: "testing@switchkeys.com",
+      password: "0000",
+      memberType: UserTypeEnum.administrator,
     );
-
-    print("Organization name: ${organization.name}");
-
-    // We can add members to an organization by passing the memberID.
-    organization = await switchKeys.organizations.addMember(
-      organizationID: organization.id,
-      memberID: 2,
-    );
-
-    // As we used the `addMember` method to add a member on the organization, also we can remove the added member or any member from the organization.
-    organization = await switchKeys.organizations.removeMember(
-      organizationID: organization.id,
-      memberID: 2,
-    );
-
-    print("Members ${organization.members[0].fullName}");
-
-    // Update an existing organization by specifying its ID.
-    // organization = await switchKeys.organizations.update(
-    //   organizationID: organization.id,
-    //   newName: "EGClouds",
-    //   newMembers: [],
-    // );
-
-    // print("Organization name: ${organization.name}");
-
-    // Delete the organization based on its ID, returns `true` if the organization is deleted.
-    // final isDeleted = await switchKeys.organizations.delete(
-    //   organizationID: organization.id,
-    // );
-
-    // print("Is the organization deleted: $isDeleted");
+    print("[+] Registered successfully: ${user.email}");
   } catch (e) {
-    // Handle any errors that may occur during organization operations.
-    print(e);
+    var user = await switchkeys.auth.login(
+      email: "testing@switchkeys.com",
+      password: "0000",
+    );
+    print("[+] Logged in successfully: ${user.email}");
+
+    // ------------------------------------------------------------------------
+    // Creating a new organization
+    // ------------------------------------------------------------------------
+    // Create a new organization named "SwitchKeys".
+    var organization = await switchkeys.organizations.create(
+      name: "SwitchKeys",
+    );
+    print("[+] Created organization name: ${organization.name}");
+
+    // ------------------------------------------------------------------------
+    // Creating a new project on the created organization
+    // ------------------------------------------------------------------------
+    // Create a new project named "FlayAway" on the created organization.
+    var project = await organization.createProject(projectName: "FlayAway");
+    print("[+] Created project name: ${project.name}");
+
+    // ------------------------------------------------------------------------
+    // List all organization projects
+    // ------------------------------------------------------------------------
+    // You can list all of the organization projects,
+    // including the new created "FlayAway" project.
+    var projects = await organization.getAllProjects();
+    print("[+] Organization projects: $projects");
+
+    // ------------------------------------------------------------------------
+    // Adding members to an organization
+    // ------------------------------------------------------------------------
+    // You can easily add a new member to the created organization
+    await organization.addMember(memberID: user.id);
+    print("[+] Organization members: ${organization.members}");
+    // Also, remove member.
+    await organization.removeMember(memberID: user.id);
+    print("[+] Organization members: ${organization.members}");
+
+    // ------------------------------------------------------------------------
+    // Updating the organization
+    // ------------------------------------------------------------------------
+    await organization.update(newName: "FlagsBoard", newMembers: []);
+    print("[+] Updated organization name: ${organization.name}");
+
+    // ------------------------------------------------------------------------
+    // Delete the created organization
+    // ------------------------------------------------------------------------
+    // You can also delete a different organization by providing its ID.
+    await switchkeys.organizations.delete(organizationID: organization.id);
+    print("[+] Deleted organization: ${organization.name}");
+
+    // ------------------------------------------------------------------------
+    // Get the deleted organization: Error!
+    // ------------------------------------------------------------------------
+    try {
+      await switchkeys.organizations.getById(organizationID: organization.id);
+      // await switchkeys.organizations.getByName(
+      //   organizationName: organization.name,
+      // );
+    } catch (e) {
+      print("[-] $e");
+    }
+  } finally {
+    // ------------------------------------------------------------------------
+    // Logging out of SwitchKeys
+    // ------------------------------------------------------------------------
+    // Finally, log out of SwitchKeys.
+    await switchkeys.auth.logout();
+    print("[+] Logged out successfully");
   }
 }

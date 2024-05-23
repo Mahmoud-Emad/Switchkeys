@@ -2,3 +2,4 @@ exec: bash -c "backend/scripts/backend.sh"
 after:
   - config
 oneshot: true
+log: stdout

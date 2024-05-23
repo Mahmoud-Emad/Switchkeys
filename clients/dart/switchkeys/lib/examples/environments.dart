@@ -1,67 +1,147 @@
+// import 'package:switchkeys/src/api/response/types.dart';
 import 'package:switchkeys/src/api/request/types.dart';
+import 'package:switchkeys/src/api/response/types.dart';
 import 'package:switchkeys/src/core/base.dart';
 
-/// Main function for environment-related operations.
-void environmentsMain() async {
+/// Main function for project-related operations.
+Future<void> environmentsMain() async {
   // Get an instance of SwitchKeys
-  final SwitchKeys switchKeys = SwitchKeys();
+  final SwitchKeys switchkeys = SwitchKeys();
 
-  // Load an environment using its key.
-  var environment = await switchKeys.environments.load(
-    environmentKey: 'a525176d-3344-4ce0-abd9-7e6b04eff0b8', // Production
-    // environmentKey: 'a502139e-3e21-4c61-ae41-2b467d19ace4', // Development
-  );
+  print('\n------------------------------------------------------------------');
+  print('[+] Running the projects example.');
+  print('------------------------------------------------------------------\n');
 
-  // Add a user to the environment.
-  final userDevice = SwitchKeyDevice(
-    deviceType: SwitchKeyDeviceType.Android,
-    version: "v1.1-0x54s",
-  );
+  // --------------------------------------------------------------------------
+  // Logging in to SwitchKeys
+  // --------------------------------------------------------------------------
+  // First, log in to SwitchKeys with valid credentials.
+  try {
+    // If you haven't created account yet, unlock the register method.
+    var user = await switchkeys.auth.register(
+      firstName: "Testing",
+      lastName: "Account",
+      email: "testing@switchkeys.com",
+      password: "0000",
+      memberType: UserTypeEnum.administrator,
+    );
+    print("[+] Registered successfully: ${user.email}");
+  } catch (e) {
+    var user = await switchkeys.auth.login(
+      email: "testing@switchkeys.com",
+      password: "0000",
+    );
+    print("[+] Logged in successfully: ${user.email}");
 
-  final user = SwitchKeysEnvironmentsUser(
-    username: "Mahmoud",
-    device: userDevice,
-  );
+    // ------------------------------------------------------------------------
+    // Creating a new organization
+    // ------------------------------------------------------------------------
+    // Create a new organization named "SwitchKeys".
+    var organization = await switchkeys.organizations.create(
+      name: "SwitchKeys",
+    );
+    print("[+] Created organization name: ${organization.name}");
 
-  final addedUser = await switchKeys.environments.users.addUser(
-    user: user,
-    environment: environment,
-  );
+    // ------------------------------------------------------------------------
+    // Creating a new project on the created organization
+    // ------------------------------------------------------------------------
+    // Create a new project named "FlayAway" on the created organization.
+    var project = await switchkeys.projects.create(
+      name: "FlayAway",
+      organizationID: organization.id,
+    );
+    print("[+] Created project name: ${project.name}");
 
-  print(addedUser.device);
+    // ------------------------------------------------------------------------
+    // Updating the created project
+    // ------------------------------------------------------------------------
+    await project.update(
+      name: "StoryMith",
+      organizationID: organization.id,
+    );
+    print("[+] Updated project name: ${project.name}");
 
-  // Add a feature to the user.
-  var feature = SwitchKeyUserEnvironmentFeatureRequest(
-    name: "Theme",
-    value: "dark",
-  );
+    // ------------------------------------------------------------------------
+    // Load project environment.
+    // ------------------------------------------------------------------------
+    // Load the environment using the project's development environment key.
+    var environmentKey = project.environments.development.environmentKey;
+    var environment = await switchkeys.environments.load(
+      environmentKey: environmentKey,
+    );
 
-  final userFeature = await switchKeys.environments.users.addFeature(
-    username: user.username,
-    feature: feature,
-    environment: environment,
-  );
+    print("[+] Loaded environment key: ${environment.environmentKey}");
 
-  print(userFeature.name);
+    // ------------------------------------------------------------------------
+    // Add/remove user to/from the environment.
+    // ------------------------------------------------------------------------
+    // First, you need to send the `SwitchKeysEnvironmentsUser` user.
+    var environmentUser = SwitchKeysEnvironmentsUser(
+      username: "Mahmoud",
+      device: SwitchKeyDevice(
+        deviceType: SwitchKeyDeviceType.android,
+        version: "v142.54.5158s.54w",
+      ),
+    );
 
-  // Get the value of a specific feature of a user.
-  final getUserFeature = await switchKeys.environments.users.getFeature(
-    featureName: "debug",
-    username: "Adham",
-    environment: environment,
-  );
+    var pName = environment.project.name;
+    var envName = environment.name;
 
-  print(getUserFeature.name);
+    var addedUser = await environment.addUser(user: environmentUser);
+    var username = addedUser.username;
 
-  // Get all of user features.
-  final getAllUserFeature = await switchKeys.environments.users.getAllFeatures(
-    featureName: "debug",
-    username: "Adham",
-    environment: environment,
-  );
+    print(
+      "[+] User '$username' has been added to the '$pName/$envName' environment",
+    );
 
-  print(getAllUserFeature);
+    // ------------------------------------------------------------------------
+    // Add/remove feature to/from the environment.
+    // ------------------------------------------------------------------------
+    // Log the environment features
+    print("[+] Environment features: ${environment.features.toList()}");
 
-  // print("Name: ${feature.name}");
-  // print("Value: ${feature.value}");
+    var feature = await environment.addFeature(
+      feature: SwitchKeysFeatureData(name: "theme", value: "dark"),
+    );
+    print(
+      "[+] Feature '${feature.name}' has been added to the '${environment.name}' environment, Value => '${feature.value}'.",
+    );
+
+    print("[+] Environment features: ${environment.features.toList()}");
+
+    feature = await environment.updateFeature(
+      featureName: "theme",
+      feature: SwitchKeysFeatureData(name: "theme", value: "light"),
+    );
+    print(
+      "[+] Feature '${feature.name}' has been updated with new value: '${feature.value}'.",
+    );
+
+    print("[+] Environment features: ${environment.features.toList()}");
+    // ------------------------------------------------------------------------
+    // Delete the created organization
+    // ------------------------------------------------------------------------
+    // You can also delete a different organization by providing its ID.
+    await switchkeys.organizations.delete(organizationID: organization.id);
+    print("[+] Deleted organization: ${organization.name}");
+
+    // ------------------------------------------------------------------------
+    // Get the deleted organization: Error!
+    // ------------------------------------------------------------------------
+    try {
+      await switchkeys.organizations.getById(organizationID: organization.id);
+      // await switchkeys.organizations.getByName(
+      //   organizationName: organization.name,
+      // );
+    } catch (e) {
+      print("[-] $e");
+    }
+  } finally {
+    // ------------------------------------------------------------------------
+    // Logging out of SwitchKeys
+    // ------------------------------------------------------------------------
+    // Finally, log out of SwitchKeys.
+    await switchkeys.auth.logout();
+    print("[+] Logged out successfully");
+  }
 }

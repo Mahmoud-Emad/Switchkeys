@@ -1,16 +1,18 @@
+import 'dart:ffi';
+
 import 'package:switchkeys/src/api/request/types.dart';
 
-class SwitchKeysEnvironmentsUserResponse {
+class SwitchKeysEnvironmentUserResponse {
   final int id;
   final String username;
   final SwitchKeyDevice device;
-  final List<SwitchKeyUserEnvironmentFeatures>? features;
+  final List<SwitchKeysFeature> features;
 
-  SwitchKeysEnvironmentsUserResponse({
+  SwitchKeysEnvironmentUserResponse({
     required this.id,
     required this.username,
     required this.device,
-    this.features,
+    required this.features,
   });
 }
 
@@ -18,9 +20,10 @@ class SwitchKeysEnvironmentResponse {
   final int id;
   final String created;
   final String modified;
-  final SwitchKeysProjectResponse project;
   final String environmentKey;
-  List<SwitchKeysEnvironmentsUserResponse> users;
+  List<SwitchKeysFeature> features;
+  final SwitchKeysProjectResponse project;
+  List<SwitchKeysEnvironmentUserResponse> users;
 
   SwitchKeysEnvironmentResponse({
     required this.id,
@@ -29,6 +32,28 @@ class SwitchKeysEnvironmentResponse {
     required this.project,
     required this.environmentKey,
     required this.users,
+    required this.features,
+  });
+}
+
+class SwitchKeysDefaultEnvironmentResponse {
+  String name;
+  String environmentKey;
+  SwitchKeysDefaultEnvironmentResponse({
+    required this.name,
+    required this.environmentKey,
+  });
+}
+
+class SwitchKeysDefaultEnvironmentsResponse {
+  final SwitchKeysDefaultEnvironmentResponse development;
+  final SwitchKeysDefaultEnvironmentResponse staging;
+  final SwitchKeysDefaultEnvironmentResponse production;
+
+  SwitchKeysDefaultEnvironmentsResponse({
+    required this.development,
+    required this.staging,
+    required this.production,
   });
 }
 
@@ -37,6 +62,7 @@ class SwitchKeysProjectResponse {
   final String name;
   final String created;
   final String modified;
+  final SwitchKeysDefaultEnvironmentsResponse environments;
   final SwitchKeysOrganizationResponse? organization;
 
   SwitchKeysProjectResponse({
@@ -44,6 +70,7 @@ class SwitchKeysProjectResponse {
     required this.name,
     required this.created,
     required this.modified,
+    required this.environments,
     this.organization,
   });
 }
@@ -129,47 +156,26 @@ extension UserTypeEnumExtension on UserTypeEnum {
   }
 }
 
-class SwitchKeysEnvironmentsUserFeatureResponse {
+class SwitchKeysFeature {
   final int id;
   final String name;
   final String value;
-  final bool isEnabled;
-  final bool isDefault;
+  final String initialValue;
+  final Bool isDefault;
   final String created;
   final String modified;
 
-  SwitchKeysEnvironmentsUserFeatureResponse({
+  SwitchKeysFeature({
     required this.id,
     required this.name,
     required this.value,
-    required this.isEnabled,
+    required this.initialValue,
     required this.isDefault,
     required this.created,
     required this.modified,
   });
 }
-
-class SwitchKeysEnvironmentNameKeyValueResponse {
-  String name;
-  String environmentKey;
-
-  SwitchKeysEnvironmentNameKeyValueResponse({
-    required this.name,
-    required this.environmentKey,
-  });
-}
-
-class SwitchKeysEnvironmentNameKeyResponse {
-  final SwitchKeysEnvironmentNameKeyValueResponse development;
-  final SwitchKeysEnvironmentNameKeyValueResponse staging;
-  final SwitchKeysEnvironmentNameKeyValueResponse production;
-
-  SwitchKeysEnvironmentNameKeyResponse({
-    required this.development,
-    required this.staging,
-    required this.production,
-  });
-}
+<<<<<<< Updated upstream
 
 class SwitchKeyUserFeature {
   final int id;
@@ -186,3 +192,5 @@ class SwitchKeyUserFeature {
     required this.modified,
   });
 }
+=======
+>>>>>>> Stashed changes

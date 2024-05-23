@@ -153,5 +153,4 @@ node_modules
 staticfiles
 clients/py/config.ini
 clients/dart/switchkeys/config.ini
-clients/dart/switchkeys/example.dart
 clients/dart/switchkeys/.dart_tool/

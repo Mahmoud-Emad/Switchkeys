@@ -22,9 +22,9 @@ class SwitchKeysEnvironmentsUser {
 
 enum SwitchKeyDeviceType {
   // ignore: constant_identifier_names
-  Android,
+  android,
   // ignore: constant_identifier_names
-  IPhone,
+  iphone,
 }
 
 class SwitchKeyDevice {
@@ -55,46 +55,26 @@ class SwitchKeyUserEnvironmentFeatureRequest {
   }
 }
 
-class SwitchKeyUserEnvironmentFeatures {
-  int id;
+class SwitchKeysFeatureData {
   String name;
-  String created;
-  String modified;
   String value;
-  String initialValue;
-  bool isDefault;
 
-  SwitchKeyUserEnvironmentFeatures({
-    required this.id,
+  SwitchKeysFeatureData({
     required this.name,
-    required this.created,
-    required this.modified,
     required this.value,
-    required this.initialValue,
-    required this.isDefault,
   });
 
   // Method to convert SwitchKeyUserEnvironmentFeatures to a JSON-compatible map
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
       'name': name,
-      'created': created,
-      'modified': modified,
       'value': value,
-      'initial_value': initialValue,
-      'is_default': isDefault,
     };
   }
 
   // Factory method to create SwitchKeyUserEnvironmentFeatures from JSON map
-  factory SwitchKeyUserEnvironmentFeatures.fromJson(Map<String, dynamic> json) {
-    return SwitchKeyUserEnvironmentFeatures(
-      id: json['id'],
-      initialValue: json['initial_value'],
-      isDefault: json['is_default'],
-      created: json['created'],
-      modified: json['modified'],
+  factory SwitchKeysFeatureData.fromJson(Map<String, dynamic> json) {
+    return SwitchKeysFeatureData(
       name: json['name'],
       value: json['value'],
     );

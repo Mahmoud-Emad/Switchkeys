@@ -3,15 +3,15 @@ import 'package:switchkeys/src/api/response/types.dart';
 
 SwitchKeysAuthResponse parseAuth(Map<String, dynamic> authData) {
   return SwitchKeysAuthResponse(
-    id: authData['id'],
-    firstName: authData['first_name'],
-    lastName: authData['last_name'],
-    email: authData['email'],
-    password: authData['password'],
-    joiningAt: authData['joining_at'],
-    memberType: authData['user_type'],
-    accessToken: authData['access_token'],
-    refreshToken: authData['refresh_token'],
+    id: authData['id'] ?? 0,
+    firstName: authData['first_name'] ?? "",
+    lastName: authData['last_name'] ?? "",
+    email: authData['email'] ?? "",
+    password: authData['password'] ?? "",
+    joiningAt: authData['joining_at'] ?? "",
+    memberType: authData['user_type'] ?? "",
+    accessToken: authData['access_token'] ?? "",
+    refreshToken: authData['refresh_token'] ?? "",
   );
 }
 
@@ -65,6 +65,7 @@ SwitchKeysProjectResponse parseProject(Map<String, dynamic> projectData) {
     created: projectData['created'],
     modified: projectData['modified'],
     organization: parseOrganization(projectData['organization']),
+    environments: parseProjectDefaultEnvironment(projectData['environments']),
   );
 }
 
@@ -79,6 +80,12 @@ List<SwitchKeysProjectResponse> parseProjects(
         modified: projectsData[i]['modified'],
         id: projectsData[i]['id'],
         name: projectsData[i]['name'],
+        organization: parseOrganization(
+          projectsData[i]['organization'],
+        ),
+        environments: parseProjectDefaultEnvironment(
+          projectsData[i]['environments'],
+        ),
       ),
     );
   }
@@ -95,6 +102,7 @@ SwitchKeysEnvironmentResponse parseEnvironment(
     created: environmentData['created'],
     modified: environmentData['modified'],
     users: parseEnvironmentUsers(environmentData['users']),
+    features: parseFeatures(environmentData['features']),
     project: parseProject(environmentData['project']),
   );
 }
@@ -103,21 +111,21 @@ SwitchKeyDevice parseDevice(
   Map<String, dynamic> deviceData,
 ) {
   return SwitchKeyDevice(
-    deviceType: deviceData['device_type'] == 'IPhone'
-        ? SwitchKeyDeviceType.IPhone
-        : SwitchKeyDeviceType.Android,
+    deviceType: deviceData['device_type'] == 'iphone'
+        ? SwitchKeyDeviceType.iphone
+        : SwitchKeyDeviceType.android,
     version: deviceData['version'],
   );
 }
 
-List<SwitchKeyUserEnvironmentFeatures> parseFeatures(
+List<SwitchKeysFeature> parseFeatures(
   List<dynamic> featuresData,
 ) {
-  List<SwitchKeyUserEnvironmentFeatures> features = [];
+  List<SwitchKeysFeature> features = [];
 
   for (var i = 0; i < featuresData.length; i++) {
     features.add(
-      SwitchKeyUserEnvironmentFeatures(
+      SwitchKeysFeature(
         id: featuresData[i]['id'],
         name: featuresData[i]['name'],
         value: featuresData[i]['value'],
@@ -131,10 +139,10 @@ List<SwitchKeyUserEnvironmentFeatures> parseFeatures(
   return features;
 }
 
-SwitchKeyUserEnvironmentFeatures parseFeature(
+SwitchKeysFeature parseFeature(
   Map<String, dynamic> featuresData,
 ) {
-  var feature = SwitchKeyUserEnvironmentFeatures(
+  var feature = SwitchKeysFeature(
     id: featuresData['id'],
     name: featuresData['name'],
     value: featuresData['value'],
@@ -147,10 +155,10 @@ SwitchKeyUserEnvironmentFeatures parseFeature(
   return feature;
 }
 
-SwitchKeysEnvironmentsUserResponse parseEnvironmentUser(
+SwitchKeysEnvironmentUserResponse parseEnvironmentUser(
   Map<String, dynamic> userData,
 ) {
-  return SwitchKeysEnvironmentsUserResponse(
+  return SwitchKeysEnvironmentUserResponse(
     id: userData['id'],
     username: userData['username'],
     device: parseDevice(userData['device']),
@@ -158,31 +166,20 @@ SwitchKeysEnvironmentsUserResponse parseEnvironmentUser(
   );
 }
 
-SwitchKeysEnvironmentNameKeyResponse parseEnvironmentsNameKey(
+SwitchKeysDefaultEnvironmentsResponse parseProjectDefaultEnvironment(
   List<dynamic> envsData,
 ) {
-  return SwitchKeysEnvironmentNameKeyResponse(
-    development: parseProjectEnvironment(envsData, 'development'),
-    staging: parseProjectEnvironment(envsData, 'staging'),
-    production: parseProjectEnvironment(envsData, 'production'),
-  );
-}
-
-SwitchKeysEnvironmentNameKeyValueResponse parseProjectEnvironment(
-  List<dynamic> envsData,
-  String type,
-) {
-  var development = SwitchKeysEnvironmentNameKeyValueResponse(
+  var development = SwitchKeysDefaultEnvironmentResponse(
     name: "",
     environmentKey: "",
   );
 
-  var staging = SwitchKeysEnvironmentNameKeyValueResponse(
+  var staging = SwitchKeysDefaultEnvironmentResponse(
     name: "",
     environmentKey: "",
   );
 
-  var production = SwitchKeysEnvironmentNameKeyValueResponse(
+  var production = SwitchKeysDefaultEnvironmentResponse(
     name: "",
     environmentKey: "",
   );
@@ -204,24 +201,21 @@ SwitchKeysEnvironmentNameKeyValueResponse parseProjectEnvironment(
     }
   }
 
-  if (type == 'development') return development;
-  if (type == 'staging') return staging;
-  if (type == 'production') return production;
-
-  return SwitchKeysEnvironmentNameKeyValueResponse(
-    name: "",
-    environmentKey: "",
+  return SwitchKeysDefaultEnvironmentsResponse(
+    development: development,
+    production: production,
+    staging: staging,
   );
 }
 
-List<SwitchKeysEnvironmentsUserResponse> parseEnvironmentUsers(
+List<SwitchKeysEnvironmentUserResponse> parseEnvironmentUsers(
   List<dynamic> usersData,
 ) {
-  List<SwitchKeysEnvironmentsUserResponse> users = [];
+  List<SwitchKeysEnvironmentUserResponse> users = [];
 
   for (var i = 0; i < usersData.length; i++) {
     users.add(
-      SwitchKeysEnvironmentsUserResponse(
+      SwitchKeysEnvironmentUserResponse(
         id: usersData[i]['id'],
         username: usersData[i]['username'],
         device: parseDevice(usersData[i]['device']),
@@ -230,37 +224,4 @@ List<SwitchKeysEnvironmentsUserResponse> parseEnvironmentUsers(
     );
   }
   return users;
-}
-
-SwitchKeyUserFeature parseUserFeature(
-  Map<String, dynamic> featuresData,
-) {
-  var feature = SwitchKeyUserFeature(
-    id: featuresData['id'],
-    name: featuresData['name'],
-    value: featuresData['value'],
-    created: featuresData['created'],
-    modified: featuresData['modified'],
-  );
-
-  return feature;
-}
-
-List<SwitchKeyUserFeature> parseUserFeatures(
-  List<dynamic> featuresData,
-) {
-  List<SwitchKeyUserFeature> features = [];
-
-  for (var i = 0; i < featuresData.length; i++) {
-    features.add(
-      SwitchKeyUserFeature(
-        id: featuresData[i]['id'],
-        name: featuresData[i]['name'],
-        value: featuresData[i]['value'],
-        created: featuresData[i]['created'],
-        modified: featuresData[i]['modified'],
-      ),
-    );
-  }
-  return features;
 }

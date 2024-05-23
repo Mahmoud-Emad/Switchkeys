@@ -175,22 +175,3 @@ class SwitchKeysFeature {
     required this.modified,
   });
 }
-<<<<<<< Updated upstream
-
-class SwitchKeyUserFeature {
-  final int id;
-  final String name;
-  final String value;
-  final String created;
-  final String modified;
-
-  SwitchKeyUserFeature({
-    required this.id,
-    required this.name,
-    required this.value,
-    required this.created,
-    required this.modified,
-  });
-}
-=======
->>>>>>> Stashed changes

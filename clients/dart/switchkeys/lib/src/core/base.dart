@@ -7,7 +7,7 @@ import 'package:switchkeys/src/api/models/users.dart';
 class SwitchKeys {
   SwitchKeys();
 
-  SwitchKeyAuth auth = SwitchKeyAuth();
+  SwitchKeysAuth auth = SwitchKeysAuth();
   SwitchKeysOrganizations organizations = SwitchKeysOrganizations();
   SwitchKeysProjects projects = SwitchKeysProjects();
   SwitchKeysEnvironments environments = SwitchKeysEnvironments();

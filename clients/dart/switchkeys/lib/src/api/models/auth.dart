@@ -4,13 +4,26 @@ import 'package:switchkeys/src/api/routes.dart';
 import 'package:switchkeys/src/utils/config.dart';
 import 'package:switchkeys/src/utils/parser.dart';
 
+<<<<<<< Updated upstream
 /// A class that handles authentication for the SwitchKeys API.
 ///
 /// This class provides methods for logging in and registering users,
 /// and manages the storage of authentication tokens.
+=======
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
 class SwitchKeyAuth {
   // ignore: unused_field
   const SwitchKeyAuth();
+=======
+/// A class that handles authentication for the SwitchKeys API.
+///
+/// This class provides methods for logging in and registering users,
+/// and manages the storage of authentication tokens.
+class SwitchKeysAuth {
+  // ignore: unused_field
+  const SwitchKeysAuth();
+>>>>>>> Stashed changes
 
   /// Logging out the logged in user by removing the saved tokens.
   logout() {

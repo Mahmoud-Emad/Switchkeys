@@ -32,12 +32,12 @@ if [ "$ENV" = "production" ]; then
     echo "Running in production mode."
     wait_for_postgres
     run_django_commands
+    # TODO: Remove it later, when start deploying on production.
     create_superuser_if_not_exists
 else
     echo "Running in development mode."
     run_django_commands
-    echo "Creating a superuser email: $DJANGO_SUPERUSER_EMAIL"
-    poetry run python3 manage.py createsuperuser --noinput
+    create_superuser_if_not_exists
 fi
 
 # Continue with the provided command or entry point

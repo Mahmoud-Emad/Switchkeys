@@ -860,5 +860,5 @@ class UpdateEnvironmentFeatureAPIView(GenericAPIView):
 
         return CustomResponse.success(
             message="The environment feature has been deleted successfully.",
-            data=EnvironmentFeatureSerialize(feature).data,
+            data=SwitchKeysFeatureSerializer(feature).data,
         )

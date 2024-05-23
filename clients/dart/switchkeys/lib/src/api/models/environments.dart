@@ -288,9 +288,7 @@ class SwitchKeysEnvironmentServices {
   }) async {
     String apiUrl = SwitchKeysRoutes.getRoute(
       EndPoints.environmentDeleteFeature,
-      [
-        __environment.environmentKey.toString(),
-      ],
+      [__environment.environmentKey.toString(), featureName],
     );
 
     try {

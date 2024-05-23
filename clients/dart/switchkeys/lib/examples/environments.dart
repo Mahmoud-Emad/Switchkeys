@@ -9,7 +9,7 @@ Future<void> environmentsMain() async {
   final SwitchKeys switchkeys = SwitchKeys();
 
   print('\n------------------------------------------------------------------');
-  print('[+] Running the projects example.');
+  print('[+] Running the environments example.');
   print('------------------------------------------------------------------\n');
 
   // --------------------------------------------------------------------------
@@ -115,6 +115,16 @@ Future<void> environmentsMain() async {
     );
     print(
       "[+] Feature '${feature.name}' has been updated with new value: '${feature.value}'.",
+    );
+
+    print("[+] Environment features: ${environment.features.toList()}");
+
+    await environment.deleteFeature(
+      featureName: "theme",
+    );
+
+    print(
+      "[-] Feature '${feature.name}' deleted!",
     );
 
     print("[+] Environment features: ${environment.features.toList()}");

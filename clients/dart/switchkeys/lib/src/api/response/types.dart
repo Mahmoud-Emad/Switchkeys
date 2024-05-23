@@ -161,7 +161,7 @@ class SwitchKeysFeature {
   final String name;
   final String value;
   final String initialValue;
-  final Bool isDefault;
+  final bool isDefault;
   final String created;
   final String modified;
 

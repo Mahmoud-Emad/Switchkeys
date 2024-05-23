@@ -82,11 +82,11 @@ abstract class SwitchKeysRoutes {
       case EndPoints.environmentsId:
         return "${baseUrl}environments/${args![0]}/";
       case EndPoints.environmentAddFeature:
-        return "${baseUrl}environments/${args![0]}/features/";
+        return "${baseUrl}environments/key/${args![0]}/features/";
       case EndPoints.environmentUpdateFeature:
-        return "${baseUrl}environments/${args![0]}/features/update/${args[1]}/";
+        return "${baseUrl}environments/key/${args![0]}/features/update/${args[1]}/";
       case EndPoints.environmentDeleteFeature:
-        return "${baseUrl}environments/${args![0]}/features/delete/${args[1]}/";
+        return "${baseUrl}environments/key/${args![0]}/features/delete/${args[1]}/";
 
       // Projects
       case EndPoints.projects:

@@ -48,8 +48,8 @@ var environment = await switchKeys.environments.load(
 );
 
 // Add a user to the environment.
-final userDevice = SwitchKeyDevice(
-  deviceType: SwitchKeyDeviceType.Android,
+final userDevice = SwitchKeyUserDevice(
+  deviceType: SwitchKeyUserDeviceType.Android,
   version: "v1.1-0x54s",
 );
 final user = SwitchKeysEnvironmentsUser(

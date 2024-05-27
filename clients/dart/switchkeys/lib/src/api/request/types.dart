@@ -12,7 +12,7 @@ class SwitchKeysOrganizationRequest {
 
 class SwitchKeysEnvironmentsUser {
   final String username;
-  final SwitchKeyDevice? device;
+  final SwitchKeyUserDevice? device;
 
   SwitchKeysEnvironmentsUser({
     required this.username,
@@ -20,39 +20,21 @@ class SwitchKeysEnvironmentsUser {
   });
 }
 
-enum SwitchKeyDeviceType {
+enum SwitchKeyUserDeviceType {
   // ignore: constant_identifier_names
   android,
   // ignore: constant_identifier_names
   iphone,
 }
 
-class SwitchKeyDevice {
-  final SwitchKeyDeviceType deviceType;
+class SwitchKeyUserDevice {
+  final SwitchKeyUserDeviceType deviceType;
   final String version;
 
-  SwitchKeyDevice({
+  SwitchKeyUserDevice({
     required this.deviceType,
     required this.version,
   });
-}
-
-class SwitchKeyUserEnvironmentFeatureRequest {
-  String name;
-  String value;
-
-  SwitchKeyUserEnvironmentFeatureRequest({
-    required this.name,
-    required this.value,
-  });
-
-  // Method to convert SwitchKeyUserEnvironmentFeatures to a JSON-compatible map
-  Map<String, dynamic> toJson() {
-    return {
-      'name': name,
-      'value': value,
-    };
-  }
 }
 
 class SwitchKeysFeatureData {

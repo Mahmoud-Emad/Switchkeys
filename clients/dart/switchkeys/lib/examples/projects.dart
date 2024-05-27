@@ -8,7 +8,7 @@ Future<void> projectsMain() async {
   final SwitchKeys switchkeys = SwitchKeys();
 
   print('\n------------------------------------------------------------------');
-  print('[+] Running the projects example.');
+  print('### Running the projects example ###');
   print('------------------------------------------------------------------\n');
 
   // --------------------------------------------------------------------------

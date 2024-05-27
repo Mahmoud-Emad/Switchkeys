@@ -587,9 +587,11 @@ class SetEnvironmentUserFeaturesApiView(GenericAPIView):
         user_feature.feature_value = feature_value
         user_feature.save()
 
+        # Change the value for the user.
+        user_feature.feature.value = user_feature.feature_value
         return CustomResponse.success(
             message="User features found.",
-            data=UserFeatureSerializers(user_feature).data,
+            data=SwitchKeysFeatureSerializer(user_feature.feature).data,
         )
 
 

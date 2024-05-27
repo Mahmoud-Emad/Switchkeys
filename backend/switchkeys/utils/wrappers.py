@@ -22,12 +22,13 @@ def unique_field_error(field_name: str):
     """
     return {
         "message": "Please note that you have passed a unique field.",
-        "fields": {
-            field_name: "This field is unique"
-        },
+        "fields": {field_name: "This field is unique"},
     }
 
-def value_not_accepted_error(field_name: str, user_value: Any, default_value: Any) -> dict:
+
+def value_not_accepted_error(
+    field_name: str, user_value: Any, default_value: Any
+) -> dict:
     """
     Generate a field value error response for API requests.
 
@@ -54,4 +55,3 @@ def value_not_accepted_error(field_name: str, user_value: Any, default_value: An
             field_name: f"You have sent '{user_value}' and this field accepts '{default_value}'."
         },
     }
-

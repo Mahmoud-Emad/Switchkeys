@@ -3,7 +3,6 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from switchkeys.api.permissions import (
     IsAdminUser,
-    UserIsAuthenticated,
 )
 from switchkeys.api.custom_response import CustomResponse
 from switchkeys.serializers.users import OrganizationUserSerializer
@@ -50,6 +49,7 @@ class GeneralUserAPIView(GenericAPIView):
                 status_code=200,
             )
         return CustomResponse.not_found(message="User not found", status_code=404)
+
 
 class GetUserByEmailAPIView(GenericAPIView):
     permission_classes = []

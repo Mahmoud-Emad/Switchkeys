@@ -5,6 +5,7 @@ from switchkeys.models.abstracts import TimeStampedModel
 from switchkeys.models.management import ProjectEnvironment
 from django.utils.translation import gettext_lazy as _
 
+
 class SwitchKeysFeature(TimeStampedModel):
     """
     Model representing a feature in the SwitchKeys system.
@@ -18,6 +19,7 @@ class SwitchKeysFeature(TimeStampedModel):
         - initial_value (`str`): The initial value of the feature.
         - is_default (`str`): if the feature is default feature.
     """
+
     name = models.CharField(_("Name"), max_length=50)
     value = models.TextField(_("Value"), max_length=5000)
     initial_value = models.TextField(_("Initial Value"), max_length=5000)
@@ -34,6 +36,8 @@ class SwitchKeysFeature(TimeStampedModel):
         - Format: `{self.name}`
         """
         return f"{self.name}"
+
+
 class EnvironmentFeature(TimeStampedModel):
     """
     Model representing features associated with a project environment in the SwitchKeys system.
@@ -50,7 +54,7 @@ class EnvironmentFeature(TimeStampedModel):
         verbose_name=_("Environment"),
         related_name="feature_environment",
         on_delete=models.CASCADE,
-        null=True
+        null=True,
     )
 
     features = models.ManyToManyField(
@@ -70,6 +74,7 @@ class EnvironmentFeature(TimeStampedModel):
     class Meta:
         verbose_name = _("Environment Feature")
         verbose_name_plural = _("Environment Features")
+
 
 class UserFeature(TimeStampedModel):
     """
@@ -96,7 +101,7 @@ class UserFeature(TimeStampedModel):
         related_name="user_feature",
         on_delete=models.CASCADE,
     )
-    
+
     feature_value = models.TextField(
         _("Value"),
         max_length=5000,

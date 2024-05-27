@@ -1,8 +1,8 @@
 # SwitchKeys Changelog
 
-## Version 1.1.4
+## Version 1.1.5
 
-## What's Changed (1.1.4)
+## What's Changed (1.1.5)
 
 * feat: Added TS example runner. by @Mahmoud-Emad in <https://github.com/Mahmoud-Emad/Switchkeys/pull/29>
 

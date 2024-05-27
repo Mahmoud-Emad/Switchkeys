@@ -26,6 +26,7 @@ enum EndPoints {
   environmentAddFeature,
   environmentUpdateFeature,
   environmentDeleteFeature,
+  environmentUserAddFeature,
 
   // Projects
   projects,
@@ -87,6 +88,8 @@ abstract class SwitchKeysRoutes {
         return "${baseUrl}environments/key/${args![0]}/features/update/${args[1]}/";
       case EndPoints.environmentDeleteFeature:
         return "${baseUrl}environments/key/${args![0]}/features/delete/${args[1]}/";
+      case EndPoints.environmentUserAddFeature:
+        return "${baseUrl}environments/key/${args![0]}/users/${args[1]}/features/set/";
 
       // Projects
       case EndPoints.projects:

@@ -5,7 +5,7 @@ import 'package:switchkeys/src/api/request/types.dart';
 class SwitchKeysEnvironmentUserResponse {
   final int id;
   final String username;
-  final SwitchKeyDevice device;
+  final SwitchKeyUserDevice device;
   final List<SwitchKeysFeature> features;
 
   SwitchKeysEnvironmentUserResponse({

@@ -9,7 +9,7 @@ Future<void> environmentsMain() async {
   final SwitchKeys switchkeys = SwitchKeys();
 
   print('\n------------------------------------------------------------------');
-  print('[+] Running the environments example.');
+  print('### Running the environments example ###');
   print('------------------------------------------------------------------\n');
 
   // --------------------------------------------------------------------------
@@ -78,8 +78,8 @@ Future<void> environmentsMain() async {
     // First, you need to send the `SwitchKeysEnvironmentsUser` user.
     var environmentUser = SwitchKeysEnvironmentsUser(
       username: "Mahmoud",
-      device: SwitchKeyDevice(
-        deviceType: SwitchKeyDeviceType.android,
+      device: SwitchKeyUserDevice(
+        deviceType: SwitchKeyUserDeviceType.android,
         version: "v142.54.5158s.54w",
       ),
     );
@@ -128,6 +128,40 @@ Future<void> environmentsMain() async {
     );
 
     print("[+] Environment features: ${environment.features.toList()}");
+
+    // ------------------------------------------------------------------------
+    // Get/Select environment user.
+    // ------------------------------------------------------------------------
+    var envUser = environment.users.getUser(username: username);
+    print("[+] User ${envUser.username} selected.");
+    print("[+] User ${envUser.username} features are ${envUser.features}.");
+
+    // ------------------------------------------------------------------------
+    // Get, Check, and set a feature for an environment user.
+    // ------------------------------------------------------------------------
+    const featureName = "design";
+
+    if (envUser.hasFeature(featureName: featureName)) {
+      print("[+] ${envUser.username} has the '$featureName' feature.");
+
+      var envUserFeat = envUser.getFeature(
+        featureName: featureName,
+      );
+
+      print(
+        "[+] User ${envUser.username} $featureName feature value is: ${envUserFeat.value}.",
+      );
+    } else {
+      SwitchKeysFeatureData featrue = SwitchKeysFeatureData(
+        name: featureName,
+        value: "v1.2.5",
+      );
+      var userFeat = await envUser.setFeature(feature: featrue);
+      print(
+        "[+] User ${envUser.username} ${userFeat.name} feature value is: ${userFeat.value}.",
+      );
+    }
+
     // ------------------------------------------------------------------------
     // Delete the created organization
     // ------------------------------------------------------------------------

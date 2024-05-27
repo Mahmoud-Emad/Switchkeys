@@ -7,7 +7,7 @@ Future<void> organizationsMain() async {
   final SwitchKeys switchkeys = SwitchKeys();
 
   print('\n------------------------------------------------------------------');
-  print('[+] Running the organizations example.');
+  print('### Running the organizations example ###');
   print('------------------------------------------------------------------\n');
 
   // --------------------------------------------------------------------------

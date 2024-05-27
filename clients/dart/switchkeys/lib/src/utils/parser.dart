@@ -107,13 +107,13 @@ SwitchKeysEnvironmentResponse parseEnvironment(
   );
 }
 
-SwitchKeyDevice parseDevice(
+SwitchKeyUserDevice parseDevice(
   Map<String, dynamic> deviceData,
 ) {
-  return SwitchKeyDevice(
+  return SwitchKeyUserDevice(
     deviceType: deviceData['device_type'] == 'iphone'
-        ? SwitchKeyDeviceType.iphone
-        : SwitchKeyDeviceType.android,
+        ? SwitchKeyUserDeviceType.iphone
+        : SwitchKeyUserDeviceType.android,
     version: deviceData['version'],
   );
 }

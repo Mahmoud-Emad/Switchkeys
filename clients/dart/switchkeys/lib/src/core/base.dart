@@ -11,5 +11,5 @@ class SwitchKeys {
   SwitchKeysOrganizations organizations = SwitchKeysOrganizations();
   SwitchKeysProjects projects = SwitchKeysProjects();
   SwitchKeysEnvironments environments = SwitchKeysEnvironments();
-  SwitchKeysOrganizationMember users = SwitchKeysOrganizationMember();
+  SwitchKeysOrganizationMember members = SwitchKeysOrganizationMember();
 }

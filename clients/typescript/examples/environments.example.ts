@@ -48,7 +48,7 @@ export async function environmentExample() {
     // --------------------------------------------------------------------------------------------------------------------
     // Second, create a new organization.
     const organization = await switchkeys.organizations.create({
-      name: "SwitchKeys",
+      name: "SwitchKeys7",
     });
 
     // --------------------------------------------------------------------------------------------------------------------

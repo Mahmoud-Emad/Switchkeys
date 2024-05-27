@@ -48,7 +48,7 @@ export async function projectExample() {
     // Second, create a new organization.
     // PS: If you have a valid project ID, you can get it directly and skip this step.
     const organization = await switchkeys.organizations.create({
-      name: "SwitchKeys",
+      name: "SwitchKeys4",
     });
 
     // Now you can create a project in the created organization.

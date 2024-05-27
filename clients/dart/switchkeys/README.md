@@ -8,7 +8,7 @@ To install the SwitchKeys Dart client, add it as a dependency to your Dart proje
 
 ```yaml
 dependencies:
-  switchkeys: ^1.1.0
+  switchkeys: ^1.1.4
 ```
 
 Then, run the following command in your terminal to fetch the package:
@@ -53,7 +53,7 @@ try {
 
 ```
 
-For more detailed usage instructions, refer to the [examples folder](./lib/examples/).
+For more detailed usage instructions, refer to the [examples folder](https://github.com/Mahmoud-Emad/Switchkeys/tree/development/clients/dart/switchkeys/lib/examples).
 
 ## Organization Management
 
@@ -61,7 +61,7 @@ The SwitchKeys Dart Client allows you to manage organizations within the SwitchK
 
 ### Creating an Organization
 
-```typescript
+```dart
 // ------------------------------------------------------------------------
 // Creating a new organization
 // ------------------------------------------------------------------------
@@ -73,7 +73,7 @@ print("[+] Created organization name: ${organization.name}");
 
 ```
 
-Before using the SwitchKeys Dart Client, make sure to set up the necessary environment variables and configuration files. Refer to the [configuration documentation](./docs/configuration.md) for details.
+Before using the SwitchKeys Dart Client, make sure to set up the necessary environment variables and configuration files. Refer to the [configuration documentation](https://github.com/Mahmoud-Emad/Switchkeys/blob/development/clients/dart/switchkeys/docs/configuration.md) for details.
 
 ## Contributing
 
@@ -81,4 +81,4 @@ Contributions are welcome! If you find a bug or have a feature request, please o
 
 ## License
 
-This project is licensed under the [MIT License](./LICENSE)
+This project is licensed under the [MIT License](https://github.com/Mahmoud-Emad/Switchkeys/blob/development/clients/dart/switchkeys/LICENSE)

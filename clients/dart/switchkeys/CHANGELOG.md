@@ -1,8 +1,16 @@
 # SwitchKeys Changelog
 
+## Version 1.1.4
+
+## What's Changed (1.1.4)
+
+* feat: Added TS example runner. by @Mahmoud-Emad in <https://github.com/Mahmoud-Emad/Switchkeys/pull/29>
+
+**Full Changelog**: <https://github.com/Mahmoud-Emad/Switchkeys/compare/v1.0.3...v1.0.4>
+
 ## Version 1.1.0
 
-## What's Changed
+## What's Changed (1.1.0)
 
 * Updated the TSClient with some bug fixes and features by @Mahmoud-Emad in <https://github.com/Mahmoud-Emad/Switchkeys/pull/16>
 * Development backend v0.2.0 by @Mahmoud-Emad in <https://github.com/Mahmoud-Emad/Switchkeys/pull/15>
@@ -22,7 +30,7 @@
 
 ## Version 1.0.8
 
-### 1.0.8 Features
+### What's Changed (1.0.8)
 
 * Updated the request/response of adding/getting user features
 * Commented un-needed caller for now

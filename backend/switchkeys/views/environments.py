@@ -28,7 +28,7 @@ from switchkeys.models.environments import (
 from switchkeys.models.users import DeviceType
 from switchkeys.utils.wrappers import unique_field_error, value_not_accepted_error
 from switchkeys.services.projects import get_project_by_id
-from switchkeys.models.management import OrganizationProject, ProjectEnvironment
+from switchkeys.models.management import OrganizationProject
 from switchkeys.api.custom_response import CustomResponse
 from switchkeys.services.environments import (
     create_environment_user,
@@ -860,5 +860,5 @@ class UpdateEnvironmentFeatureAPIView(GenericAPIView):
 
         return CustomResponse.success(
             message="The environment feature has been deleted successfully.",
-            data=EnvironmentFeatureSerialize(feature).data,
+            data=SwitchKeysFeatureSerializer(feature).data,
         )

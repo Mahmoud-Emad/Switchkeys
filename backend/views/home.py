@@ -2,6 +2,7 @@ from django.urls import get_resolver
 from django.http import JsonResponse
 from components import config
 
+
 def display_urls(request):
     """
     View function to display all available URL patterns in the Django project.

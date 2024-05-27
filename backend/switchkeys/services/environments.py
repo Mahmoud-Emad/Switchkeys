@@ -117,6 +117,7 @@ def validate_unique_environment_name(
 
     return environments.exists()
 
+
 def is_feature_created(name: str, environment: ProjectEnvironment) -> bool:
     """
     Check if a feature with the given name is created in the specified environment.
@@ -133,12 +134,19 @@ def is_feature_created(name: str, environment: ProjectEnvironment) -> bool:
         True
     """
 
-    all_features = SwitchKeysFeature.objects.filter(name=name).values_list("id", flat=True)
-    env_features = EnvironmentFeature.objects.filter(environment=environment, features__id__in=all_features)
-    
+    all_features = SwitchKeysFeature.objects.filter(name=name).values_list(
+        "id", flat=True
+    )
+    env_features = EnvironmentFeature.objects.filter(
+        environment=environment, features__id__in=all_features
+    )
+
     return env_features.exists()
 
-def get_environment_feature(name: str, environment: ProjectEnvironment) -> Optional[EnvironmentFeature]:
+
+def get_environment_feature(
+    name: str, environment: ProjectEnvironment
+) -> Optional[EnvironmentFeature]:
     """
     Retrieve an environment feature by name and environment.
 
@@ -158,8 +166,10 @@ def get_environment_feature(name: str, environment: ProjectEnvironment) -> Optio
 
     # Retrieve all features with the given name
     all_features = SwitchKeysFeature.objects.filter(name=name)
-    
+
     # Filter environment features by environment and matching feature IDs
-    env_features = EnvironmentFeature.objects.get(environment=environment, features__in=all_features)
+    env_features = EnvironmentFeature.objects.get(
+        environment=environment, features__in=all_features
+    )
 
     return env_features

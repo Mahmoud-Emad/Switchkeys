@@ -8,73 +8,16 @@ Before using this script, ensure that you have the SwitchKeys library installed 
 
 ## Usage
 
-To use this script, follow these steps:
+Ensure you have the SwitchKeys SDK installed in your Dart project. You can install it using:
 
-1. **Import Dependencies**: Import the required dependencies at the top of your Dart file.
-
-   ```dart
-   import 'package:switchkeys/src/api/response/types.dart';
-   import 'package:switchkeys/src/core/base.dart';
-   ```
-
-2. **Define the Main Function**: Define the main function `organizationsMain()` for organization-related operations.
-
-   ```dart
-   void organizationsMain() async {
-       // Code for organization operations goes here
-   }
-   ```
-
-3. **Instantiate SwitchKeys**: Get an instance of SwitchKeys to interact with the SwitchKeys API.
-
-   ```dart
-   final SwitchKeys switchKeys = SwitchKeys();
-   ```
-
-4. **Authenticate User**: Log in the user using their email and password. This step is necessary if the saved token is expired.
-
-   ```dart
-   await switchKeys.auth.login(email: "email@example.com", password: "password");
-   ```
-
-5. **Organization Operations**: Perform various organization operations within a try-catch block to handle any potential errors.
-
-   - **Create Organization**: Create a new organization with a unique name.
-
-   - **Get Organization by Name**: Retrieve an existing organization by its name, as the name is unique for the user.
-
-   - **Update Organization**: Update an existing organization with new data, such as name or members.
-
-   - **Delete Organization**: Delete the organization.
-
-   Example usage:
-
-   ```dart
-   try {
-      organization = await switchKeys.organizations.getByName(organizationName: 'Cloud for students');
-      print("Organization name: ${organization.name}");
-   } catch (e) {
-       // Error handling
-   }
-   ```
-
-6. **Handle Errors**: In the catch block, handle any errors that may occur during organization operations.
-
-   ```dart
-   } catch (e) {
-       print("Error occurred: $e");
-   }
-   ```
-
-## Example
-
-Here's how you can use the `organizationsMain()` function in your Dart code:
-
-```dart
-void main() {
-    // Call the organizationsMain function to perform organization operations
-    organizationsMain();
-}
+```bash
+dart pub add switchkeys
 ```
 
-Replace `"email@example.com"` and `"password"` with your actual email and password for authentication with the SwitchKeys API.
+### Script Execution
+
+To execute the script, you can call the `organizationsMain()` function:
+
+```dart
+organizationsMain();
+```

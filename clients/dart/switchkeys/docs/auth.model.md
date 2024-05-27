@@ -18,10 +18,12 @@ SwitchKeys switchKeys = SwitchKeys();
 
 // Now you can use the auth instance to make API calls
 // Logging in an existing user
-await switchKeys.auth
-    .login(email: "hamada__2020@gmail.com", password: "hamada")
-    .then((user) => print("Logged in successfully: ${user.email}"))
-    .catchError((e) => print("Error logging in: $e"));
+var user = await switchkeys.auth.login(
+  email: "testing@switchkeys.com",
+  password: "0000",
+);
+print("[+] Logged in successfully: ${user.email}");
+
 
 ```
 
@@ -38,19 +40,12 @@ import 'package:switchkeys/src/core/base.dart';
 SwitchKeys switchKeys = SwitchKeys();
 
 // Now you can use the auth instance to make API calls
-// Logging in an existing user
-await switchKeys.auth
-    .register(
-      firstName: "Ahmed",
-      lastName: "Zain",
-      email: "hamada__2020@gmail.com",
-      password: "hamada",
-      memberType: UserTypeEnum.administrator,
-    )
-    .then((user) => print("User registered successfully: ${user.email}"))
-    .catchError((e) => print("Error registering user: $e"));
+var user = await switchkeys.auth.register(
+  firstName: "Testing",
+  lastName: "Account",
+  email: "testing@switchkeys.com",
+  password: "0000",
+  memberType: UserTypeEnum.administrator,
+);
+print("[+] Registered successfully: ${user.email}");
 ```
-
-## Conclusion
-
-By following these usage examples, you can effectively utilize the SwitchKeys authentication API in your Dart applications to log in existing users and register new users, while handling errors gracefully.

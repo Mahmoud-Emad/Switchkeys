@@ -8,7 +8,7 @@ To install the SwitchKeys Dart client, add it as a dependency to your Dart proje
 
 ```yaml
 dependencies:
-  switchkeys: ^1.0.5
+  switchkeys: ^1.1.0
 ```
 
 Then, run the following command in your terminal to fetch the package:
@@ -17,155 +17,68 @@ Then, run the following command in your terminal to fetch the package:
 dart pub get
 ```
 
-## User Registration and Login
+## Usage
 
-### Registering a New User
-
-To register a new user, use the `register` method provided by the `SwitchKeyAuth` class. Provide the user's first name, last name, email, password, and user type (optional) as parameters:
+Here's a basic example of how to use the SwitchKeys TS Client:
 
 ```dart
+// This Dart script demonstrates how to use the SwitchKeys authentication API.
+
+import 'package:switchkeys/src/api/response/types.dart';
 import 'package:switchkeys/src/core/base.dart';
 
-// Get an instance of SwitchKeyAuth
-SwitchKeys switchKeys = SwitchKeys();
+// Get an instance of SwitchKeys
+final SwitchKeys switchkeys = SwitchKeys();
 
-// Register a new user
-await switchKeys.auth.register(
-  firstName: "John",
-  lastName: "Doe",
-  email: "john@example.com",
-  password: "password",
-);
+try {
+  // If you haven't created account yet, unlock the register method.
+  var user = await switchkeys.auth.register(
+    firstName: "Testing",
+    lastName: "Account",
+    email: "testing@switchkeys.com",
+    password: "0000",
+    memberType: UserTypeEnum.administrator,
+  );
+  print("[+] Registered successfully: ${user.email}");
+} catch (e) {
+  var user = await switchkeys.auth.login(
+    email: "testing@switchkeys.com",
+    password: "0000",
+  );
+  print("[+] Logged in successfully: ${user.email}");
+} finally {
+  switchkeys.auth.logout();
+  print("[+] Logged out successfully");
+}
+
 ```
 
-### Logging in an Existing User
+For more detailed usage instructions, refer to the [examples folder](./lib/examples/).
 
-To log in as an existing user, use the `login` method provided by the `SwitchKeyAuth` class. Provide the user's email and password as parameters:
+## Organization Management
 
-```dart
-import 'package:switchkeys/src/core/base.dart';
-
-// Get an instance of SwitchKeyAuth
-SwitchKeys switchKeys = SwitchKeys();
-
-// Log in an existing user
-await switchKeys.auth.login(
-  email: "john@example.com",
-  password: "password",
-);
-```
-
-## Managing Organizations and Projects
+The SwitchKeys Dart Client allows you to manage organizations within the SwitchKeys system. Here are some examples of organization-related operations:
 
 ### Creating an Organization
 
-To create a new organization, use the `create` method provided by the `SwitchKeysOrganizations` class:
+```typescript
+// ------------------------------------------------------------------------
+// Creating a new organization
+// ------------------------------------------------------------------------
+// Create a new organization named "SwitchKeys".
+var organization = await switchkeys.organizations.create(
+  name: "SwitchKeys",
+);
+print("[+] Created organization name: ${organization.name}");
 
-```dart
-import 'package:switchkeys/src/core/base.dart';
-
-// Get an instance of SwitchKeysOrganizations
-SwitchKeys switchKeys = SwitchKeys();
-
-// Create a new organization
-await switchKeys.organizations.create(name: "My Organization");
 ```
 
-### Creating a Project
+Before using the SwitchKeys Dart Client, make sure to set up the necessary environment variables and configuration files. Refer to the [configuration documentation](./docs/configuration.md) for details.
 
-To create a new project within an organization, use the `create` method provided by the `SwitchKeysProjects` class:
+## Contributing
 
-```dart
-import 'package:switchkeys/src/core/base.dart';
+Contributions are welcome! If you find a bug or have a feature request, please open an issue or submit a pull request.
 
-// Get an instance of SwitchKeysProjects
-SwitchKeys switchKeys = SwitchKeys();
+## License
 
-// Create a new project within an organization
-await switchKeys.projects.create(name: "My Project", organizationId: 1);
-```
-
-## Managing Environments and User Features
-
-### Creating an Environment
-
-To create a new environment, use the `create` method provided by the `SwitchKeysEnvironments` class:
-
-```dart
-import 'package:switchkeys/src/core/base.dart';
-
-// Get an instance of SwitchKeysEnvironments
-SwitchKeys switchKeys = SwitchKeys();
-
-// Create a new environment
-await switchKeys.environments.create(name: "Production", projectId: 1);
-```
-
-### Adding Users to an Environment
-
-To add users to an environment, use the `addUser` method provided by the `SwitchKeysEnvironments` class:
-
-```dart
-import 'package:switchkeys/src/core/base.dart';
-
-// Get an instance of SwitchKeysEnvironments
-SwitchKeys switchKeys = SwitchKeys();
-
-// Add a user to an environment
-await switchKeys.environments.users.addUser(
-  user: SwitchKeysEnvironmentsUser(username: "user1"),
-  environmentKey: "0246204d-c567-4089-add2-a1155657ecac", // Environment key
-);
-```
-
-### Setting User Features in an Environment
-
-To set user features in an environment, use the `addFeature` method provided by the `SwitchKeysEnvironmentsUsers` class:
-
-```dart
-import 'package:switchkeys/src/core/base.dart';
-
-// Get an instance of SwitchKeysEnvironmentsUsers
-SwitchKeys switchKeys = SwitchKeys();
-
-final user = SwitchKeysEnvironmentsUser(
-  username: "Mahmoud",
-  device: userDevice,
-);
-
-final addedUser = await switchKeys.environments.users.addUser(
-  user: user,
-  environment: environment,
-);
-
-// Add a feature to the user.
-var feature = SwitchKeyUserEnvironmentFeatureRequest(
-  name: "Theme",
-  value: "dark",
-);
-
-// Get the value of a specific feature of a user.
-final getUserFeature = await switchKeys.environments.users.getFeature(
-  featureName: "debug",
-  username: "Adham",
-  environment: environment,
-);
-
-print(getUserFeature.name);
-
-// Get all of user features.
-final getAllUserFeature = await switchKeys.environments.users.getAllFeatures(
-  featureName: "debug",
-  username: "Adham",
-  environment: environment,
-);
-
-print(getAllUserFeature);
-
-print("Name: ${feature.name}");
-print("Value: ${feature.value}");
-```
-
----
-
-Follow these steps to install the SwitchKeys Dart client and perform various actions such as registering/logging in a user, creating an organization, creating a project within the organization, creating an environment, adding users to the environment, and setting user features within the environment.
+This project is licensed under the [MIT License](./LICENSE)

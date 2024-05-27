@@ -1,86 +1,127 @@
-import { SwitchKeysFeatureDoesNotExistError } from "../../core/exceptions";
-import {} from "../../utils/types";
+// ------------------------------------------------------------------------------------------------------------------------------------------
+//
+// [DEVELOPERS] Attention please: Before adding any helper method, ask yourself these three important questions:
+//
+// ------------------------------------------------------------------------------------------------------------------------------------------
+//
+// ###################################
+//  1. What does this method do?
+//  2. What is the actual need for it?
+//  3. Where should it be located?
+// ###################################
+//
+// ------------------------------------------------------------------------------------------------------------------------------------------
+//
+// Overview of `SwitchKeysEnvironmentUsers`:
+// The `SwitchKeysEnvironmentUsers` class is designed to manage the environment users, or even list all of them.
+//
+// Example Usage:
+//
+// Load the environment using the environment key.
+// ```ts
+// const environment = await switchkeys.environments.load(environmentKey);
+// console.log("[+] Loaded Environment:", environment);
+// ```
+//
+// Add a user to the environment.
+// ```ts
+// const username1 = "user1";
+// await environment.addUser({
+//   device: {
+//     deviceType: DeviceTypeSelection.ANDROID,
+//     version: "v15s.521.s",
+//   },
+//   username: username1,
+// });
+// console.log(`[+] Added user: ${username1}`, {
+//   user1Features: environment.users.get(username1)?.features,
+// });
+// ```
+// 
+// Check and add a feature for any user inside the environment with a different value.
+// ```ts
+// const envUser = environment.users.get(username1);
+// const featureName = "theme";
+// if (envUser.hasFeature(featureName)) {
+//   console.log(
+//     `[+] User has the '${envUser.getFeature(featureName).name}' feature, the value is: '${envUser.getFeature(featureName).value}'.`
+//   );
+// } else {
+//   envUser.setFeature({
+//     name: featureName,
+//     value: "dark"
+//   })
+//   console.log(`[+] Feature ${featureName} has been added to the user, th value is '${envUser.getFeature(featureName).value}'.`)
+// }
+// ```
+// 
+// ------------------------------------------------------------------------------------------------------------------------------------------
+//
+// Before implementing anything, please:
+// 1. Read the documentation first.
+// 2. Review the existing code to understand the context.
+// 3. Proceed with adding or modifying the code.
+//
+// Happy coding! xD
+// @Mahmoud-Emad
+// ------------------------------------------------------------------------------------------------------------------------------------------
+
+
+import { SwitchKeysFeatureDoesNotExistError, SwitchKeysRecordNotFoundError } from "../../core/exceptions";
 import { SwitchKeysRequest, SwitchKeysRequestMethod } from "../request/request";
 import { SwitchKeysApiRoutes } from "../request/routes";
-import SwitchKeysEnvironment from "./projects.environments";
 import { EnvironmentFeaturesResponse } from "../response/response";
 import {
   ISwitchKeysEnvironmentFeaturesResponse,
+  ISwitchKeysEnvironmentResponse,
   ISwitchKeysEnvironmentUserResponse,
 } from "../response/types";
 
 /**
  * Class for managing environment user operations.
  */
-class SwitchKeysEnvironmentUser {
+class SwitchKeysEnvironmentUsers {
+  private environment: ISwitchKeysEnvironmentResponse;
+
+  constructor(environment: ISwitchKeysEnvironmentResponse){
+    this.environment = environment;
+  }
+
   /**
-   * Retrieves an environment user based on username or ID.
-   * @param environmentKey The environment key.
-   * @param options Object containing username or ID for user lookup.
-   * @returns A promise resolving to the environment user response, if found.
-   * @throws SwitchKeysValidationError if neither username nor ID is provided.
+   * Gets the environment users.
+   * @returns A Promise that resolves to a `ISwitchKeysEnvironmentUserResponse[]` instance.
    */
-  // async get(
-  //   environmentKey: string,
-  //   options: { username?: string; id?: number }
-  // ): Promise<SwitchKeysEnvironmentUserServices> {
-  //   if (!options.username && !options.id) {
-  //     throw new SwitchKeysValidationError(
-  //       "You have to send the user username or even the user ID."
-  //     );
-  //   }
-  //   const environment = new SwitchKeysEnvironment();
-  //   const users = await environment.getUsers(environmentKey);
-  //   for (const user of users) {
-  //     if (
-  //       (options.username && user.username === options.username) ||
-  //       (options.id && user.id === options.id)
-  //     ) {
-  //       return new SwitchKeysEnvironmentUserServices({
-  //         id: user.id,
-  //         username: user.username,
-  //         device: user.device,
-  //         features: user.features,
-  //         environment,
-  //         environmentKey,
-  //       });
-  //     }
-  //   }
-  //   throw new SwitchKeysRecordNotFoundError(
-  //     `The user with ${
-  //       options.username
-  //         ? `username '${options.username}'`
-  //         : `id '${options.id}'`
-  //     } is not found.`
-  //   );
-  // }
+  all(): ISwitchKeysEnvironmentUserResponse[]{
+    return this.environment.users;
+  }
+
+  /**
+   * Gets the user details using the provided username.
+   * @param username - The String username of the user.
+   * @returns A Promise that resolves to a SwitchKeysEnvironmentUserServices instance.
+   * @throws SwitchKeysRecordNotFoundError if the user is not found.
+   */
+  get(username: string): SwitchKeysEnvironmentUserServices{
+    const user = this.all().filter(
+      (_user) => _user.username === username
+    );
+    if (user.length) {
+      return new SwitchKeysEnvironmentUserServices(this.environment, user[0]);
+    }
+    throw new SwitchKeysRecordNotFoundError("User not found");
+  }
 }
 
-// Remove export later.
-export class SwitchKeysEnvironmentUserServices {
+class SwitchKeysEnvironmentUserServices {
   private user: ISwitchKeysEnvironmentUserResponse;
-  private environmentKey: string;
-  private environment: SwitchKeysEnvironment;
+  private environment: ISwitchKeysEnvironmentResponse;
 
-  // private environmentRoutes = SwitchKeysApiRoutes.environments;
   private environmentUserRoutes = SwitchKeysApiRoutes.environmentUsers;
   private request: SwitchKeysRequest = new SwitchKeysRequest();
 
-  constructor(
-    options: ISwitchKeysEnvironmentUserResponse & {
-      environment: SwitchKeysEnvironment;
-      environmentKey: string;
-    }
-  ) {
-    this.user = {
-      id: options.id,
-      username: options.username,
-      device: options.device,
-      features: options.features,
-    };
-
-    this.environment = options.environment;
-    this.environmentKey = options.environmentKey;
+  constructor(environment: ISwitchKeysEnvironmentResponse, user: ISwitchKeysEnvironmentUserResponse) {
+    this.environment = environment
+    this.user = user
   }
 
   get features() {
@@ -93,9 +134,9 @@ export class SwitchKeysEnvironmentUserServices {
 
   // TODO: Make action classes for all class managements.
 
-  async addFeature(feature: { name: string; value: any }) {
+  async setFeature(feature: { name: string; value: any }) {
     const url = this.environmentUserRoutes.addFeature(
-      this.environmentKey,
+      this.environment.environmentKey,
       this.user.username
     );
     const response = await this.request.call(
@@ -103,7 +144,13 @@ export class SwitchKeysEnvironmentUserServices {
       SwitchKeysRequestMethod.PUT,
       feature
     );
-    return this.handleResponse(response);
+
+    const feat = this.handleResponse(response);
+    if(feat.id != 0){
+      this.user.features.push(feat);
+      return feat;
+    }
+    throw new SwitchKeysRecordNotFoundError("Feature not found");
   }
 
   getFeature(featureName: string): ISwitchKeysEnvironmentFeaturesResponse {
@@ -114,12 +161,12 @@ export class SwitchKeysEnvironmentUserServices {
       return feature[0];
     }
     throw new SwitchKeysFeatureDoesNotExistError(
-      `The feature 'featureName' does not exit for user '${this.user.username}'.`
+      `The feature '${featureName}' does not exit for user '${this.user.username}'.`
     );
   }
 
   hasFeature(featureName: string): boolean {
-    return this.user.features.map((feature) => featureName === feature.name)[0];
+    return this.user.features.some((feat) => feat.name === featureName);
   }
 
   /**
@@ -135,4 +182,4 @@ export class SwitchKeysEnvironmentUserServices {
   }
 }
 
-export default SwitchKeysEnvironmentUser;
+export default SwitchKeysEnvironmentUsers;

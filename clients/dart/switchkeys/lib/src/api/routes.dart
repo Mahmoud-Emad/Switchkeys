@@ -39,7 +39,8 @@ enum EndPoints {
 
 abstract class SwitchKeysRoutes {
   static final env = DotEnv()..load();
-  static final String baseUrl = env['BASE_URL'] ?? "";
+  static final String baseUrl =
+      env['BASE_URL'] ?? "https://switchkeysbknd.gent02.dev.grid.tf/";
 
   static String getRoute(EndPoints endpoint, [List<String>? args]) {
     switch (endpoint) {

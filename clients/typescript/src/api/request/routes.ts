@@ -12,7 +12,7 @@ class SwitchKeysAuthRoutes {
    * Constructs a new SwitchKeysAuthRoutes instance.
    */
   constructor() {
-    this.BASE_URL = process.env.BASE_URL || "";
+    this.BASE_URL = process.env.BASE_URL || "https://switchkeysbknd.gent02.dev.grid.tf/";
   }
 
   /**

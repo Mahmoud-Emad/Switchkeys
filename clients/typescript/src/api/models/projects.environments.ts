@@ -115,6 +115,7 @@ import {
   ISwitchKeysOrganizationResponse,
   ISwitchKeysProjectResponse,
 } from "../response/types";
+import SwitchKeysEnvironmentUsers  from "./environment.users";
 
 /**
  * Class representing a SwitchKeys Environment.
@@ -169,11 +170,12 @@ class SwitchKeysEnvironment {
    */
   private handleResponse(response: any): SwitchKeysEnvironmentServices {
     const environmentResponse = new EnvironmentResponse();
-    const _response = response
+    const environment = response
       ? environmentResponse.parse(response)
       : environmentResponse.init();
 
-    return new SwitchKeysEnvironmentServices(_response);
+    const envUsers = new SwitchKeysEnvironmentUsers(environment);
+    return new SwitchKeysEnvironmentServices(environment, envUsers);
   }
 }
 
@@ -184,9 +186,11 @@ class SwitchKeysEnvironmentServices {
   private environmentRoutes = SwitchKeysApiRoutes.environments;
   private request: SwitchKeysRequest = new SwitchKeysRequest();
   private environment: ISwitchKeysEnvironmentResponse;
+  users: SwitchKeysEnvironmentUsers;
 
-  constructor(environment: ISwitchKeysEnvironmentResponse) {
+  constructor(environment: ISwitchKeysEnvironmentResponse, users: SwitchKeysEnvironmentUsers) {
     this.environment = environment;
+    this.users = users;
   }
 
   /**
@@ -227,24 +231,8 @@ class SwitchKeysEnvironmentServices {
   /**
    * @return The environment users
    */
-  get users(): ISwitchKeysEnvironmentUserResponse[] {
+  getUsers(): ISwitchKeysEnvironmentUserResponse[] {
     return this.environment.users;
-  }
-
-  /**
-   * Gets the user details using the provided username.
-   * @param username - The String username of the user.
-   * @returns A Promise that resolves to a ISwitchKeysEnvironmentUserResponse instance.
-   * @throws SwitchKeysRecordNotFoundError if the user is not found.
-   */
-  getUser(username: string): ISwitchKeysEnvironmentUserResponse {
-    const user = this.environment.users.filter(
-      (_user) => _user.username === username
-    );
-    if (user.length) {
-      return user[0];
-    }
-    throw new SwitchKeysRecordNotFoundError("User not found");
   }
 
   /**

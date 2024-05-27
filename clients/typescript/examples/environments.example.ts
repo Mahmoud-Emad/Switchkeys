@@ -16,14 +16,16 @@ export async function environmentExample() {
   // --------------------------------------------------------------------------------------------------------------------
   // Check if the user is already created
   // --------------------------------------------------------------------------------------------------------------------
-  console.log(`[+] Check if user with email ${userEmail} is registered.`)
-  const userCreated = await switchkeys.users.isUserCreated({email: userEmail})
+  console.log(`[+] Check if user with email ${userEmail} is registered.`);
+  const userCreated = await switchkeys.users.isUserCreated({
+    email: userEmail,
+  });
 
   // --------------------------------------------------------------------------------------------------------------------
   // Logging in to SwitchKeys
   // --------------------------------------------------------------------------------------------------------------------
   // First, log in to SwitchKeys with valid credentials.
-  if(!userCreated){
+  if (!userCreated) {
     // If you haven't created account yet, unlock the register method.
     await switchkeys.auth.register({
       email: userEmail,
@@ -34,7 +36,7 @@ export async function environmentExample() {
     });
     console.log("[+] Registered successfully.");
   } else {
-    console.log(`[!] User with email ${userEmail} is already registered.`)
+    console.log(`[!] User with email ${userEmail} is already registered.`);
     await switchkeys.auth.login({
       email: userEmail,
       password: "0000",
@@ -113,6 +115,15 @@ export async function environmentExample() {
       });
 
       console.log("[+] Added Feature:", newFeature);
+
+      // Update the added feature.
+      const updatedFeature = await environment.updateFeature({
+        name: debugFeatureName,
+        newName: debugFeatureName,
+        newValue: "true",
+      });
+
+      console.log("[+] updated Feature:", updatedFeature);
     }
 
     // Verify that the new feature is added to user1.

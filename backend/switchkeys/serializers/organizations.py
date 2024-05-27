@@ -5,7 +5,7 @@ from rest_framework.serializers import (
 )
 
 from switchkeys.serializers.users import OrganizationUserSerializer
-from switchkeys.models.management import Organization, OrganizationProject
+from switchkeys.models.management import Organization
 
 
 class OrganizationSerializer(ModelSerializer):

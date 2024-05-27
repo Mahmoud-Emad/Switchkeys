@@ -2,6 +2,8 @@
 # Backend commands.
 CMD:=poetry run
 backend:=cd backend
+ts-client:=cd clients/typescript
+
 get-poetry:
 	curl -sSL https://install.python-poetry.org | python3 -
 migrate:
@@ -29,6 +31,7 @@ endif
 lint:
 	$(backend) && $(CMD) black .  --exclude=__init__.py
 	$(backend) && $(CMD) flake8 .  --exclude=__init__.py
+	$(ts-client) && yarn lint
 	# $(frontend) && yarn lint
 
 # Run examples

@@ -45,63 +45,63 @@ abstract class SwitchKeysRoutes {
     switch (endpoint) {
       // Auth, Users.
       case EndPoints.signUp:
-        return "${baseUrl}auth/signup/";
+        return "${baseUrl}/api/auth/signup/";
       case EndPoints.login:
-        return "${baseUrl}auth/login/";
+        return "${baseUrl}/api/auth/login/";
       case EndPoints.users:
-        return "${baseUrl}auth/users/";
+        return "${baseUrl}/api/auth/users/";
       case EndPoints.changePassword:
-        return "${baseUrl}auth/change-password/";
+        return "${baseUrl}/api/auth/change-password/";
       case EndPoints.refreshToken:
-        return "${baseUrl}auth/token/refresh/";
+        return "${baseUrl}/api/auth/token/refresh/";
       case EndPoints.usersId:
-        return "${baseUrl}users/${args![0]}/";
+        return "${baseUrl}/api/users/${args![0]}/";
 
       // Organizations
       case EndPoints.organizations:
-        return "${baseUrl}organizations/";
+        return "${baseUrl}/api/organizations/";
       case EndPoints.organizationsId:
-        return "${baseUrl}organizations/${args![0]}/";
+        return "${baseUrl}/api/organizations/${args![0]}/";
       case EndPoints.organizationsIdAddMember:
-        return "${baseUrl}organizations/${args![0]}/add-member/";
+        return "${baseUrl}/api/organizations/${args![0]}/add-member/";
       case EndPoints.organizationsIdRemoveMember:
-        return "${baseUrl}organizations/${args![0]}/remove-member/";
+        return "${baseUrl}/api/organizations/${args![0]}/remove-member/";
       case EndPoints.organizationsName:
-        return "${baseUrl}organizations/name/${args![0]}/";
+        return "${baseUrl}/api/organizations/name/${args![0]}/";
       case EndPoints.organizationsIdAllProjects:
-        return "${baseUrl}organizations/${args![0]}/projects/";
+        return "${baseUrl}/api/organizations/${args![0]}/projects/";
 
       // Environments
       case EndPoints.environments:
-        return "${baseUrl}environments/";
+        return "${baseUrl}/api/environments/";
       case EndPoints.environmentsKey:
-        return "${baseUrl}environments/key/${args![0]}/";
+        return "${baseUrl}/api/environments/key/${args![0]}/";
       case EndPoints.environmentsKeyAddUser:
-        return "${baseUrl}environments/key/${args![0]}/add-user/";
+        return "${baseUrl}/api/environments/key/${args![0]}/add-user/";
       case EndPoints.environmentsKeyRemoveUser:
-        return "${baseUrl}environments/key/${args![0]}/remove-user/";
+        return "${baseUrl}/api/environments/key/${args![0]}/remove-user/";
       case EndPoints.environmentsId:
-        return "${baseUrl}environments/${args![0]}/";
+        return "${baseUrl}/api/environments/${args![0]}/";
       case EndPoints.environmentAddFeature:
-        return "${baseUrl}environments/key/${args![0]}/features/";
+        return "${baseUrl}/api/environments/key/${args![0]}/features/";
       case EndPoints.environmentUpdateFeature:
-        return "${baseUrl}environments/key/${args![0]}/features/update/${args[1]}/";
+        return "${baseUrl}/api/environments/key/${args![0]}/features/update/${args[1]}/";
       case EndPoints.environmentDeleteFeature:
-        return "${baseUrl}environments/key/${args![0]}/features/delete/${args[1]}/";
+        return "${baseUrl}/api/environments/key/${args![0]}/features/delete/${args[1]}/";
       case EndPoints.environmentUserAddFeature:
-        return "${baseUrl}environments/key/${args![0]}/users/${args[1]}/features/set/";
+        return "${baseUrl}/api/environments/key/${args![0]}/users/${args[1]}/features/set/";
 
       // Projects
       case EndPoints.projects:
-        return "${baseUrl}projects/";
+        return "${baseUrl}/api/projects/";
       case EndPoints.projectsId:
-        return "${baseUrl}projects/${args![0]}/";
+        return "${baseUrl}/api/projects/${args![0]}/";
 
       // Groups
       case EndPoints.groups:
-        return "${baseUrl}groups/";
+        return "${baseUrl}/api/groups/";
       case EndPoints.groupsId:
-        return "${baseUrl}groups/${args![0]}/";
+        return "${baseUrl}/api/groups/${args![0]}/";
 
       default:
         throw ArgumentError("Invalid endpoint: $endpoint");

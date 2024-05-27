@@ -36,7 +36,7 @@ Future<void> organizationsMain() async {
     // ------------------------------------------------------------------------
     // Create a new organization named "SwitchKeys".
     var organization = await switchkeys.organizations.create(
-      name: "SwitchKeys",
+      name: "SwitchKeys2",
     );
     print("[+] Created organization name: ${organization.name}");
 

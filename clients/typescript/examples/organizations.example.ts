@@ -47,7 +47,7 @@ export async function organizationExample() {
     // --------------------------------------------------------------------------------------------------------------------
     // Create a new organization named "SwitchKeys".
     const organization = await switchkeys.organizations.create({
-      name: "SwitchKeys",
+      name: "SwitchKeys5",
     });
 
     console.log("[+] Created Organization:", organization);

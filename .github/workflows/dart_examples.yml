@@ -1,0 +1,35 @@
+name: Dart-Client run examples
+
+on:
+  push:
+    branches: 
+      [development, development_*]
+  pull_request:
+    branches: 
+      [development, development_*]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Dart
+      uses: dart-lang/setup-dart@v1
+      with:
+        sdk: '3.1.4'
+
+    - name: Install dependencies
+      run: cd clients/dart/switchkeys && dart pub get
+
+    - name: Create .env file
+      run: |
+        cd clients/dart/switchkeys
+        touch .env
+        echo BASE_URL=${{ secrets.BASE_URL }} >> .env
+        cat .env
+
+    - name: Run Examples
+      run: cd clients/dart/switchkeys && dart example.dart

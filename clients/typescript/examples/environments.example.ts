@@ -86,7 +86,7 @@ export async function environmentExample() {
     });
 
     console.log(`[+] Added user: ${username1}`, {
-      user1Features: environment.getUser(username1)?.features,
+      user1Features: environment.users.get(username1)?.features,
     });
 
     // --------------------------------------------------------------------------------------------------------------------
@@ -128,8 +128,23 @@ export async function environmentExample() {
 
     // Verify that the new feature is added to user1.
     console.log("[+] User1 Features after adding 'debug':", {
-      user1Features: environment.getUser(username1)?.features,
+      user1Features: environment.users.get(username1)?.features,
     });
+
+    // Check and add a feature for any user inside the environment with a different value.
+    const envUser = environment.users.get(username1);
+    const featureName = "theme";
+    if (envUser.hasFeature(featureName)) {
+      console.log(
+        `[+] User has the '${envUser.getFeature(featureName).name}' feature, the value is: '${envUser.getFeature(featureName).value}'.`
+      );
+    } else {
+      await envUser.setFeature({
+        name: featureName,
+        value: "dark"
+      })
+      console.log(`[+] Feature ${featureName} has been added to the user, th value is '${envUser.getFeature(featureName).value}'.`)
+    }
 
     // --------------------------------------------------------------------------------------------------------------------
     // Deleting the Created Organization

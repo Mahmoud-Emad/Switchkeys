@@ -1,3 +1,64 @@
+// ------------------------------------------------------------------------------------------------------------------------------------------
+//
+// [DEVELOPERS] Attention please: Before adding any helper method, ask yourself these three important questions:
+//
+// ------------------------------------------------------------------------------------------------------------------------------------------
+//
+// ###################################
+//  1. What does this method do?
+//  2. What is the actual need for it?
+//  3. Where should it be located?
+// ###################################
+//
+// ------------------------------------------------------------------------------------------------------------------------------------------
+//
+// Overview of `SwitchKeysProjects`:
+// The `SwitchKeysProjects` class is designed to manage a specific organization project, or even list all of them.
+//
+// Example Usage:
+//
+// If you have a valid organization, you first need to login and then use the organization id to get the organization.
+//
+// ```typescript
+// await switchkeys.auth.login({
+//   email: "email@example.com",
+//   password: "password"
+// });
+//
+// // Now, you can get the organization directly
+// const organization = await switchkeys.organizations.get({organizationID});
+// ```
+//
+// By default, the `get` method returns an instance of the `SwitchKeysOrganizationsServices` class,
+// which provides various methods to interact with the organization.
+//
+// Example Usage:
+//
+// Get the organization project:
+// ```typescript
+// const project = organization.project;
+// console.log({ project });
+// ```
+//
+// Creating a new project:
+// ```typescript
+// const project = await organization.createProject({
+//   name: { projectName },
+// });
+// console.log("Created project:", project);
+// ```
+//
+// ------------------------------------------------------------------------------------------------------------------------------------------
+//
+// Before implementing anything, please:
+// 1. Read the documentation first.
+// 2. Review the existing code to understand the context.
+// 3. Proceed with adding or modifying the code.
+//
+// Happy coding! xD
+// @Mahmoud-Emad
+// ------------------------------------------------------------------------------------------------------------------------------------------
+
 import { SwitchKeysRecordNotFoundError } from "../../core/exceptions";
 import { SwitchKeysRequest, SwitchKeysRequestMethod } from "../request/request";
 import { SwitchKeysApiRoutes } from "../request/routes";
@@ -11,32 +72,9 @@ import {
 /**
  * Represents a service for interacting with projects.
  */
-class SwitchKeysProject {
+class SwitchKeysProjects {
   private projectRoutes = SwitchKeysApiRoutes.projects;
   private request: SwitchKeysRequest = new SwitchKeysRequest();
-
-  // /**
-  //  * Updates an existing project.
-  //  * @param projectId - The ID of the project to update.
-  //  * @param data - Updated project data.
-  //  * @returns A promise that resolves to the updated project.
-  //  */
-  // async update(
-  //   projectId: number,
-  //   data: ISwitchKeysIProjectRequest
-  // ): Promise<IProjectResponse> {
-  //   const requestData = {
-  //     name: data.name,
-  //     organization_id: data.organizationId,
-  //   };
-  //   const url = this.projectRoutes.getById(projectId);
-  //   const response = await this.request.call(
-  //     url,
-  //     SwitchKeysRequestMethod.PUT,
-  //     requestData
-  //   );
-  //   return this.handleResponse(response);
-  // }
 
   /**
    * Retrieves a project by its ID.
@@ -150,4 +188,4 @@ class SwitchKeysProjectServices {
   }
 }
 
-export default SwitchKeysProject;
+export default SwitchKeysProjects;

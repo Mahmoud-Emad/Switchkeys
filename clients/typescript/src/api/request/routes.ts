@@ -1,26 +1,14 @@
-import * as dotenv from "dotenv";
-
-dotenv.config(); // Load environment variables from .env file
-
+const BASE_URL: string = "https://switchkeysbknd.gent02.dev.grid.tf/";
 /**
  * Represents authentication routes for making API requests.
  */
 class SwitchKeysAuthRoutes {
-  private BASE_URL: string;
-
-  /**
-   * Constructs a new SwitchKeysAuthRoutes instance.
-   */
-  constructor() {
-    this.BASE_URL = process.env.BASE_URL || "https://switchkeysbknd.gent02.dev.grid.tf/";
-  }
-
   /**
    * Gets the URL for user registration.
    * @returns The URL for user registration.
    */
   get registerURL(): string {
-    return `${this.BASE_URL}/api/auth/signup/`;
+    return `${BASE_URL}/api/auth/signup/`;
   }
 
   /**
@@ -28,7 +16,7 @@ class SwitchKeysAuthRoutes {
    * @returns The URL for user login.
    */
   get loginURL(): string {
-    return `${this.BASE_URL}/api/auth/login/`;
+    return `${BASE_URL}/api/auth/login/`;
   }
 }
 
@@ -36,21 +24,12 @@ class SwitchKeysAuthRoutes {
  * Represents user routes for making API requests.
  */
 class SwitchKeysUserRoutes {
-  private BASE_URL: string;
-
-  /**
-   * Constructs a new `SwitchKeysUserRoutes` instance.
-   */
-  constructor() {
-    this.BASE_URL = process.env.BASE_URL || "";
-  }
-
   /**
    * Gets the URL for user by its ID.
    * @returns The URL for getting a user.
    */
   getById(id: number): string {
-    return `${this.BASE_URL}/api/users/${id}/`;
+    return `${BASE_URL}/api/users/${id}/`;
   }
 
   /**
@@ -58,7 +37,7 @@ class SwitchKeysUserRoutes {
    * @returns The URL for getting a user.
    */
   getByEmail(userEmail: string): string {
-    return `${this.BASE_URL}/api/users/email/${userEmail}/`;
+    return `${BASE_URL}/api/users/email/${userEmail}/`;
   }
 }
 
@@ -66,21 +45,12 @@ class SwitchKeysUserRoutes {
  * Represents organization routes for making API requests.
  */
 class SwitchKeysOrganizationRoutes {
-  private BASE_URL: string;
-
-  /**
-   * Constructs a new `SwitchKeysUserRoutes` instance.
-   */
-  constructor() {
-    this.BASE_URL = process.env.BASE_URL || "";
-  }
-
   /**
    * Gets the URL for organization by its ID.
    * @returns The URL for getting an organization.
    */
   get create(): string {
-    return `${this.BASE_URL}/api/organizations/`;
+    return `${BASE_URL}/api/organizations/`;
   }
 
   /**
@@ -88,7 +58,7 @@ class SwitchKeysOrganizationRoutes {
    * @returns The URL for getting an organization.
    */
   getById(id: number): string {
-    return `${this.BASE_URL}/api/organizations/${id}/`;
+    return `${BASE_URL}/api/organizations/${id}/`;
   }
 
   /**
@@ -97,7 +67,7 @@ class SwitchKeysOrganizationRoutes {
    * @returns The URL for getting an organization adding member.
    */
   addMember(organizationId: number): string {
-    return `${this.BASE_URL}/api/organizations/${organizationId}/add-member/`;
+    return `${BASE_URL}/api/organizations/${organizationId}/add-member/`;
   }
 
   /**
@@ -105,7 +75,7 @@ class SwitchKeysOrganizationRoutes {
    * @returns The URL for getting an organization removing member.
    */
   removeMember(id: number): string {
-    return `${this.BASE_URL}/api/organizations/${id}/remove-member/`;
+    return `${BASE_URL}/api/organizations/${id}/remove-member/`;
   }
 }
 
@@ -113,21 +83,12 @@ class SwitchKeysOrganizationRoutes {
  * Represents project routes for making API requests.
  */
 class SwitchKeysProjectRoutes {
-  private BASE_URL: string;
-
-  /**
-   * Constructs a new SwitchKeysAuthRoutes instance.
-   */
-  constructor() {
-    this.BASE_URL = process.env.BASE_URL || "";
-  }
-
   /**
    * Gets the URL for creating a project.
    * @returns The URL for creating a project.
    */
   get create(): string {
-    return `${this.BASE_URL}/api/projects/`;
+    return `${BASE_URL}/api/projects/`;
   }
 
   /**
@@ -135,7 +96,7 @@ class SwitchKeysProjectRoutes {
    * @returns The URL for getting an project.
    */
   getById(id: number): string {
-    return `${this.BASE_URL}/api/projects/${id}/`;
+    return `${BASE_URL}/api/projects/${id}/`;
   }
 
   /**
@@ -143,28 +104,19 @@ class SwitchKeysProjectRoutes {
    * @returns The URL for all organization projects.
    */
   getAllOrganizationProjects(id: number): string {
-    return `${this.BASE_URL}/api/organizations/${id}/projects/`;
+    return `${BASE_URL}/api/organizations/${id}/projects/`;
   }
 }
 /**
  * Represents environment routes for making API requests.
  */
 class SwitchKeysEnvironmentRoutes {
-  private BASE_URL: string;
-
-  /**
-   * Constructs a new `SwitchKeysEnvironmentRoutes` instance.
-   */
-  constructor() {
-    this.BASE_URL = process.env.BASE_URL || "";
-  }
-
   /**
    * Gets the URL for creating a environment.
    * @returns The URL for creating a environment.
    */
   get create(): string {
-    return `${this.BASE_URL}/api/environments/`;
+    return `${BASE_URL}/api/environments/`;
   }
 
   /**
@@ -172,7 +124,7 @@ class SwitchKeysEnvironmentRoutes {
    * @returns The URL for loading an environment by its key.
    */
   load(environmentKey: string): string {
-    return `${this.BASE_URL}/api/environments/key/${environmentKey}/`;
+    return `${BASE_URL}/api/environments/key/${environmentKey}/`;
   }
 
   /**
@@ -180,7 +132,7 @@ class SwitchKeysEnvironmentRoutes {
    * @returns The URL for deleting an environment by its key.
    */
   delete(environmentKey: string): string {
-    return `${this.BASE_URL}/api/environments/key/${environmentKey}/`;
+    return `${BASE_URL}/api/environments/key/${environmentKey}/`;
   }
 
   /**
@@ -188,7 +140,7 @@ class SwitchKeysEnvironmentRoutes {
    * @returns The URL for adding a feature on environment by the environment key.
    */
   addFeature(environmentKey: string): string {
-    return `${this.BASE_URL}/api/environments/key/${environmentKey}/features/`;
+    return `${BASE_URL}/api/environments/key/${environmentKey}/features/`;
   }
 
   /**
@@ -196,7 +148,7 @@ class SwitchKeysEnvironmentRoutes {
    * @returns The URL for updating a feature on environment by the environment key.
    */
   updateFeature(environmentKey: string, featrueName: string): string {
-    return `${this.BASE_URL}/api/environments/key/${environmentKey}/features/update/${featrueName}/`;
+    return `${BASE_URL}/api/environments/key/${environmentKey}/features/update/${featrueName}/`;
   }
 
   /**
@@ -204,7 +156,7 @@ class SwitchKeysEnvironmentRoutes {
    * @returns The URL for adding a user on environment by the environment key.
    */
   addUser(environmentKey: string): string {
-    return `${this.BASE_URL}/api/environments/key/${environmentKey}/add-user/`;
+    return `${BASE_URL}/api/environments/key/${environmentKey}/add-user/`;
   }
 
   /**
@@ -212,7 +164,7 @@ class SwitchKeysEnvironmentRoutes {
    * @returns The URL for removing a user from an environment by the environment key.
    */
   removeUser(environmentKey: string): string {
-    return `${this.BASE_URL}/api/environments/key/${environmentKey}/remove-user/`;
+    return `${BASE_URL}/api/environments/key/${environmentKey}/remove-user/`;
   }
 }
 
@@ -220,21 +172,12 @@ class SwitchKeysEnvironmentRoutes {
  * Represents environment user routes for making API requests.
  */
 class SwitchKeysEnvironmentUsersRoutes {
-  private BASE_URL: string;
-
-  /**
-   * Constructs a new `SwitchKeysEnvironmentUsersRoutes` instance.
-   */
-  constructor() {
-    this.BASE_URL = process.env.BASE_URL || "";
-  }
-
   /**
    * Gets the URL for adding a feature for a user on environment by the environment key.
    * @returns The URL for adding a feature for a user on environment by the environment key.
    */
   addFeature(environmentKey: string, username: string): string {
-    return `${this.BASE_URL}/api/environments/key/${environmentKey}/users/${username}/features/set/`;
+    return `${BASE_URL}/api/environments/key/${environmentKey}/users/${username}/features/set/`;
   }
 }
 
@@ -242,21 +185,12 @@ class SwitchKeysEnvironmentUsersRoutes {
  * Represents user routes for making API requests.
  */
 class SwitchKeysUsersRoutes {
-  private BASE_URL: string;
-
-  /**
-   * Constructs a new `SwitchKeysUsersRoutes` instance.
-   */
-  constructor() {
-    this.BASE_URL = process.env.BASE_URL || "";
-  }
-
   /**
    * Gets the URL for getting a user by the user-email.
    * @returns The URL for getting a user by the user-email.
    */
   getByEmail(email: string): string {
-    return `${this.BASE_URL}/api/users/email/${email}`;
+    return `${BASE_URL}/api/users/email/${email}`;
   }
 }
 

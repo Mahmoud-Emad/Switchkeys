@@ -24,13 +24,6 @@ jobs:
     - name: Install dependencies
       run: cd clients/typescript &&  yarn install
 
-    - name: Create .env file
-      run: |
-        cd clients/typescript
-        touch .env
-        echo BASE_URL=${{ secrets.BASE_URL }} >> .env
-        cat .env
-
     - name: Compile TypeScript
       run: cd clients/typescript &&  yarn build
 

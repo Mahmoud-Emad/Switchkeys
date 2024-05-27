@@ -24,12 +24,5 @@ jobs:
     - name: Install dependencies
       run: cd clients/dart/switchkeys && dart pub get
 
-    - name: Create .env file
-      run: |
-        cd clients/dart/switchkeys
-        touch .env
-        echo BASE_URL=${{ secrets.BASE_URL }} >> .env
-        cat .env
-
     - name: Run Examples
       run: cd clients/dart/switchkeys && dart example.dart

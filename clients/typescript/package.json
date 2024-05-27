@@ -43,7 +43,6 @@
     "@typescript-eslint/parser": "^7.10.0",
     "axios": "^1.6.8",
     "config-ini-parser": "^1.6.1",
-    "dotenv": "^16.4.5",
     "eslint": "^8.37.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-prettier": "^4.2.1",

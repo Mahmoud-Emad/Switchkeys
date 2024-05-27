@@ -1,5 +1,3 @@
-import 'package:dotenv/dotenv.dart';
-
 enum EndPoints {
   // Endpoints without parameters
   signUp,
@@ -38,9 +36,7 @@ enum EndPoints {
 }
 
 abstract class SwitchKeysRoutes {
-  static final env = DotEnv()..load();
-  static final String baseUrl =
-      env['BASE_URL'] ?? "https://switchkeysbknd.gent02.dev.grid.tf/";
+  static final String baseUrl = "https://switchkeysbknd.gent02.dev.grid.tf/";
 
   static String getRoute(EndPoints endpoint, [List<String>? args]) {
     switch (endpoint) {

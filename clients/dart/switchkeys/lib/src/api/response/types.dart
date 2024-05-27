@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:switchkeys/src/api/request/types.dart';
 
 class SwitchKeysEnvironmentUserResponse {

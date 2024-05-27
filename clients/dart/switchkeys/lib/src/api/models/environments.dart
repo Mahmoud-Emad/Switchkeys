@@ -1,3 +1,4 @@
+import 'package:switchkeys/src/api/models/environment.users.dart';
 import 'package:switchkeys/src/api/request/request.dart';
 import 'package:switchkeys/src/api/request/types.dart';
 import 'package:switchkeys/src/api/response/types.dart';
@@ -14,7 +15,8 @@ class SwitchKeysEnvironments {
   /// Returns a [SwitchKeysEnvironmentServices] instance.
   SwitchKeysEnvironmentServices __parse(dynamic data) {
     SwitchKeysEnvironmentResponse environment = parseEnvironment(data);
-    return SwitchKeysEnvironmentServices(environment);
+    final users = SwitchKeysEnvironmentUsers(environment);
+    return SwitchKeysEnvironmentServices(environment, users);
   }
 
   /// Creates a new environment.
@@ -150,9 +152,10 @@ class SwitchKeysEnvironments {
 /// Class for managing environment services.
 class SwitchKeysEnvironmentServices {
   final SwitchKeysEnvironmentResponse __environment;
+  final SwitchKeysEnvironmentUsers users;
 
   /// Constructs an instance of [SwitchKeysEnvironmentServices] with the given [__environment].
-  const SwitchKeysEnvironmentServices(this.__environment);
+  const SwitchKeysEnvironmentServices(this.__environment, this.users);
 
   /// The environment ID.
   int get id => __environment.id;
@@ -176,11 +179,13 @@ class SwitchKeysEnvironmentServices {
   SwitchKeysOrganizationResponse? get organization =>
       __environment.project.organization;
 
-  /// The environment users.
-  List<SwitchKeysEnvironmentUserResponse> get users => __environment.users;
-
   /// The environment features.
   List<SwitchKeysFeature> get features => __environment.features;
+
+  /// Returns the environment users.
+  List<SwitchKeysEnvironmentUserResponse> getUsers() {
+    return __environment.users;
+  }
 
   /// Retrieves the environment name based on the environment key.
   String getEnvironmentName() {
@@ -288,9 +293,7 @@ class SwitchKeysEnvironmentServices {
   }) async {
     String apiUrl = SwitchKeysRoutes.getRoute(
       EndPoints.environmentDeleteFeature,
-      [
-        __environment.environmentKey.toString(),
-      ],
+      [__environment.environmentKey.toString(), featureName],
     );
 
     try {
@@ -371,9 +374,10 @@ class SwitchKeysEnvironmentServices {
         __environment.environmentKey.toString(),
       ],
     );
-    String deviceType = (user.device?.deviceType == SwitchKeyDeviceType.android)
-        ? 'android'
-        : 'iphone';
+    String deviceType =
+        (user.device?.deviceType == SwitchKeyUserDeviceType.android)
+            ? 'android'
+            : 'iphone';
 
     Map<String, dynamic> payload = {
       "username": user.username,

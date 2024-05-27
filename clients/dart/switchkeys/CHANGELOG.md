@@ -1,5 +1,14 @@
 # SwitchKeys Changelog
 
+## Version 1.1.6
+
+## What's Changed (1.1.6)
+
+* feat: Added TS example runner. by @Mahmoud-Emad in https://github.com/Mahmoud-Emad/Switchkeys/pull/29
+* feat: Updated the Environment User Interface with the Services class, so now the developer can manage the user inside the environment. by @Mahmoud-Emad in https://github.com/Mahmoud-Emad/Switchkeys/pull/30
+
+**Full Changelog**: https://github.com/Mahmoud-Emad/Switchkeys/compare/v1.0.3...v1.0.5
+
 ## Version 1.1.5
 
 ## What's Changed (1.1.5)

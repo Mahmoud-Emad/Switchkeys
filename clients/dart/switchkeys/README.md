@@ -8,7 +8,7 @@ To install the SwitchKeys Dart client, add it as a dependency to your Dart proje
 
 ```yaml
 dependencies:
-  switchkeys: ^1.1.5
+  switchkeys: ^1.1.6
 ```
 
 Then, run the following command in your terminal to fetch the package:

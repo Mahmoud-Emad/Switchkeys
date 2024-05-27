@@ -1,0 +1,32 @@
+name: TS-Client run examples
+
+on:
+  push:
+    branches: 
+      [development, development_*]
+  pull_request:
+    branches: 
+      [development, development_*]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18.18.0'
+
+    - name: Install dependencies
+      run: cd clients/typescript &&  yarn install
+
+    - name: Compile TypeScript
+      run: cd clients/typescript &&  yarn build
+
+    - name: Run Examples
+      run:  cd clients/typescript && npx ts-node ./example.ts
+

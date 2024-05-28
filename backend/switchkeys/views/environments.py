@@ -59,7 +59,7 @@ class ProjectEnvironmentKeyApiView(ListAPIView):
 
     serializer_class = ProjectEnvironmentSerializer
 
-    def get_queryset(self):
+    def get(self, request: Request, environment_key: UUID):
         """Get the queryset of projects for the specified organization"""
         environment_key = self.kwargs.get("environment_key")
 
@@ -75,11 +75,6 @@ class ProjectEnvironmentKeyApiView(ListAPIView):
                 message="The project environment does not exist."
             )
 
-        return environment
-
-    def get(self, request: Request, environment_key: UUID):
-        """Get an environment exists on a project"""
-        environment = self.get_queryset()
         return CustomResponse.success(
             message="Environment found.",
             data=self.serializer_class(environment).data,

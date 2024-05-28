@@ -36,7 +36,7 @@ enum EndPoints {
 }
 
 abstract class SwitchKeysRoutes {
-  static final String baseUrl = "https://switchkeysbknd.gent02.dev.grid.tf/";
+  static final String baseUrl = "http://127.0.0.1:8000/";
 
   static String getRoute(EndPoints endpoint, [List<String>? args]) {
     switch (endpoint) {

@@ -1,7 +1,7 @@
 {
   "name": "@switchkeys/ts-client",
   "author": "Mahmoud Emad",
-  "version": "1.4.7",
+  "version": "1.5.0",
   "description": "The TypeScript client facilitates seamless management and interaction with the SwitchKeys system. It empowers users to effortlessly create organizations, establish projects within them, and subsequently create environments. Users can efficiently add users and features to these environments, streamlining project management processes. This client ensures smooth project operations without the need for redeployment after introducing new features. it enhances the management of projects with robust capabilities.",
   "repository": "https://github.com/Mahmoud-Emad/Switchkeys/tree/master/clients/typescript",
   "homepage": "https://github.com/Mahmoud-Emad/Switchkeys/blob/master/clients/typescript/README.md",
@@ -38,7 +38,6 @@
   },
   "dependencies": {
     "@types/node": "^20.12.7",
-    "@types/uuid-validate": "^0.0.3",
     "@typescript-eslint/eslint-plugin": "^7.10.0",
     "@typescript-eslint/parser": "^7.10.0",
     "axios": "^1.6.8",
@@ -47,7 +46,6 @@
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-prettier": "^4.2.1",
     "prettier": "^3.2.5",
-    "typescript": "^5.4.5",
-    "uuid-validate": "^0.0.3"
+    "typescript": "^5.4.5"
   }
 }

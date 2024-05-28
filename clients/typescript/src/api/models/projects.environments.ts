@@ -95,6 +95,7 @@ import {
   SwitchKeysRecordNotFoundError,
   SwitchKeysValidationError,
 } from "../../core/exceptions";
+import { UUIDValidators } from "../../utils/validators";
 import { SwitchKeysRequest, SwitchKeysRequestMethod } from "../request/request";
 import { SwitchKeysApiRoutes } from "../request/routes";
 import {
@@ -107,7 +108,6 @@ import {
   EnvironmentResponse,
   EnvironmentUserResponse,
 } from "../response/response";
-import UUIDValidators from "uuid-validate";
 import {
   ISwitchKeysEnvironmentFeaturesResponse,
   ISwitchKeysEnvironmentResponse,
@@ -182,7 +182,7 @@ class SwitchKeysEnvironment {
 /**
  * Class representing the services available for a SwitchKeys Environment.
  */
-class SwitchKeysEnvironmentServices {
+export class SwitchKeysEnvironmentServices {
   private environmentRoutes = SwitchKeysApiRoutes.environments;
   private request: SwitchKeysRequest = new SwitchKeysRequest();
   private environment: ISwitchKeysEnvironmentResponse;

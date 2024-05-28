@@ -1,4 +1,4 @@
-const BASE_URL: string = "https://switchkeysbknd.gent02.dev.grid.tf/";
+const BASE_URL: string = "http://127.0.0.1:8000/";
 /**
  * Represents authentication routes for making API requests.
  */

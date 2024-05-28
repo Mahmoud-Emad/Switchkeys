@@ -24,5 +24,5 @@ jobs:
     - name: Install dependencies
       run: cd clients/dart/switchkeys && dart pub get
 
-    - name: Run Examples
-      run: cd clients/dart/switchkeys && dart example.dart
+    # - name: Run Examples
+      # run: cd clients/dart/switchkeys && dart example.dart

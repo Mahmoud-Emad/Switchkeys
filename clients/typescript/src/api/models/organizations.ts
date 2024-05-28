@@ -78,12 +78,12 @@ import {
   ISwitchKeysProjectResponse,
 } from "../response/types";
 import SwitchKeysOrganizationMember from "./organizations.members";
-import SwitchKeysProject from "./organizations.projects";
+import { SwitchKeysProjects } from "./organizations.projects";
 
 /**
  * Class representing operations related to organizations.
  */
-class SwitchKeysOrganizations {
+export class SwitchKeysOrganizations {
   private organizationRoutes = SwitchKeysApiRoutes.organizations;
   private request: SwitchKeysRequest = new SwitchKeysRequest();
 
@@ -147,16 +147,16 @@ class SwitchKeysOrganizations {
   }
 }
 
-class SwitchKeysOrganizationsServices {
+export class SwitchKeysOrganizationsServices {
   private organization: ISwitchKeysOrganizationResponse;
   private organizationRoutes = SwitchKeysApiRoutes.organizations;
   private projectRoutes = SwitchKeysApiRoutes.projects;
   private request: SwitchKeysRequest = new SwitchKeysRequest();
 
-  projects: SwitchKeysProject;
+  projects: SwitchKeysProjects;
   constructor(organization: ISwitchKeysOrganizationResponse) {
     this.organization = organization;
-    this.projects = new SwitchKeysProject();
+    this.projects = new SwitchKeysProjects();
   }
 
   /**
@@ -312,4 +312,3 @@ class SwitchKeysOrganizationsServices {
     return organization;
   }
 }
-export default SwitchKeysOrganizations;

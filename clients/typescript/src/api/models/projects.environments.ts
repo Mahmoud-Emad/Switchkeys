@@ -115,12 +115,12 @@ import {
   ISwitchKeysOrganizationResponse,
   ISwitchKeysProjectResponse,
 } from "../response/types";
-import SwitchKeysEnvironmentUsers  from "./environment.users";
+import { SwitchKeysEnvironmentUsers }  from "./environment.users";
 
 /**
  * Class representing a SwitchKeys Environment.
  */
-class SwitchKeysEnvironment {
+export class SwitchKeysEnvironment {
   private environmentRoutes = SwitchKeysApiRoutes.environments;
   private request: SwitchKeysRequest = new SwitchKeysRequest();
 
@@ -381,5 +381,3 @@ export class SwitchKeysEnvironmentServices {
     return this.environment.users;
   }
 }
-
-export default SwitchKeysEnvironment;

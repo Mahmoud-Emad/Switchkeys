@@ -1,7 +1,7 @@
 import SwitchKeysAuth from "../api/models/auth";
-import SwitchKeysOrganizations from "../api/models/organizations";
-import SwitchKeysProject from "../api/models/organizations.projects";
-import SwitchKeysEnvironment from "../api/models/projects.environments";
+import { SwitchKeysOrganizations } from "../api/models/organizations";
+import { SwitchKeysProjects } from "../api/models/organizations.projects";
+import { SwitchKeysEnvironment } from "../api/models/projects.environments";
 import SwitchKeysUsers from "../api/models/users";
 
 /**
@@ -15,8 +15,8 @@ class SwitchKeys {
   users: SwitchKeysUsers = new SwitchKeysUsers();
   /** Instance of `SwitchKeysOrganization` for managing `organization-related` operations. */
   organizations: SwitchKeysOrganizations = new SwitchKeysOrganizations();
-  /** Instance of `SwitchKeysProject` for managing `project-related` operations. */
-  projects: SwitchKeysProject = new SwitchKeysProject();
+  /** Instance of `SwitchKeysProjects` for managing `projects-related` operations. */
+  projects: SwitchKeysProjects = new SwitchKeysProjects();
   /** Instance of `SwitchKeysEnvironment` for managing environment-related operations. */
   environments: SwitchKeysEnvironment = new SwitchKeysEnvironment();
 }

@@ -80,7 +80,7 @@ import {
 /**
  * Class for managing environment user operations.
  */
-class SwitchKeysEnvironmentUsers {
+export class SwitchKeysEnvironmentUsers {
   private environment: ISwitchKeysEnvironmentResponse;
 
   constructor(environment: ISwitchKeysEnvironmentResponse){
@@ -112,7 +112,7 @@ class SwitchKeysEnvironmentUsers {
   }
 }
 
-class SwitchKeysEnvironmentUserServices {
+export class SwitchKeysEnvironmentUserServices {
   private user: ISwitchKeysEnvironmentUserResponse;
   private environment: ISwitchKeysEnvironmentResponse;
 
@@ -181,5 +181,3 @@ class SwitchKeysEnvironmentUserServices {
     return response ? userFeature.parse(response) : userFeature.init();
   }
 }
-
-export default SwitchKeysEnvironmentUsers;

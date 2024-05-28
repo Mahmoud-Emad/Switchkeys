@@ -72,7 +72,7 @@ import {
 /**
  * Represents a service for interacting with projects.
  */
-class SwitchKeysProjects {
+export class SwitchKeysProjects {
   private projectRoutes = SwitchKeysApiRoutes.projects;
   private request: SwitchKeysRequest = new SwitchKeysRequest();
 
@@ -122,7 +122,7 @@ class SwitchKeysProjects {
   }
 }
 
-class SwitchKeysProjectServices {
+export class SwitchKeysProjectServices {
   private project: ISwitchKeysProjectResponse;
   private projectRoutes = SwitchKeysApiRoutes.projects;
   private request: SwitchKeysRequest = new SwitchKeysRequest();
@@ -187,5 +187,3 @@ class SwitchKeysProjectServices {
     return await this.request.call(url, SwitchKeysRequestMethod.DELETE);
   }
 }
-
-export default SwitchKeysProjects;

@@ -171,16 +171,16 @@ class ProjectResponse implements ISwitchKeysProjectResponse {
     )[0];
     const environments: ISwitchKeysDefaultEnvironmentsResponse = {
       development: {
-        environmentKey: development.environment_key,
-        name: development.name,
+        environmentKey: development ? development.environment_key: null,
+        name: development ? development.name : null,
       },
       production: {
-        environmentKey: production.environment_key,
-        name: production.name,
+        environmentKey: production ? production.environment_key : null,
+        name: production ? production.name : null,
       },
       staging: {
-        environmentKey: staging.environment_key,
-        name: staging.name,
+        environmentKey: staging ? staging.environment_key : null,
+        name: staging ? staging.name : null,
       },
     };
 

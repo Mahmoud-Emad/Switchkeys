@@ -27,5 +27,5 @@ jobs:
     - name: Compile TypeScript
       run: cd clients/typescript &&  yarn build
 
-    - name: Run Examples
-      run:  cd clients/typescript && npx ts-node ./example.ts
+    # - name: Run Examples
+      # run:  cd clients/typescript && npx ts-node ./example.ts

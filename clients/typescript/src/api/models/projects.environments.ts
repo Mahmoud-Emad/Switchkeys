@@ -182,7 +182,7 @@ class SwitchKeysEnvironment {
 /**
  * Class representing the services available for a SwitchKeys Environment.
  */
-class SwitchKeysEnvironmentServices {
+export class SwitchKeysEnvironmentServices {
   private environmentRoutes = SwitchKeysApiRoutes.environments;
   private request: SwitchKeysRequest = new SwitchKeysRequest();
   private environment: ISwitchKeysEnvironmentResponse;

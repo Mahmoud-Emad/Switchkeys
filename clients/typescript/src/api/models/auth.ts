@@ -21,7 +21,6 @@ class SwitchKeysAuth {
   private config = new SwitchKeysConfig();
   private authRoutes = SwitchKeysApiRoutes.auth;
   private request: SwitchKeysRequest = new SwitchKeysRequest();
-  private configFile: string = "config.ini";
 
   /**
    * Registers a new user with the SwitchKeys authentication service.
@@ -56,7 +55,6 @@ class SwitchKeysAuth {
         this.tokens.accessToken = userData.accessToken;
         this.tokens.refreshToken = userData.refreshToken;
         this.config.write(this.tokens);
-        console.info(`Tokens written to: ${this.configFile}.`);
       }
     }
 
@@ -73,8 +71,7 @@ class SwitchKeysAuth {
         accessToken: "",
         refreshToken: "",
       },
-      this.configFile,
-      true
+      true,
     );
   }
 

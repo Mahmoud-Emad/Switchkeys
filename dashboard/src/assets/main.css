@@ -1,0 +1,36 @@
+:root{
+  --blue-bg: radial-gradient(#1a1f35 25%, #202020 100%);
+  --blue-text-color: #fff;
+}
+
+h1, h2, h3, h4, h5, h6, small, strong, p {
+  font-family: inherit;
+  color: var(--blue-text-color) !important;
+}
+
+a{
+  text-decoration: none;
+}
+
+.appbar-custom{
+  background: var(--blue-bg) !important;
+}
+
+.navigation-drawer-custom{
+  background: var(--blue-bg) !important;
+}
+
+.v-application{
+  background: var(--blue-bg) !important;
+}
+
+.app-card, .org-card, .project-card, .env-card {
+  background: rgba(255, 255, 255, .1) !important;
+  color: var(--blue-text-color) !important;
+  transition: 0.2s !important;
+}
+
+.app-card:hover {
+  scale: 1.005;
+  background: rgba(255, 255, 255, 0.247) !important;
+}

@@ -5,11 +5,14 @@
       @show:loading="isLoading = true"
       @show:auth-dialogs="isShowAuthDialog = true"
       @close:loading="isLoading = false"
-      @close:auth-dialogs="() => {
-        isLoading = false;
-        isShowAuthDialog = false;
-      }"
+      @close:auth-dialogs="
+        () => {
+          isLoading = false
+          isShowAuthDialog = false
+        }
+      "
     />
+
     <v-navigation-drawer
       app
       class="navigation-drawer-custom"
@@ -17,7 +20,10 @@
     >
       <v-list-item class="mt-4">
         <div class="d-flex align-center">
-          <v-img src="https://randomuser.me/api/portraits/men/85.jpg" class="avatar-img" />
+          <v-img
+            src="https://randomuser.me/api/portraits/men/85.jpg"
+            class="avatar-img"
+          />
           <p class="ml-2">
             Mahmoud Emad
             <small>Owner</small>
@@ -50,29 +56,62 @@
           link
         >
           <template #prepend>
-            <v-icon :style="{ marginRight: '-20px', color: tab.iconColor }">{{ tab.icon }}</v-icon>
+            <v-icon
+              :style="{
+                marginRight: '-20px',
+                color: tab.iconColor,
+              }"
+              >{{ tab.icon }}</v-icon
+            >
           </template>
         </v-list-item>
       </v-list>
       <template v-slot:append>
         <div class="pa-2 mb-3">
-          <v-btn block variant="tonal" color="primary" @click="logout"> Logout </v-btn>
+          <v-btn block variant="tonal" color="primary" @click="logout">
+            Logout
+          </v-btn>
         </div>
       </template>
     </v-navigation-drawer>
-    <v-main :style="{ paddingTop: '40px', paddingLeft: '280px' }">
-      <h2 v-if="activeTab">
-        <strong>{{ activeTab.title }}</strong>
-      </h2>
+    <v-main>
+      <v-container class="mt-5">
+        <div v-if="activeTab">
+          <div class="d-flex align-center">
+            <v-tooltip v-if="prevRoute.length > 1">
+              <template #default>
+                <p>Back to the {{ prevRoute[0] }} page?</p>
+              </template>
+              <template #activator="{ props }">
+                <v-icon
+                  v-bind="props"
+                  color="white"
+                  class="mr-1"
+                  size="35"
+                  style="cursor: pointer"
+                  @Click="() => router.push(`/${prevRoute[0]}`)"
+                >
+                  mdi-arrow-left
+                </v-icon>
+              </template>
+            </v-tooltip>
+            <h2>
+              <strong>{{ activeTab.title }}</strong>
+            </h2>
+          </div>
+        </div>
+      </v-container>
+
       <router-view></router-view>
     </v-main>
   </v-app>
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref, watch } from 'vue'
 import { debounce } from 'lodash-es'
-import { useRouter } from 'vue-router'
+import { defineComponent, onMounted, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+
 import DashboardLoading from '../components/ui/DashboardLoading.vue'
 
 type TabType = {
@@ -92,7 +131,8 @@ export default defineComponent({
     const isShowAuthDialog = ref(true)
     const findSetting = ref<string>('')
     const router = useRouter()
-    const TOKENS_KEY = import.meta.env.VITE_SWITCHKEYS_TOKENS;
+    const route = useRoute()
+    const TOKENS_KEY = import.meta.env.VITE_SWITCHKEYS_TOKENS
 
     const tabs: TabType[] = [
       {
@@ -101,7 +141,7 @@ export default defineComponent({
         title: 'Dashboard',
         value: 'dashboard',
         iconColor: 'deepskyblue',
-        route: '/dashboard'
+        route: '/dashboard',
       },
       {
         id: 2,
@@ -109,7 +149,7 @@ export default defineComponent({
         title: 'Organizations',
         value: 'organizations',
         iconColor: 'orange',
-        route: '/organizations'
+        route: '/organizations',
       },
       {
         id: 3,
@@ -117,7 +157,7 @@ export default defineComponent({
         title: 'Projects',
         value: 'projects',
         iconColor: 'dodgerblue',
-        route: '/projects'
+        route: '/projects',
       },
       // {
       //   id: 4,
@@ -133,7 +173,7 @@ export default defineComponent({
         title: 'Environments',
         value: 'environments',
         iconColor: 'green',
-        route: '/environments'
+        route: '/environments',
       },
       {
         id: 6,
@@ -141,7 +181,7 @@ export default defineComponent({
         title: 'Account',
         value: 'account',
         iconColor: 'deepskyblue',
-        route: '/account'
+        route: '/account',
       },
       {
         id: 7,
@@ -149,8 +189,8 @@ export default defineComponent({
         title: 'Settings',
         value: 'settings',
         iconColor: 'orange',
-        route: '/settings'
-      }
+        route: '/settings',
+      },
     ]
 
     const filteredTabs = ref<TabType[]>(tabs)
@@ -199,16 +239,24 @@ export default defineComponent({
       window.location.reload()
     }
 
+    const prevRoute = ref<string[]>([])
+
+    watch(route, () => {
+      prevRoute.value = route.path.split('/').filter((r) => r.length > 0)
+    })
+
     return {
       isLoading,
       isShowAuthDialog,
       findSetting,
       activeTab,
       filteredTabs,
+      prevRoute,
+      router,
 
       logout,
     }
-  }
+  },
 })
 </script>
 

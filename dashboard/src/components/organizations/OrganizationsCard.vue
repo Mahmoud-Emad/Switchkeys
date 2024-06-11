@@ -1,5 +1,5 @@
 <template>
-  <v-card class="org-card mt-6" style="width: 100%">
+  <v-card class="org-card mt-6">
     <v-card-title>
       <h1 class="org-logo">{{ generateCardLogo(organization.title) }}</h1>
       <div class="d-flex align-center">
@@ -8,7 +8,9 @@
       </div>
     </v-card-title>
     <v-card-text>
-      <v-chip color="success" variant="tonal">{{ organization.projects }}</v-chip>
+      <v-chip color="success" variant="tonal">{{
+        organization.projects
+      }}</v-chip>
       Projects associated, There are
       <v-chip color="yellow" variant="tonal">{{ organization.members }}</v-chip>
       members.
@@ -22,7 +24,10 @@
               <small class="mr-2">Created at</small>
               <small>{{ organization.createdAt }}</small>
             </v-col>
-            <v-col cols="12" class="pa-0 ma-0 ml-4 d-flex align-center mb-3 org-actions-dates">
+            <v-col
+              cols="12"
+              class="pa-0 ma-0 ml-4 d-flex align-center mb-3 org-actions-dates"
+            >
               <small class="mr-2">Modified at</small>
               <small>{{ organization.modifiedAt }}</small>
             </v-col>
@@ -47,15 +52,16 @@
 <script lang="ts">
 import { defineComponent, type PropType } from 'vue'
 import { useRouter } from 'vue-router'
-import type { IOrganization } from "@/utils/types"
-import { generateCardLogo } from '@/utils/generators';
+
+import { generateCardLogo } from '../../utils/generators'
+import type { IOrganization } from '../../utils/types'
 
 export default defineComponent({
   name: 'OrganizationsCard',
   props: {
     organization: {
       type: Object as PropType<IOrganization>,
-      required: true
+      required: true,
     },
     noView: {
       type: Boolean,
@@ -72,9 +78,9 @@ export default defineComponent({
 
     return {
       navigateToOrganization,
-      generateCardLogo
+      generateCardLogo,
     }
-  }
+  },
 })
 </script>
 

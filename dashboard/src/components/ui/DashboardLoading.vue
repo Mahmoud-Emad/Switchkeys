@@ -6,15 +6,19 @@
     </div>
 
     <v-container v-if="showSignUpDialog">
-      <sign-up-component :open-dialog="showSignUpDialog" @update:close-dialog="closeSignUpDialog" />
+      <sign-up-component
+        :open-dialog="showSignUpDialog"
+        @update:close-dialog="closeSignUpDialog"
+      />
     </v-container>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref, watch, onUnmounted } from 'vue'
-import SignUpComponent from '../auth/SignUpComponent.vue'
 import { AtomSpinner } from 'epic-spinners'
+import { defineComponent, onMounted, onUnmounted, ref, watch } from 'vue'
+
+import SignUpComponent from '../auth/SignUpComponent.vue'
 
 export default defineComponent({
   name: 'HomeComponent',
@@ -22,10 +26,15 @@ export default defineComponent({
   props: {
     isLoading: {
       type: Boolean,
-      required: true
-    }
+      required: true,
+    },
   },
-  emits: ['close:loading', 'show:loading', 'show:auth-dialogs', 'close:auth-dialogs'],
+  emits: [
+    'close:loading',
+    'show:loading',
+    'show:auth-dialogs',
+    'close:auth-dialogs',
+  ],
 
   setup(props, { emit }) {
     const showSignUpDialog = ref(false)
@@ -63,7 +72,7 @@ export default defineComponent({
       const tokens = localStorage.getItem(TOKENS_KEY)
       if (tokens) {
         // TODO: Validate the access token or use the refresh token to get new one.
-        stopLoading(); // Remove this if validation logic will keep loading
+        stopLoading() // Remove this if validation logic will keep loading
         emit('close:auth-dialogs')
       } else {
         showSignUpDialog.value = true
@@ -89,9 +98,9 @@ export default defineComponent({
       showSignUpDialog,
       loadingMessage,
 
-      closeSignUpDialog
+      closeSignUpDialog,
     }
-  }
+  },
 })
 </script>
 

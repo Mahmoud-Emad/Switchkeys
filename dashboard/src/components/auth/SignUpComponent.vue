@@ -16,8 +16,8 @@
               <div class="w-100">
                 <h1>Get started</h1>
                 <small class="text-gray">
-                  It looks like you're new to our dashboard. You can easily sign up using one of our
-                  authentication methods.
+                  It looks like you're new to our dashboard. You can easily sign
+                  up using one of our authentication methods.
                 </small>
               </div>
             </v-col>
@@ -25,9 +25,9 @@
               <div class="w-100">
                 <v-form v-model="isValidForm">
                   <v-text-field
-                  v-for="input in formInputs"
-                  :key="input.label"
-                  v-model="input.vModel.value"
+                    v-for="input in formInputs"
+                    :key="input.label"
+                    v-model="input.vModel.value"
                     :type="input.type.value"
                     :label="input.label"
                     :rules="input.rules"
@@ -37,7 +37,7 @@
                     hide-details="auto"
                     class="mb-4"
                     color="primary"
-                    style="color: white;"
+                    style="color: white"
                   >
                     <template #append-inner>
                       <v-icon
@@ -107,82 +107,98 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref } from 'vue';
-import { generateStrongPassword } from '@/utils/generators';
-import { isStrongPasswordRules, isValidEmailRules, isValidNameRules } from '@/utils/validators';
-import axios from 'axios';
-import type { SignUpFormInputs, ISignUpResponse } from '@/utils/types';
-import { useUserStore } from '@/stores/user.store';
+import axios from 'axios'
+import { computed, defineComponent, ref } from 'vue'
+
+import { useUserStore } from '../../stores/user.store'
+import { generateStrongPassword } from '../../utils/generators'
+import type { ISignUpResponse, SignUpFormInputs } from '../../utils/types'
+import {
+  isStrongPasswordRules,
+  isValidEmailRules,
+  isValidNameRules,
+} from '../../utils/validators'
 
 export default defineComponent({
   name: 'SignUpComponent',
   props: {
     openDialog: {
       type: Boolean,
-      required: true
-    }
+      required: true,
+    },
   },
   emits: ['update:close-dialog'],
   setup(props, { emit }) {
-    const showPassword = ref(false);
-    const isValidForm = ref(false);
-    const isLoadingSignUp = ref(false);
-    const errorMessage = ref<string>();
-    const successMessage = ref<string>();
+    const showPassword = ref(false)
+    const isValidForm = ref(false)
+    const isLoadingSignUp = ref(false)
+    const errorMessage = ref<string>()
+    const successMessage = ref<string>()
 
-    const passwordEyeIconColor = computed(() => (isStrongPasswordRules(password.value) === true ? 'primary' : 'error'));
-    const emailIconColor = computed(() => (isValidEmailRules(email.value) === true ? 'primary' : 'error'));
-    const fNameIconColor = computed(() => (isValidNameRules(fName.value) === true ? 'primary' : 'error'));
-    const lNameIconColor = computed(() => (isValidNameRules(lName.value) === true ? 'primary' : 'error'));
+    const passwordEyeIconColor = computed(() =>
+      isStrongPasswordRules(password.value) === true ? 'primary' : 'error'
+    )
+    const emailIconColor = computed(() =>
+      isValidEmailRules(email.value) === true ? 'primary' : 'error'
+    )
+    const fNameIconColor = computed(() =>
+      isValidNameRules(fName.value) === true ? 'primary' : 'error'
+    )
+    const lNameIconColor = computed(() =>
+      isValidNameRules(lName.value) === true ? 'primary' : 'error'
+    )
 
-    const email = ref<string>('');
-    const fName = ref<string>('');
-    const lName = ref<string>('');
-    const password = ref<string>('');
+    const email = ref<string>('')
+    const fName = ref<string>('')
+    const lName = ref<string>('')
+    const password = ref<string>('')
 
-    const TOKENS_KEY = import.meta.env.VITE_SWITCHKEYS_TOKENS;
-    const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+    const TOKENS_KEY = import.meta.env.VITE_SWITCHKEYS_TOKENS
+    const SERVER_URL = import.meta.env.VITE_SERVER_URL
 
     const passwordHints = [
       'The password should be strong.',
       'Use at least 8 characters.',
       'Include both uppercase and lowercase letters.',
       'Add numbers and special characters (e.g., @, #, $, %, etc.).',
-      'Avoid using easily guessable information like your name or birthdate.'
-    ];
+      'Avoid using easily guessable information like your name or birthdate.',
+    ]
 
     const signup = async () => {
       try {
-        errorMessage.value = undefined;
-        successMessage.value = undefined;
-        isLoadingSignUp.value = true;
+        errorMessage.value = undefined
+        successMessage.value = undefined
+        isLoadingSignUp.value = true
 
         const payload = {
           email: email.value,
           first_name: fName.value,
           last_name: lName.value,
-          password: password.value
-        };
+          password: password.value,
+        }
 
-        const response = await axios.post(`${SERVER_URL}/auth/signup/`, payload);
-        successMessage.value = response.data.message;
+        const response = await axios.post(`${SERVER_URL}/auth/signup/`, payload)
+        successMessage.value = response.data.message
 
-        const results: ISignUpResponse = response.data.results;
-        localStorage.setItem(TOKENS_KEY, JSON.stringify({
-          access: results.access_token,
-          refresh: results.refresh_token
-        }));
+        const results: ISignUpResponse = response.data.results
+        localStorage.setItem(
+          TOKENS_KEY,
+          JSON.stringify({
+            access: results.access_token,
+            refresh: results.refresh_token,
+          })
+        )
 
-        const userStore = useUserStore();
-        userStore.set(results);
+        const userStore = useUserStore()
+        userStore.set(results)
 
-        setTimeout(() => emit('update:close-dialog'), 1500);
+        setTimeout(() => emit('update:close-dialog'), 1500)
       } catch (error: any) {
-        errorMessage.value = error.response?.data?.message || error.message;
+        errorMessage.value = error.response?.data?.message || error.message
       } finally {
-        isLoadingSignUp.value = false;
+        isLoadingSignUp.value = false
       }
-    };
+    }
 
     const toggleShowPassword = () => {
       showPassword.value = !showPassword.value
@@ -192,12 +208,12 @@ export default defineComponent({
     }
 
     const internalGenerateStrongPassword = () => {
-      password.value = generateStrongPassword();
-      showPassword.value = true;
+      password.value = generateStrongPassword()
+      showPassword.value = true
       setTimeout(() => {
-        showPassword.value = false;
-      }, 1000);
-    };
+        showPassword.value = false
+      }, 1000)
+    }
 
     const formInputs: SignUpFormInputs[] = [
       {
@@ -205,21 +221,21 @@ export default defineComponent({
         icon: 'mdi-at',
         label: 'Email',
         rules: [isValidEmailRules],
-        type: ref('email')
+        type: ref('email'),
       },
       {
         vModel: fName,
         icon: 'mdi-account',
         label: 'First Name',
         rules: [isValidNameRules],
-        type: ref('text')
+        type: ref('text'),
       },
       {
         vModel: lName,
         icon: 'mdi-account',
         label: 'Last Name',
         rules: [isValidNameRules],
-        type: ref('text')
+        type: ref('text'),
       },
       {
         vModel: password,
@@ -227,23 +243,23 @@ export default defineComponent({
         label: 'Password',
         rules: [isStrongPasswordRules],
         type: computed(() => (showPassword.value ? 'text' : 'password')),
-      }
-    ];
+      },
+    ]
 
     const getIconColor = (label: string) => {
       switch (label.toLowerCase()) {
         case 'email':
-          return emailIconColor.value;
+          return emailIconColor.value
         case 'first name':
-          return fNameIconColor.value;
+          return fNameIconColor.value
         case 'last name':
-          return lNameIconColor.value;
+          return lNameIconColor.value
         case 'password':
-          return passwordEyeIconColor.value;
+          return passwordEyeIconColor.value
         default:
-          return 'primary';
+          return 'primary'
       }
-    };
+    }
 
     return {
       ...props,
@@ -257,10 +273,10 @@ export default defineComponent({
       getIconColor,
       toggleShowPassword,
       internalGenerateStrongPassword,
-      signup
-    };
-  }
-});
+      signup,
+    }
+  },
+})
 </script>
 
 <style scoped>

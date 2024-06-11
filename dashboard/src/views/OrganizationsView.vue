@@ -7,12 +7,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import OrganizationsComponent from "@/components/organizations/OrganizationsComponent.vue"
-import ComponentTransition from "@/components/ui/ComponentTransition.vue";
+import { defineComponent } from 'vue'
+
+import OrganizationsComponent from '../components/organizations/OrganizationsComponent.vue'
+import ComponentTransition from '../components/ui/ComponentTransition.vue'
 
 export default defineComponent({
-  nbame: "DashboardView",
-  components: {OrganizationsComponent, ComponentTransition},
+  nbame: 'DashboardView',
+  components: { OrganizationsComponent, ComponentTransition },
 })
 </script>

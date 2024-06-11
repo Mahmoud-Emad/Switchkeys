@@ -1,19 +1,20 @@
-import { defineStore } from "pinia";
-import type { ISignUpResponse } from "../utils/types";
+import { defineStore } from 'pinia'
 
-export const useUserStore = defineStore("user", {
+import type { ISignUpResponse } from '../utils/types'
+
+export const useUserStore = defineStore('user', {
   state: (): ISignUpResponse => {
     return {
       id: 0,
-      email: "",
-      first_name: "",
-      last_name: "",
-      password: "",
-      access_token: "",
-      refresh_token: "",
-      joining_at: "",
-      user_type: "",
-    };
+      email: '',
+      first_name: '',
+      last_name: '',
+      password: '',
+      access_token: '',
+      refresh_token: '',
+      joining_at: '',
+      user_type: '',
+    }
   },
   actions: {
     set(userResponse: ISignUpResponse) {
@@ -26,6 +27,6 @@ export const useUserStore = defineStore("user", {
       this.refresh_token = userResponse.refresh_token
       this.joining_at = userResponse.joining_at
       this.user_type = userResponse.user_type
-    }
+    },
   },
-});
+})

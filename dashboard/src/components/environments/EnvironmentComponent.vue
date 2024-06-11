@@ -1,10 +1,17 @@
 <template>
-  <SearchCards :objects="environments" @update:objects="updateEnvironments"/>
+  <SearchCards :objects="environments" @update:objects="updateEnvironments" />
 
-  <div class="w-100">
-    <v-row class="w-100">
-      <v-col cols="4" class="w-100 d-flex justify-space-between" v-for="environment in filteredEnvs"
-        :key="environment.id">
+  <div>
+    <v-row>
+      <v-col
+        cols="12"
+        md="6"
+        sm="12"
+        lg="4"
+        xl="4"
+        v-for="environment in filteredEnvs"
+        :key="environment.id"
+      >
         <EnvironmentCard :environment />
       </v-col>
     </v-row>
@@ -13,15 +20,16 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
-import EnvironmentCard from './EnvironmentCard.vue';
-import type { IEnvironment } from '@/utils/types';
-import SearchCards from '@/layoutes/SearchCards.vue';
+
+import SearchCards from '../../layoutes/SearchCards.vue'
+import type { IEnvironment } from '../../utils/types'
+import EnvironmentCard from './EnvironmentCard.vue'
 
 export default defineComponent({
   name: 'OrganizationsComponent',
   components: {
     EnvironmentCard,
-    SearchCards
+    SearchCards,
   },
 
   setup() {
@@ -44,29 +52,29 @@ export default defineComponent({
             projects: 15,
             members: 12,
             createdAt: '19-06-2024',
-            modifiedAt: '19-06-2024'
-          }
+            modifiedAt: '19-06-2024',
+          },
         },
         users: [
           {
-            username: "Ahmed",
+            username: 'Ahmed',
             device: {
-              deviceType: "Android",
-              version: "v1515.42.6",
+              deviceType: 'Android',
+              version: 'v1515.42.6',
             },
             features: [
               {
-                name: "debug",
-                value: "true",
-              }
+                name: 'debug',
+                value: 'true',
+              },
             ],
-          }
+          },
         ],
         features: [
           {
-            name: "debug",
-            value: "false",
-          }
+            name: 'debug',
+            value: 'false',
+          },
         ],
       },
       {
@@ -87,29 +95,29 @@ export default defineComponent({
             projects: 15,
             members: 12,
             createdAt: '19-06-2024',
-            modifiedAt: '19-06-2024'
-          }
+            modifiedAt: '19-06-2024',
+          },
         },
         users: [
           {
-            username: "Ahmed",
+            username: 'Ahmed',
             device: {
-              deviceType: "Android",
-              version: "v1515.42.6",
+              deviceType: 'Android',
+              version: 'v1515.42.6',
             },
             features: [
               {
-                name: "debug",
-                value: "true",
-              }
+                name: 'debug',
+                value: 'true',
+              },
             ],
-          }
+          },
         ],
         features: [
           {
-            name: "debug",
-            value: "false",
-          }
+            name: 'debug',
+            value: 'false',
+          },
         ],
       },
       {
@@ -130,42 +138,43 @@ export default defineComponent({
             projects: 15,
             members: 12,
             createdAt: '19-06-2024',
-            modifiedAt: '19-06-2024'
-          }
+            modifiedAt: '19-06-2024',
+          },
         },
         users: [
           {
-            username: "Ahmed",
+            username: 'Ahmed',
             device: {
-              deviceType: "Android",
-              version: "v1515.42.6",
+              deviceType: 'Android',
+              version: 'v1515.42.6',
             },
             features: [
               {
-                name: "debug",
-                value: "true",
-              }
+                name: 'debug',
+                value: 'true',
+              },
             ],
-          }
+          },
         ],
         features: [
           {
-            name: "debug",
-            value: "false",
-          }
+            name: 'debug',
+            value: 'false',
+          },
         ],
       },
     ]
     const filteredEnvs = ref<IEnvironment[]>(environments)
 
-    const updateEnvironments = (objs: IEnvironment[]) => filteredEnvs.value = objs;
+    const updateEnvironments = (objs: IEnvironment[]) =>
+      (filteredEnvs.value = objs)
 
     return {
       environments,
       filteredEnvs,
       updateEnvironments,
     }
-  }
+  },
 })
 </script>
 

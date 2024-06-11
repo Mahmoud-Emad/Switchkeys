@@ -14,6 +14,7 @@ user:
 
 # Frontend commands.
 frontend:=cd frontend
+dashboard:=cd dashboard
 
 # Commands works on both servers.
 install:
@@ -26,6 +27,8 @@ ifeq ($(server), frontend)
 	$(frontend) && yarn dev
 else ifeq ($(server), backend)
 	$(backend) && $(CMD) python3 manage.py runserver
+else ifeq ($(server), dashboard)
+	$(dashboard) && yarn dev
 endif
 
 lint:

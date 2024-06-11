@@ -1,5 +1,6 @@
 :root{
-  --blue-bg: radial-gradient(#1a1f35 25%, #202020 100%);
+  --blue-bg: radial-gradient(#12151f 25%, #202020 100%);
+  --blue-bg-light: radial-gradient(#30395e 25%, #302e2e 100%);
   --blue-text-color: #fff;
 }
 
@@ -33,4 +34,8 @@ a{
 .app-card:hover {
   scale: 1.005;
   background: rgba(255, 255, 255, 0.247) !important;
+}
+
+.v-tooltip > .v-overlay__content{
+  background: var(--blue-bg-light) !important;
 }
